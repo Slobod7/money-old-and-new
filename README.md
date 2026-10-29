@@ -15,7 +15,7 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 
 | Setting | What to put |
 |---|---|
-| `url` | Your domain, for example `https://slobodzean.com` |
+| `url` and `baseurl` | Right now `https://slobod7.github.io` and `/money-old-and-new`. When you connect your domain, set `url` to it (for example `https://slobodzean.com`) and `baseurl` to `""` |
 | `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://newsletter.slobodzean.com`) |
 | `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first |
 | `kit.price` | The Starter Kit price, once you know it |
@@ -127,7 +127,7 @@ An image with a source credit (put the file in `assets/img/guides/`):
 
 ```html
 <figure class="figure">
-<img src="/assets/img/guides/your-image.jpg" width="1400" height="700" alt="Describe what the image shows" loading="lazy">
+<img src="{{ '/assets/img/guides/your-image.jpg' | relative_url }}" width="1400" height="700" alt="Describe what the image shows" loading="lazy">
 <figcaption>What it shows. Source: example.com</figcaption>
 </figure>
 ```

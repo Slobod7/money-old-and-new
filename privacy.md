@@ -9,7 +9,7 @@ permalink: /privacy/
 
 **The site is hosted on GitHub Pages.** Like any web host, GitHub may keep basic server logs, such as IP addresses, to keep the service running and secure. See [GitHub’s privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 
-**The newsletter is sent by Substack.** If you subscribe, Substack stores your email address and sends the Sunday letter. The signup form on the [Subscribe page](/subscribe/) is loaded from Substack. See [Substack’s privacy policy](https://substack.com/privacy). You can unsubscribe with one click at the bottom of any letter.
+**The newsletter is sent by Substack.** If you subscribe, Substack stores your email address and sends the Sunday letter. The signup form on the [Subscribe page]({{ '/subscribe/' | relative_url }}) is loaded from Substack. See [Substack’s privacy policy](https://substack.com/privacy). You can unsubscribe with one click at the bottom of any letter.
 
 **Questions?** Email [{{ site.author.email }}](mailto:{{ site.author.email }}).
 

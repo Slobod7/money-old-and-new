@@ -5,8 +5,10 @@ title: "Money, Old and New"
 tagline: "Finance and crypto, explained"
 description: "A Sunday letter about how money works, from bank deposits to blockchains. Written by Bogdan Slobodzean."
 lang: en
-url: "https://example.com"          # CHANGE ME: your domain, e.g. https://slobodzean.com (no slash at the end)
-baseurl: ""
+# For now the site lives at https://slobod7.github.io/money-old-and-new/
+# When you connect your own domain: set url to it (e.g. https://slobodzean.com) and baseurl to "".
+url: "https://slobod7.github.io"
+baseurl: "/money-old-and-new"
 
 author:
   name: Bogdan Slobodzean
