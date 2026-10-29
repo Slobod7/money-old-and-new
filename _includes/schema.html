@@ -1,0 +1,187 @@
+{%- comment -%}
+Structured data for search engines: one JSON-LD graph per page, its parts linked by @id.
+Every page describes the site and its author. Guides add the article and its breadcrumb, plus
+FAQPage when their front matter has faq and Review when it has review (the score comes from
+review_scores in _config.yml, as on the page). Other pages pick their type with schema_type in
+front matter (ProfilePage on About, CollectionPage on Guides); the rest are plain WebPages.
+default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disagree.
+{%- endcomment -%}
+{%- assign home_url = '/' | absolute_url -%}
+{%- assign about_url = '/about/' | absolute_url -%}
+{%- assign guides_url = '/guides/' | absolute_url -%}
+{%- assign page_url = page.url | absolute_url -%}
+{%- assign website_id = home_url | append: '#website' -%}
+{%- assign person_id = about_url | append: '#person' -%}
+{%- assign webpage_id = page_url | append: '#webpage' -%}
+{%- assign language = site.lang | default: 'en' -%}
+{%- assign page_name = page.title | default: site.title -%}
+{%- assign page_type = page.schema_type | default: 'WebPage' -%}
+{%- assign is_home = false -%}{%- if page.url == '/' -%}{%- assign is_home = true -%}{%- endif -%}
+{%- assign is_guide = false -%}{%- if page.collection == 'posts' -%}{%- assign is_guide = true -%}{%- endif -%}
+{%- assign person_image = site.author.avatar | default: site.author.photo -%}
+{%- assign same_as = site.author.same_as | default: '' -%}
+{%- if same_as == '' -%}{%- assign same_as = '' | split: '' -%}{%- endif -%}
+{%- if site.author.linkedin -%}{%- assign same_as = same_as | unshift: site.author.linkedin -%}{%- endif -%}
+{%- unless site.substack_url == nil or site.substack_url == '' or site.substack_url contains 'YOUR-NAME' -%}{%- assign same_as = same_as | push: site.substack_url -%}{%- endunless -%}
+{%- if is_guide -%}
+{%- assign updated = page.updated | default: page.date -%}
+{%- assign published_iso = page.date | date_to_xmlschema -%}
+{%- assign updated_iso = updated | date_to_xmlschema -%}
+{%- if page.review -%}
+{%- assign review_score = page.review.rating | default: site.review_scores[page.review.verdict] -%}
+{%- assign review_type = page.review.type | default: 'Book' -%}
+{%- endif -%}
+{%- endif -%}
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": {{ website_id | jsonify }},
+"url": {{ home_url | jsonify }},
+"name": {{ site.title | jsonify }},
+"description": {{ site.description | jsonify }},
+"inLanguage": {{ language | jsonify }},
+"publisher": { "@id": {{ person_id | jsonify }} }
+},
+{
+"@type": "Person",
+"@id": {{ person_id | jsonify }},
+"name": {{ site.author.name | jsonify }},
+"url": {{ about_url | jsonify }}
+{%- if person_image and person_image != '' %},
+"image": {{ person_image | absolute_url | jsonify }}
+{%- endif %}
+{%- if site.author.job_title %},
+"jobTitle": {{ site.author.job_title | jsonify }}
+{%- endif %}
+{%- if site.author.employer.name %},
+"worksFor": { "@type": "Organization", "name": {{ site.author.employer.name | jsonify }}{% if site.author.employer.url %}, "url": {{ site.author.employer.url | jsonify }}{% endif %} }
+{%- endif %}
+{%- if site.author.knows_about.size > 0 %},
+"knowsAbout": {{ site.author.knows_about | jsonify }}
+{%- endif %}
+{%- if same_as.size > 0 %},
+"sameAs": {{ same_as | jsonify }}
+{%- endif %}
+},
+{
+"@type": {% if page.faq %}["WebPage", "FAQPage"]{% else %}{{ page_type | jsonify }}{% endif %},
+"@id": {{ webpage_id | jsonify }},
+"url": {{ page_url | jsonify }},
+"name": {{ page_name | jsonify }},
+"description": {{ page.description | default: site.description | jsonify }},
+"inLanguage": {{ language | jsonify }},
+"isPartOf": { "@id": {{ website_id | jsonify }} }
+{%- unless is_home %},
+"breadcrumb": { "@id": {{ page_url | append: '#breadcrumb' | jsonify }} }
+{%- endunless %}
+{%- if page.image %},
+"primaryImageOfPage": { "@type": "ImageObject", "url": {{ page.image | absolute_url | jsonify }} }
+{%- endif %}
+{%- if is_guide %},
+"datePublished": {{ published_iso | jsonify }},
+"dateModified": {{ updated_iso | jsonify }}
+{%- endif %}
+{%- if page_type == 'ProfilePage' %},
+"mainEntity": { "@id": {{ person_id | jsonify }} }
+{%- elsif page_type == 'CollectionPage' %},
+"mainEntity": { "@id": {{ page_url | append: '#list' | jsonify }} }
+{%- elsif page.faq %},
+"mainEntity": [
+{%- for item in page.faq %}
+{ "@type": "Question", "name": {{ item.question | strip_html | strip | jsonify }}, "acceptedAnswer": { "@type": "Answer", "text": {{ item.answer | markdownify | strip | jsonify }} } }{% unless forloop.last %},{% endunless %}
+{%- endfor %}
+]
+{%- endif %}
+}
+{%- if is_guide %},
+{
+"@type": "BlogPosting",
+"@id": {{ page_url | append: '#article' | jsonify }},
+"url": {{ page_url | jsonify }},
+"headline": {{ page.title | jsonify }},
+"description": {{ page.description | jsonify }},
+"inLanguage": {{ language | jsonify }},
+"datePublished": {{ published_iso | jsonify }},
+"dateModified": {{ updated_iso | jsonify }},
+"author": { "@type": "Person", "@id": {{ person_id | jsonify }}, "name": {{ site.author.name | jsonify }}, "url": {{ about_url | jsonify }} },
+"publisher": { "@id": {{ person_id | jsonify }} },
+"mainEntityOfPage": { "@id": {{ webpage_id | jsonify }} },
+"isPartOf": { "@id": {{ website_id | jsonify }} }
+{%- if page.image %},
+"image": [{{ page.image | absolute_url | jsonify }}]
+{%- endif %}
+{%- if page.topic %},
+"articleSection": {{ page.topic | jsonify }}
+{%- endif %},
+"wordCount": {{ page.content | strip_html | number_of_words }}
+}
+{%- if page.review %},
+{
+"@type": "Review",
+"@id": {{ page_url | append: '#review' | jsonify }},
+"url": {{ page_url | jsonify }},
+"name": {{ page.title | jsonify }},
+"inLanguage": {{ language | jsonify }},
+"datePublished": {{ published_iso | jsonify }},
+"dateModified": {{ updated_iso | jsonify }},
+"author": { "@type": "Person", "@id": {{ person_id | jsonify }}, "name": {{ site.author.name | jsonify }}, "url": {{ about_url | jsonify }} },
+"publisher": { "@id": {{ person_id | jsonify }} },
+"isPartOf": { "@id": {{ page_url | append: '#article' | jsonify }} }
+{%- if page.review.summary %},
+"reviewBody": {{ page.review.summary | markdownify | strip_html | replace: '&lt;', '<' | replace: '&gt;', '>' | replace: '&quot;', '"' | replace: '&amp;', '&' | strip | jsonify }}
+{%- endif %},
+"itemReviewed": {
+"@type": {{ review_type | jsonify }},
+"name": {{ page.review.name | jsonify }}
+{%- if page.review.by %},
+{% case review_type %}{% when 'Book' %}"author": { "@type": "Person", "name": {{ page.review.by | jsonify }} }{% when 'Product' %}"brand": { "@type": "Brand", "name": {{ page.review.by | jsonify }} }{% else %}"author": { "@type": "Organization", "name": {{ page.review.by | jsonify }} }{% endcase %}
+{%- endif %}
+{%- if page.review.year %},
+"datePublished": {{ page.review.year | append: '' | jsonify }}
+{%- endif %}
+{%- if page.review.isbn %},
+"isbn": {{ page.review.isbn | append: '' | jsonify }}
+{%- endif %}
+{%- if page.review.url %},
+"url": {{ page.review.url | jsonify }}
+{%- endif %}
+}
+{%- if review_score %},
+"reviewRating": { "@type": "Rating", "ratingValue": {{ review_score }}, "bestRating": {{ site.review_scale | default: 3 }}, "worstRating": 1 }
+{%- endif %}
+}
+{%- endif %}
+{%- endif %}
+{%- if page_type == 'CollectionPage' %},
+{
+"@type": "ItemList",
+"@id": {{ page_url | append: '#list' | jsonify }},
+"numberOfItems": {{ site.posts.size }},
+"itemListElement": [
+{%- for post in site.posts %}
+{ "@type": "ListItem", "position": {{ forloop.index }}, "url": {{ post.url | absolute_url | jsonify }}, "name": {{ post.title | jsonify }} }{% unless forloop.last %},{% endunless %}
+{%- endfor %}
+]
+}
+{%- endif %}
+{%- unless is_home %},
+{
+"@type": "BreadcrumbList",
+"@id": {{ page_url | append: '#breadcrumb' | jsonify }},
+"itemListElement": [
+{ "@type": "ListItem", "position": 1, "name": "Home", "item": {{ home_url | jsonify }} },
+{%- if is_guide %}
+{ "@type": "ListItem", "position": 2, "name": "Guides", "item": {{ guides_url | jsonify }} },
+{ "@type": "ListItem", "position": 3, "name": {{ page_name | jsonify }}, "item": {{ page_url | jsonify }} }
+{%- else %}
+{ "@type": "ListItem", "position": 2, "name": {{ page_name | jsonify }}, "item": {{ page_url | jsonify }} }
+{%- endif %}
+]
+}
+{%- endunless %}
+]
+}
+</script>

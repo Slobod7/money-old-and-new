@@ -9,7 +9,12 @@
 <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 <link rel="icon" href="{{ '/assets/brand/favicon.svg' | relative_url }}" type="image/svg+xml">
 <meta name="theme-color" content="#FAF9F6">
-{% seo %}
+{%- comment -%} jekyll-seo-tag's meta tags, minus its JSON-LD: schema.html writes the structured data. {%- endcomment -%}
+{%- capture seo_tags %}{% seo %}{% endcapture -%}
+{%- assign seo_tags = seo_tags | split: '<script type="application/ld+json">' %}
+{{ seo_tags[0] | strip }}
+{{ seo_tags[1] | split: '</script>' | last | strip }}
+{% include schema.html %}
 {% feed_meta %}
 <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </head>

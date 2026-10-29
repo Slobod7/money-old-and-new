@@ -2,6 +2,11 @@
 layout: default
 ---
 {%- assign updated = page.updated | default: page.date -%}
+{%- assign faq_heading = page.faq_heading | default: "Common questions" -%}
+{%- if page.review -%}
+{%- assign review_score = page.review.rating | default: site.review_scores[page.review.verdict] -%}
+{%- assign review_scale = site.review_scale | default: 3 -%}
+{%- endif -%}
 <div class="wrap">
 <article class="article row">
 <header class="article-head body">
@@ -22,6 +27,9 @@ layout: default
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
 {%- endfor %}
+{%- if page.faq %}
+<li><a href="#faq">{{ faq_heading }}</a></li>
+{%- endif %}
 </ol>
 </nav>
 {%- endif %}
@@ -35,13 +43,39 @@ layout: default
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
 {%- endfor %}
+{%- if page.faq %}
+<li><a href="#faq">{{ faq_heading }}</a></li>
+{%- endif %}
 </ol>
 </nav>
 </details>
 {%- endif %}
 
 <div class="prose">
+{%- comment -%} A review opens with its verdict. The score is shown because Google only uses ratings readers can see (Review markup in schema.html). {%- endcomment -%}
+{%- if page.review %}
+<section class="verdict" aria-labelledby="verdict-title">
+<h2 id="verdict-title" class="kicker">The verdict</h2>
+<p class="verdict-call">{{ page.review.verdict }}{% if review_score %} <span class="verdict-score"><span class="verdict-meter" aria-hidden="true">{% for i in (1..review_scale) %}<i{% if i <= review_score %} class="on"{% endif %}></i>{% endfor %}</span>{{ review_score }} out of {{ review_scale }}</span>{% endif %}</p>
+{%- if page.review.summary %}
+<p>{{ page.review.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+{%- endif %}
+<p class="meta"><cite>{{ page.review.name }}</cite>{% if page.review.by %} by {{ page.review.by }}{% endif %}{% if page.review.year %}, {{ page.review.year }}{% endif %}</p>
+{%- if page.review.disclosure %}
+<p class="meta">{{ page.review.disclosure }}</p>
+{%- endif %}
+</section>
+{%- endif %}
 {{ content }}
+{%- comment -%} The questions come from faq in front matter, which also feeds the FAQPage markup in schema.html, so the two always match. {%- endcomment -%}
+{%- if page.faq %}
+<h2 id="faq">{{ faq_heading }}</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+{%- endif %}
 </div>
 
 <footer class="article-end">

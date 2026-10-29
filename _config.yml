@@ -16,10 +16,34 @@ author:
   linkedin: https://www.linkedin.com/in/bogdanslobodzean/
   photo: /assets/img/bogdan.jpg      # 4:5 portrait, beside the About introduction
   avatar: /assets/img/bogdan-square.jpg   # square, cropped close to the face, for the circle on the home page. Empty uses photo
+  # For search engines only (the schema.org Person in _includes/schema.html). None of this shows on the page.
+  job_title: Content Writer
+  employer:
+    name: Bitcoin.com
+    url: https://www.bitcoin.com/
+  knows_about:
+    - Macroeconomics
+    - Monetary policy
+    - Central banks
+    - Stablecoins
+    - Cryptocurrency
+    - Personal finance
+  # Other profiles that are you, such as your Bitcoin.com author page or X. LinkedIn and the Substack address are added automatically
+  same_as: []
 
 # Your Substack newsletter. Every "Subscribe" button on the site points to its signup page.
 # While this still says YOUR-NAME, the buttons are replaced by "Signup isn't open yet".
 substack_url: "https://YOUR-NAME.substack.com"   # CHANGE ME: later your own subdomain, e.g. https://newsletter.slobodzean.com
+
+# The Reviewed series: what each verdict scores out of review_scale. The score shows beside the verdict
+# and becomes the review's star rating in search results. Change the scale and the scores together.
+review_scale: 3
+review_scores:
+  Read it: 3
+  Use it: 3
+  Skim it: 2
+  Try it: 2
+  Skip it: 1
 
 # Guides live at short, permanent addresses like /what-is-pump-fun/
 permalink: /:title/

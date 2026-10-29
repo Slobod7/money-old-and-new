@@ -63,6 +63,21 @@ Also verify the domain in your GitHub account (**Settings → Pages → Add a do
 
 Add your domain in Search Console and verify it with the DNS record it gives you. Then submit `https://YOUR-DOMAIN/sitemap.xml`. The sitemap, RSS feed (`/feed.xml`) and `robots.txt` are generated automatically.
 
+## Structured data (schema markup)
+
+Every page carries schema.org markup (JSON-LD) that tells search engines what the page is and who wrote it. You don't write it: `_includes/schema.html` builds it from `_config.yml` and each page's front matter.
+
+| Page | What it says |
+|---|---|
+| Every page | The site (WebSite) and you (Person: name, photo, job, employer, topics, LinkedIn and Substack) |
+| A guide | The article (BlogPosting: title, description, image, published and updated dates, author, word count), its breadcrumb (Home › Guides › the guide), and its questions (FAQPage) when it has `faq`, and the review (Review: what you reviewed, your verdict and its score) when it has `review` |
+| About | Your profile (ProfilePage) |
+| Guides | The list of guides (CollectionPage) |
+
+To check a page once it's live, paste its address into Google's Rich Results Test (search.google.com/test/rich-results) or the Schema Markup Validator (validator.schema.org). Search Console's **Enhancements** section reports any errors it finds as Google crawls the site.
+
+Google shows FAQ results only for government and health sites, so the questions won't add a dropdown under your result in Google. The markup still tells other search engines and AI assistants which question each answer belongs to.
+
 ---
 
 ## Design system
@@ -100,10 +115,36 @@ toc:
     label: How it works
   - id: risks
     label: The risks
+faq:
+  - question: "Can I lose money on Pump.fun?"
+    answer: "Yes. Most tokens launched there go to zero. Answers can use **Markdown** and [links](https://example.com)."
+  - question: "Is Pump.fun legal in the EU?"
+    answer: "One or two short paragraphs."
 ---
 ```
 
 Give every guide its own `image`: it's the picture on the home page card and when the guide is shared. Without one, the card shows only the title and date, and shared links have no picture.
+
+`faq` is optional. Its questions appear at the end of the guide under "Common questions" (change the heading with `faq_heading: "Your heading"`), with a link in the contents, and search engines get them as FAQ markup. Write questions people actually search for, and answer each one in its first sentence.
+
+For a review, add a `review` block to the front matter. It puts a verdict box at the top of the piece (the verdict, its score, and what you reviewed) and gives search engines Review markup, which can show stars under your result:
+
+```
+review:
+  verdict: Read it           # books: Read it / Skim it / Skip it. Tools and products: Use it / Try it / Skip it
+  summary: "The verdict in one sentence."
+  type: Book                 # Book, SoftwareApplication (apps and tools) or Product (accounts, cards, devices)
+  name: "The Price of Time: The Real Story of Interest"
+  by: Edward Chancellor      # the book's author, or the company behind the tool or product
+  year: 2022                 # optional
+  isbn: "978XXXXXXXXXX"      # optional, books only: the 13-digit ISBN of the edition you read
+  url: https://example.com   # optional: the official page for the book, tool or product
+  disclosure: "I bought this book myself. Links to it are not affiliate links."   # optional, shown under the verdict
+```
+
+The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it and Try it 2, Skip it 1. The scores are under `review_scores` in `_config.yml`. To score one review differently, add `rating: 2` to its `review` block. Don't use `review` for a bank, broker or exchange as a company: Google ignores editorial ratings of organizations. Review a specific account or card as a `Product` instead.
+
+When you rebuild a guide, add `updated: 2026-12-06` under `date`. The page shows "Updated 6 December 2026", and search engines are told the guide changed. Leave `date` as it was.
 
 4. Commit. The guide is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the guide's `image` (cropped to 16:9 from the top left), its title and its updated date.
 5. Write the Sunday letter on Substack and link to the guide.
@@ -167,13 +208,7 @@ Every guide already ends with a subscription block, so avoid adding one early in
 {% include subscribe.html id="mid-title" heading="Get the next update when it lands" %}
 ```
 
-Questions that open and close:
-
-```html
-<div class="faq">
-<details><summary>The question?</summary><p>The answer.</p></details>
-</div>
-```
+For questions that open and close, use `faq` in the front matter (above) rather than writing the HTML by hand. Only the front matter version gets FAQ markup.
 
 You can also write a guide in Markdown (name the file `.md` instead of `.html`); the building blocks above still work inside it.
 
