@@ -5,10 +5,9 @@ title: "Money, Old and New"
 tagline: "Finance and crypto, explained"
 description: "A Sunday letter about how money works, from bank deposits to blockchains. Written by Bogdan Slobodzean."
 lang: en
-# For now the site lives at https://slobod7.github.io/money-old-and-new/
-# When you connect your own domain: set url to it (e.g. https://slobodzean.com) and baseurl to "".
-url: "https://slobod7.github.io"
-baseurl: "/money-old-and-new"
+# The site lives at the root of its own domain. The CNAME file must name the same domain.
+url: "https://moneyoldandnew.com"
+baseurl: ""
 
 author:
   name: Bogdan Slobodzean

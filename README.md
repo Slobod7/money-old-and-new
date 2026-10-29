@@ -15,7 +15,7 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 
 | Setting | What to put |
 |---|---|
-| `url` and `baseurl` | Right now `https://slobod7.github.io` and `/money-old-and-new`. When you connect your domain, set `url` to it (for example `https://slobodzean.com`) and `baseurl` to `""` |
+| `url` and `baseurl` | Already set to `https://moneyoldandnew.com` and `""`. If the domain ever changes, update `url` and the `CNAME` file together |
 | `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://newsletter.slobodzean.com`). While it still says `YOUR-NAME`, every Subscribe button is replaced by "Signup isn't open yet", so nobody is sent to a dead page |
 | `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first. It appears beside the About page introduction |
 | `author.outline_time`, `author.edit_rounds` | How quickly you send an outline and how many rounds of edits you include. The About page leaves the specifics out until these are filled in |
@@ -37,7 +37,7 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 
 ## Connect your domain
 
-At your domain registrar, add these DNS records (check GitHub's "Managing a custom domain" docs in case they've changed):
+The site is served at `moneyoldandnew.com`. The domain is registered at Cloudflare, and its DNS (Cloudflare → **DNS → Records**) holds these records, all set to **DNS only** (grey cloud), so GitHub can issue the HTTPS certificate:
 
 | Type | Name | Value |
 |---|---|---|
@@ -45,9 +45,13 @@ At your domain registrar, add these DNS records (check GitHub's "Managing a cust
 | A | @ | 185.199.109.153 |
 | A | @ | 185.199.110.153 |
 | A | @ | 185.199.111.153 |
-| CNAME | www | YOUR-USERNAME.github.io |
+| AAAA | @ | 2606:50c0:8000::153 |
+| AAAA | @ | 2606:50c0:8001::153 |
+| AAAA | @ | 2606:50c0:8002::153 |
+| AAAA | @ | 2606:50c0:8003::153 |
+| CNAME | www | slobod7.github.io |
 
-Then in the repository: **Settings → Pages → Custom domain**, enter your domain, save, and tick **Enforce HTTPS** once it's offered (it can take up to a day).
+The `CNAME` file in this folder tells GitHub Pages which domain to serve; **Settings → Pages → Custom domain** shows the same name, with **Enforce HTTPS** ticked. Don't delete the `CNAME` file, or the site falls back to the github.io address.
 
 Also verify the domain in your GitHub account (**Settings → Pages → Add a domain**), so nobody else can point a GitHub site at it.
 
