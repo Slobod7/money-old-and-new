@@ -17,14 +17,24 @@ author:
   city: Cluj-Napoca
   linkedin: https://www.linkedin.com/in/bogdanslobodzean/
   photo: ""                          # CHANGE ME: e.g. /assets/img/bogdan.jpg (a portrait photo, at least 600px tall)
+  # About page details. Each one appears on the page only once it's filled in.
+  outline_time: ""                   # e.g. "three working days"
+  edit_rounds: ""                    # e.g. "two rounds"
+  testimonial: ""                    # a real one-line quote from a past editor or client
+  testimonial_by: ""                 # their name and role
 
-# Your Substack newsletter. Every "Subscribe" button on the site points here.
+# Your Substack newsletter. Every "Subscribe" button on the site points to its signup page.
+# While this still says YOUR-NAME, the buttons are replaced by "Signup isn't open yet".
 substack_url: "https://YOUR-NAME.substack.com"   # CHANGE ME: later your own subdomain, e.g. https://newsletter.slobodzean.com
 
 # Starter Kit
 kit:
-  price: "[PRICE]"                   # CHANGE ME when you know it, e.g. "$29"
+  price: "[PRICE]"                   # CHANGE ME when you know it, e.g. "$29". Hidden while it has brackets.
   launch: "January 2027"
+  # Starter Kit questions. Each answer appears only once it's filled in.
+  format: ""                         # e.g. "Google Docs and Notion"
+  licence: ""                        # your licence terms
+  refunds: ""                        # your refund policy
 
 # Guides live at short, permanent addresses like /top-layer-1-blockchains-2026/
 permalink: /:title/

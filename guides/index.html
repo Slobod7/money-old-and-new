@@ -4,12 +4,28 @@ title: Guides
 description: Every guide on Money, Old and New, newest first. Finance and crypto explained, and rebuilt whenever the facts change.
 permalink: /guides/
 ---
-<div class="wrap section page-top">
-<h1 class="display-xl">Guides</h1>
-<p class="section-intro">Finance and crypto explained, and rebuilt whenever the facts change.</p>
-<ul class="ledger">
+<div class="wrap">
+<header class="page-head row">
+<div class="body">
+<h1 class="page-title">Guides</h1>
+<p class="page-lede">Finance and crypto explained, and rebuilt whenever the facts change.</p>
+</div>
+</header>
+
+<div class="section">
+<ul class="guide-list">
 {%- for post in site.posts %}
-<li><a href="{{ post.url | relative_url }}"><span class="ledger-main"><span class="ledger-title">{{ post.title }}</span><span class="ledger-dek">{{ post.description }}</span></span><span class="ledger-tag">{{ post.topic }}<br><span class="muted">{{ post.updated | default: post.date | date: "%-d %b %Y" }}</span></span></a></li>
+{%- assign updated = post.updated | default: post.date %}
+<li class="row">
+<div class="guide-meta">
+<p class="meta">{{ post.topic }}<br>Updated <time datetime="{{ updated | date: '%Y-%m-%d' }}">{{ updated | date: "%-d %B %Y" }}</time></p>
+</div>
+<div class="body">
+<h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+<p>{{ post.description }}</p>
+</div>
+</li>
 {%- endfor %}
 </ul>
+</div>
 </div>

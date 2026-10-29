@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#FAF9F6"/>
+  <!-- Simplified feet and generous opening for small-size use. -->
+  <path fill="#173C32" d="M10 54V30Q10 21 29 7L42 18H54V54H37V32Q37 25 29 20Q20 27 20 33V54Z"/>
+</svg>

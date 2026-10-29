@@ -1,0 +1,17 @@
+{%- comment -%}
+A quiet subscription block: one heading, the reassurance line and one button to Substack.
+Optional: include.id (unique per page), include.heading, include.text, include.button,
+include.row (true to sit on the editorial grid with rules across the full width)
+{%- endcomment -%}
+{%- assign sub_id = include.id | default: "subscribe-title" -%}
+<section class="subscribe{% if include.row %} row{% endif %}" aria-labelledby="{{ sub_id }}">
+<div class="subscribe-inner body">
+<div class="subscribe-text">
+<h2 id="{{ sub_id }}">{{ include.heading | default: "Get next Sunday’s letter" }}</h2>
+<p>{{ include.text | default: "Free. One letter every Sunday. Leave with one click." }}</p>
+</div>
+<div class="subscribe-action">
+{% include signup-button.html label=include.button %}
+</div>
+</div>
+</section>

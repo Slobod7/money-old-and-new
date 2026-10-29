@@ -4,35 +4,38 @@ title: Subscribe
 description: Get the Sunday letter. How money works, from bank deposits to blockchains. One letter a week, free.
 permalink: /subscribe/
 ---
-<div class="wrap sub-grid">
-<div class="sub-intro">
-<h1 class="display-xl">Get the Sunday letter</h1>
-<p class="lede">How money works, from bank deposits to blockchains. One letter a week, free.</p>
+<div class="wrap">
+<header class="page-head row">
+<div class="body">
+<h1 class="page-title">Get the Sunday letter</h1>
+<p class="page-lede">How money works, from bank deposits to blockchains. One letter a week, free.</p>
+<div class="actions signup">
+{% include signup-button.html note="Substack sends the letter, and will email you a link to confirm. Your address is only used for this newsletter." %}
 </div>
+</div>
+</header>
 
-<div class="sub-form">
-<div class="window">
-<h2>Subscribe free</h2>
-<p>Enter your email below. Substack sends the letter, and will email you a link to confirm.</p>
-<iframe class="embed" src="{{ site.substack_url }}/embed" title="Sign up to {{ site.title }} on Substack" loading="lazy"></iframe>
-<p class="window-small">Form not showing? <a href="{{ site.substack_url }}/subscribe">Sign up on Substack instead</a>. Your address is only used for this newsletter.</p>
-</div>
-</div>
-
-<div class="sub-more">
-<h2>What arrives each Sunday</h2>
-<ul class="coins">
-<li><span>A guide like <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>, rebuilt whenever the facts change</span></li>
-<li><span>A pair from Old money, new money: a banking idea and its crypto twin</span></li>
-<li><span>What changed this week, and what it costs you</span></li>
-<li><span>No price calls. Sponsored posts are always labelled.</span></li>
+<section class="section row" aria-labelledby="arrives-title">
+<div class="body ruled">
+<h2 id="arrives-title" class="section-title">What arrives each Sunday</h2>
+<ul class="plain-list">
+<li>A guide like <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>, rebuilt whenever the facts change</li>
+<li>A pair from Old money, new money: a banking idea and its crypto twin</li>
+<li>What changed this week, and what it costs you</li>
+<li>No price calls. Sponsored posts are always labelled.</li>
 </ul>
-<h2>Questions</h2>
-<div class="faq" style="max-width: 36em">
+</div>
+</section>
+
+<section class="section row" aria-labelledby="questions-title">
+<div class="body">
+<h2 id="questions-title" class="section-title">Questions</h2>
+<div class="faq">
 <details><summary>How often will I hear from you?</summary><p>Once a week, on Sunday.</p></details>
 <details><summary>Is it free?</summary><p>Yes.</p></details>
 <details><summary>Can I leave?</summary><p>Any time, with one click at the bottom of every letter.</p></details>
 <details><summary>Who handles my email address?</summary><p>Substack, the service that sends the letter. See the <a href="{{ '/privacy/' | relative_url }}">privacy page</a> for details.</p></details>
 </div>
 </div>
+</section>
 </div>

@@ -1,16 +1,18 @@
 <footer class="site-footer">
 <div class="wrap">
-<div class="footer-about">
-<img src="{{ '/assets/img/mark.svg' | relative_url }}" alt="" width="40" height="40">
-<p>{{ site.title }} is written by {{ site.author.name }} in <span class="nowrap">{{ site.author.city }}</span>. Nothing here is financial advice, and sponsored posts are always labelled.</p>
-</div>
+<div class="footer-inner">
+<p class="footer-note"><span class="footer-title">{{ site.title }}</span> is written by {{ site.author.name }} in <span class="nowrap">{{ site.author.city }}</span>. Nothing here is financial advice, and sponsored posts are always labelled.</p>
 <nav class="footer-nav" aria-label="Footer">
-<a href="{{ '/guides/' | relative_url }}">Guides</a>
-<a href="{{ '/starter-kit/' | relative_url }}">Starter Kit</a>
-<a href="{{ '/about/' | relative_url }}">About</a>
-<a href="{{ '/feed.xml' | relative_url }}">RSS</a>
-<a href="{{ site.author.linkedin }}">LinkedIn</a>
-<a href="{{ '/privacy/' | relative_url }}">Privacy</a>
+<ul>
+<li><a href="{{ '/guides/' | relative_url }}">Guides</a></li>
+<li><a href="{{ '/about/' | relative_url }}">About</a></li>
+<li><a href="{{ '/subscribe/' | relative_url }}">Subscribe</a></li>
+<li><a href="{{ '/starter-kit/' | relative_url }}">Starter Kit</a></li>
+<li><a href="{{ '/feed.xml' | relative_url }}">RSS</a></li>
+<li><a href="{{ site.author.linkedin }}">LinkedIn</a></li>
+<li><a href="{{ '/privacy/' | relative_url }}">Privacy</a></li>
+</ul>
 </nav>
+</div>
 </div>
 </footer>
