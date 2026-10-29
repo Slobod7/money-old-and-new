@@ -1,0 +1,15 @@
+---
+layout: default
+title: Guides
+description: Every guide on Money, Old and New, newest first. Finance and crypto explained, and rebuilt whenever the facts change.
+permalink: /guides/
+---
+<div class="wrap section page-top">
+<h1 class="display-xl">Guides</h1>
+<p class="section-intro">Finance and crypto explained, and rebuilt whenever the facts change.</p>
+<ul class="ledger">
+{%- for post in site.posts %}
+<li><a href="{{ post.url | relative_url }}"><span class="ledger-main"><span class="ledger-title">{{ post.title }}</span><span class="ledger-dek">{{ post.description }}</span></span><span class="ledger-tag">{{ post.topic }}<br><span class="muted">{{ post.updated | default: post.date | date: "%-d %b %Y" }}</span></span></a></li>
+{%- endfor %}
+</ul>
+</div>

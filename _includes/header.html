@@ -1,0 +1,14 @@
+{%- assign path = page.url -%}
+<header class="site-header">
+<div class="wrap">
+<a class="brand" href="{{ '/' | relative_url }}"><img src="{{ '/assets/img/mark.svg' | relative_url }}" alt="" width="34" height="34">{{ site.title }}</a>
+<nav class="nav" aria-label="Main">
+<a href="{{ '/guides/' | relative_url }}"{% if path == '/guides/' or page.layout == 'post' %} aria-current="page"{% endif %}>Guides</a>
+<a href="{{ '/starter-kit/' | relative_url }}"{% if path == '/starter-kit/' %} aria-current="page"{% endif %}>Starter Kit</a>
+<a href="{{ '/about/' | relative_url }}"{% if path == '/about/' %} aria-current="page"{% endif %}>About</a>
+{%- unless path == '/subscribe/' %}
+<a class="btn btn-primary" href="{{ '/subscribe/' | relative_url }}">Subscribe</a>
+{%- endunless %}
+</nav>
+</div>
+</header>

@@ -1,0 +1,12 @@
+{%- comment -%}
+The teal "polymer window" always means subscribe. It sends people to your Substack signup page.
+Optional: include.heading, include.text, include.button, include.class
+{%- endcomment -%}
+<div class="window {{ include.class }}">
+{%- if include.heading %}
+<h3>{{ include.heading }}</h3>
+{%- endif %}
+<p>{{ include.text | default: "One letter every Sunday on finance and crypto. Free, and you can leave with one click." }}</p>
+<a class="btn btn-primary" href="{{ site.substack_url }}/subscribe">{{ include.button | default: "Subscribe on Substack" }}</a>
+<p class="window-small">Prefer to sign up here? <a href="{{ '/subscribe/' | relative_url }}">Use the form on this site</a>.</p>
+</div>

@@ -1,0 +1,59 @@
+# Money, Old and New: site settings.
+# Lines marked CHANGE ME need your real details before launch.
+
+title: "Money, Old and New"
+tagline: "Finance and crypto, explained"
+description: "A Sunday letter about how money works, from bank deposits to blockchains. Written by Bogdan Slobodzean."
+lang: en
+url: "https://example.com"          # CHANGE ME: your domain, e.g. https://slobodzean.com (no slash at the end)
+baseurl: ""
+
+author:
+  name: Bogdan Slobodzean
+  initials: BS
+  email: slobodzeanb@gmail.com
+  city: Cluj-Napoca
+  linkedin: https://www.linkedin.com/in/bogdanslobodzean/
+  photo: ""                          # CHANGE ME: e.g. /assets/img/bogdan.jpg (a portrait photo, at least 600px tall)
+
+# Your Substack newsletter. Every "Subscribe" button on the site points here.
+substack_url: "https://YOUR-NAME.substack.com"   # CHANGE ME: later your own subdomain, e.g. https://newsletter.slobodzean.com
+
+# Starter Kit
+kit:
+  price: "[PRICE]"                   # CHANGE ME when you know it, e.g. "$29"
+  launch: "January 2027"
+
+# Guides live at short, permanent addresses like /top-layer-1-blockchains-2026/
+permalink: /:title/
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+feed:
+  path: feed.xml
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+    values:
+      image: /assets/img/guides/layer-1-2026/what-changed-2025-2026.png
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .bundle

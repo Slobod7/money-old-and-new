@@ -1,0 +1,98 @@
+---
+layout: default
+title: Crypto Project Email Starter Kit
+description: The emails a crypto or fintech project needs in its first month, written and ready to adapt. Five welcome emails, twenty subject lines, a tagging map and a launch email.
+permalink: /starter-kit/
+---
+<section class="wrap" aria-labelledby="kit-title">
+<div class="kit-head">
+<h1 id="kit-title" class="display-xl">Crypto Project Email Starter Kit</h1>
+<p>The emails a crypto or fintech project needs in its first month, written and ready to adapt to your voice. Out in {{ site.kit.launch }}.</p>
+<div class="btn-row">
+<a class="btn btn-primary" href="{{ site.substack_url }}/subscribe">Join the waitlist</a>
+<a class="btn btn-outline" href="#inside">See what’s inside</a>
+</div>
+</div>
+
+<figure class="cheque" aria-label="The kit, set out as a cheque">
+<div class="cheque-band" aria-hidden="true"></div>
+<div class="cheque-body">
+<div class="cheque-row">
+<p class="bank">{{ site.title }} <span class="label">{{ site.author.city }}</span></p>
+<p><span class="label">Date</span> <span class="field field-strong">{{ site.kit.launch }}</span></p>
+</div>
+<div class="cheque-row">
+<p class="payee"><span class="label">Pay to the order of</span><span class="field field-strong">your crypto or fintech project</span></p>
+<p class="amount">{{ site.kit.price }}</p>
+</div>
+<p class="words">Five welcome emails, twenty subject lines, one tagging map and one launch email</p>
+<div class="cheque-row">
+<p class="memo"><span class="label">Memo</span><span>No promises about returns, anywhere in it</span></p>
+<p class="signature"><span class="sig">{{ site.author.name }}</span><span class="label">Signature</span></p>
+</div>
+<p class="micr" aria-hidden="true">⑆000001⑆ 2027⑈ 0005</p>
+</div>
+</figure>
+</section>
+
+<section id="inside" class="wrap section" aria-labelledby="inside-title">
+<h2 id="inside-title" class="display-l" style="margin-bottom: 18px">What’s in the kit</h2>
+<div class="table-wrap" role="region" aria-label="Kit contents" tabindex="0">
+<table class="data invoice stack">
+<thead><tr><th scope="col" class="num">Qty</th><th scope="col">Item</th><th scope="col">What it does</th></tr></thead>
+<tbody>
+<tr><td data-label="Qty" class="qty">5</td><th scope="row">Welcome emails</th><td data-label="What it does" class="what">An onboarding sequence that turns new sign-ups into people who know what you do and why it matters.</td></tr>
+<tr><td data-label="Qty" class="qty">20</td><th scope="row">Subject lines</th><td data-label="What it does" class="what">Subject-line formulas with crypto and fintech examples, and when to use each one.</td></tr>
+<tr><td data-label="Qty" class="qty">1</td><th scope="row">Tagging map</th><td data-label="What it does" class="what">Which tags to add from which clicks, so new subscribers and active users get different emails.</td></tr>
+<tr><td data-label="Qty" class="qty">1</td><th scope="row">Launch email</th><td data-label="What it does" class="what">A token or product launch email that informs without promising returns.</td></tr>
+</tbody>
+<tfoot><tr><td></td><th scope="row">Total</th><td>{{ site.kit.price }}, paid once</td></tr></tfoot>
+</table>
+</div>
+</section>
+
+<section class="wrap section" aria-labelledby="seq-title">
+<h2 id="seq-title" class="display-l" style="margin-bottom: 22px">The welcome sequence, day by day</h2>
+<ol class="sequence">
+<li><span class="day">Day 0</span><span class="title">Welcome</span><span class="job">Say what they signed up for and what comes next.</span></li>
+<li><span class="day">Day 1</span><span class="title">The problem you solve</span><span class="job">Why your project exists, in plain words.</span></li>
+<li><span class="day">Day 3</span><span class="title">Your most useful resource</span><span class="job">Give value before you ask for anything.</span></li>
+<li><span class="day">Day 5</span><span class="title">Proof</span><span class="job">Show it works, without promising returns.</span></li>
+<li><span class="day">Day 7</span><span class="title">The first ask</span><span class="job">One clear action: try it, join, or reply.</span></li>
+</ol>
+</section>
+
+<section class="wrap section for-not">
+<div>
+<h2>Made for</h2>
+<ul>
+<li>Founders and marketers at early-stage crypto and fintech projects</li>
+<li>Agencies that write email for crypto and fintech clients</li>
+<li>Teams starting a newsletter or onboarding flow from zero</li>
+</ul>
+</div>
+<div>
+<h2>Not made for</h2>
+<ul>
+<li>Anyone after hype or “guaranteed 10x” copy</li>
+<li>Teams that already have an email specialist and a working sequence</li>
+</ul>
+</div>
+</section>
+
+<section class="wrap section" aria-labelledby="faq-title">
+<h2 id="faq-title" class="display-m" style="margin-bottom: 10px">Questions</h2>
+<div class="faq" style="max-width: 44em">
+<details><summary>What format is it in?</summary><p>[Format, for example Google Docs and Notion]</p></details>
+<details><summary>Can I use it for client work?</summary><p>[Your licence terms]</p></details>
+<details><summary>What if it isn’t right for me?</summary><p>[Your refund policy]</p></details>
+<details><summary>Who wrote it?</summary><p>I did. I’m {{ site.author.name }}: I write this newsletter, and by day I’m a content writer at Bitcoin.com. <a href="{{ '/about/' | relative_url }}">More about me</a></p></details>
+</div>
+</section>
+
+<section class="wrap section" aria-labelledby="wait-title">
+<div class="end-cta">
+<h2 id="wait-title">Hear when it’s out</h2>
+{% include subscribe-window.html text="Subscribers to the Sunday letter hear about the launch first." button="Join the waitlist on Substack" %}
+</div>
+</section>

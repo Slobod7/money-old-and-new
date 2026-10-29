@@ -1,0 +1,302 @@
+---
+title: "Top Layer 1 blockchains in 2026: ten networks compared"
+description: "What each network is actually good for, and the trade-off that comes with it."
+summary: "What each network is actually good for, and the trade-off that comes with it: Bitcoin, Ethereum, Solana, TRON, BNB Smart Chain, Hyperliquid, Avalanche, the XRP Ledger, Aptos and Sui."
+date: 2026-10-22 09:00:00 +0300
+updated: 2026-10-22
+first_published: April 2025
+read_time: 12
+topic: Layer 1s
+start_here: true
+image: /assets/img/guides/layer-1-2026/what-changed-2025-2026.png
+changed: "What changed since the 2025 list: Bitcoin, Hyperliquid and the XRP Ledger joined. TON, Cardano and Celestia moved to the bonus picks, alongside Stellar and Plasma."
+toc:
+  - id: short
+    label: The short version
+  - id: what
+    label: What a Layer 1 is
+  - id: how
+    label: How I picked the ten
+  - id: compare
+    label: The ten, side by side
+  - id: networks
+    label: The ten networks
+  - id: bonus
+    label: Five more worth knowing
+  - id: choose
+    label: How to choose
+  - id: faq
+    label: Questions
+  - id: sources
+    label: Sources
+---
+{%- assign img = '/assets/img/guides/layer-1-2026/' | relative_url -%}
+
+<section id="short" class="short-version" aria-labelledby="short-title">
+<h2 id="short-title">The short version</h2>
+<ul>
+<li>Holding crypto with no issuer behind it: <strong>Bitcoin</strong></li>
+<li>The widest choice of apps and dollar stablecoins: <strong>Ethereum</strong></li>
+<li>Cheap, fast trading and payments: <strong>Solana</strong></li>
+<li>Moving USDT, especially between exchanges: <strong>TRON</strong></li>
+<li>Familiar Ethereum-style apps at low cost: <strong>BNB Smart Chain</strong></li>
+<li>Onchain perpetual futures trading: <strong>Hyperliquid</strong></li>
+<li>Narrower strengths: <strong>Avalanche</strong> (custom chains), <strong>XRP Ledger</strong> (payments), <strong>Aptos</strong> and <strong>Sui</strong> (apps built in the Move language)</li>
+</ul>
+</section>
+
+<p>I published the first version of this list in April 2025. Eighteen months later, almost every technical line in it needed rewriting. Solana switched to a new consensus system the day before I finished this update. BNB Smart Chain blocks now arrive in under half a second. TON’s native coin has a new name. And several networks once described as never going down have gone down.</p>
+
+<p>So this isn’t a light refresh. It’s a new list built around a better question: not “which chain is fastest?” but <strong>what is each network used for, and what do you give up by using it?</strong></p>
+
+<p class="disclaimer">Nothing here is investment advice. It’s a map of what each network does well and where it falls short.</p>
+
+<figure class="figure">
+<img src="{{ img }}what-changed-2025-2026.png" width="1400" height="639" alt="Chart of what changed between the 2025 and 2026 lists: Bitcoin, Hyperliquid and the XRP Ledger added; TON, Cardano and Celestia moved to the bonus picks." loading="lazy">
+<figcaption>What changed between the 2025 and 2026 lists.</figcaption>
+</figure>
+
+<h2 id="what">What is a Layer 1 blockchain?</h2>
+
+<p>A Layer 1 (L1) is a base blockchain with its own consensus (the rules for agreeing on what happened) and its own ledger. Bitcoin, Ethereum and Solana are all Layer 1s.</p>
+
+<p>A Layer 2 (L2), such as Base, Arbitrum or Optimism, processes transactions somewhere else and posts proof or data back to a Layer 1, usually Ethereum. L2s are cheaper to use, but they add their own operators, bridges and withdrawal rules. They’re not on this list.</p>
+
+<p>One change from last year: an L1 doesn’t need to run general-purpose smart contracts to count. That’s why Bitcoin and the XRP Ledger are now on the list.</p>
+
+{% include subscribe-window.html heading="Get the 2027 update when it lands" class="inline" %}
+
+<h2 id="how">How I picked the ten</h2>
+
+<p>I didn’t rank by token price or advertised speed. I looked at:</p>
+
+<ul>
+<li><strong>Real economic use:</strong> stablecoin balances, trading activity and live applications</li>
+<li><strong>Operating history:</strong> outages, exploits and how they were handled</li>
+<li><strong>Access:</strong> wallet support, and whether exchanges document deposits and withdrawals on that network</li>
+<li><strong>A distinct purpose:</strong> what this network does that the others don’t</li>
+</ul>
+
+<p>There’s no points score. The data isn’t comparable enough: weighing derivatives trading against remittances would produce a precise-looking number that means nothing. The numbers below are a snapshot from <a href="https://defillama.com/chains">DefiLlama</a> taken on 22 October 2026, plus protocol documentation and incident reports linked in each section.</p>
+
+<h2 id="compare">The ten, side by side</h2>
+
+<div class="table-wrap" role="region" aria-label="Comparison of the ten networks" tabindex="0">
+<table class="data compare stack">
+<thead>
+<tr><th scope="col">Network</th><th scope="col">Best for</th><th scope="col" class="num">Stablecoins</th><th scope="col" class="num">DeFi locked</th><th scope="col">Speed and fees</th><th scope="col">Main trade-off</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row">Bitcoin (BTC)</th><td data-label="Best for">Holding and sending BTC</td><td data-label="Stablecoins" class="num">None native</td><td data-label="DeFi locked" class="num">$4.4B*</td><td data-label="Speed and fees">About 10-minute blocks; fee per byte</td><td data-label="Main trade-off" class="note-cell">Slow and costly for small payments</td></tr>
+<tr><th scope="row">Ethereum (ETH)</th><td data-label="Best for">DeFi and stablecoins</td><td data-label="Stablecoins" class="num">$144.0B</td><td data-label="DeFi locked" class="num">$49.7B</td><td data-label="Speed and fees">12-second slots; finality in about 13 minutes</td><td data-label="Main trade-off" class="note-cell">L1 fees add up on small transactions</td></tr>
+<tr><th scope="row">Solana (SOL)</th><td data-label="Best for">Trading and payments</td><td data-label="Stablecoins" class="num">$15.9B</td><td data-label="DeFi locked" class="num">$5.9B</td><td data-label="Speed and fees">About 150 ms finality (new; developer figure)</td><td data-label="Main trade-off" class="note-cell">Consensus is one day old; past outages</td></tr>
+<tr><th scope="row">TRON (TRX)</th><td data-label="Best for">Moving USDT</td><td data-label="Stablecoins" class="num">$94.9B</td><td data-label="DeFi locked" class="num">$5.5B</td><td data-label="Speed and fees">Paid in “energy” and “bandwidth”</td><td data-label="Main trade-off" class="note-cell">27 block producers; about 98% of dollars are USDT</td></tr>
+<tr><th scope="row">BNB Smart Chain (BNB)</th><td data-label="Best for">Low-cost EVM apps</td><td data-label="Stablecoins" class="num">$13.7B</td><td data-label="DeFi locked" class="num">$5.7B</td><td data-label="Speed and fees">0.45-second blocks</td><td data-label="Main trade-off" class="note-cell">21 producers per epoch; mostly bridged dollars</td></tr>
+<tr><th scope="row">Hyperliquid (HYPE)</th><td data-label="Best for">Perpetuals trading</td><td data-label="Stablecoins" class="num">$7.0B</td><td data-label="DeFi locked" class="num">$2.4B</td><td data-label="Speed and fees">Trading fees separate from gas</td><td data-label="Main trade-off" class="note-cell">Specialist chain; API outage, market interventions</td></tr>
+<tr><th scope="row">Avalanche (AVAX)</th><td data-label="Best for">EVM apps and custom chains</td><td data-label="Stablecoins" class="num">$1.3B*</td><td data-label="DeFi locked" class="num">$572M</td><td data-label="Speed and fees">EVM gas paid in AVAX</td><td data-label="Main trade-off" class="note-cell">Smaller liquidity; the C-Chain isn’t every Avalanche L1</td></tr>
+<tr><th scope="row">XRP Ledger (XRP)</th><td data-label="Best for">Payments and issued dollars</td><td data-label="Stablecoins" class="num">$1.0B</td><td data-label="DeFi locked" class="num">$40M</td><td data-label="Speed and fees">0.00001 XRP base fee; 1 XRP account reserve</td><td data-label="Main trade-off" class="note-cell">Trusted validator lists; thin DeFi</td></tr>
+<tr><th scope="row">Aptos (APT)</th><td data-label="Best for">Move apps, native USDC and USDT</td><td data-label="Stablecoins" class="num">$859M</td><td data-label="DeFi locked" class="num">$43M</td><td data-label="Speed and fees">Gas in APT, can be sponsored</td><td data-label="Main trade-off" class="note-cell">Dollars far exceed DeFi depth</td></tr>
+<tr><th scope="row">Sui (SUI)</th><td data-label="Best for">Move DeFi and consumer apps</td><td data-label="Stablecoins" class="num">$465M</td><td data-label="DeFi locked" class="num">$497M</td><td data-label="Speed and fees">Gas plus storage fee, partly rebated</td><td data-label="Main trade-off" class="note-cell">Two chain halts; validators froze stolen funds</td></tr>
+</tbody>
+</table>
+</div>
+<p class="source">Source: <a href="https://defillama.com/chains">DefiLlama</a>, 22 October 2026. The numbers move daily. Bitcoin’s figure (*) mostly reflects wrapped BTC and other layers, not native Bitcoin DeFi. Avalanche’s stablecoin figure (*) includes BlackRock’s BUIDL fund, which isn’t retail cash.</p>
+
+<figure class="figure">
+<img src="{{ img }}stablecoins-by-chain.png" width="1400" height="746" alt="Bar chart of stablecoins held on each Layer 1: Ethereum $144.0B, TRON $94.9B, Solana $15.9B, BNB Smart Chain $13.7B, Hyperliquid $7.0B, Avalanche $1.3B, XRP Ledger $1.0B, Aptos $859M, Sui $465M." loading="lazy">
+<figcaption>Stablecoins by Layer 1. Source: DefiLlama, 22 October 2026.</figcaption>
+</figure>
+
+<h2 id="networks">The ten networks</h2>
+
+<section class="network" aria-labelledby="bitcoin">
+<h3 id="bitcoin"><span class="n">1</span>Bitcoin <span class="token">BTC</span></h3>
+<p>Bitcoin has run since January 2009 with no token sale, no foundation allocation and no company that can freeze coins. New BTC enters circulation through mining, the subsidy is 3.125 BTC per block after the 2024 halving, and supply is capped at roughly 21 million. Blocks arrive about every ten minutes on average, and each extra confirmation makes a payment harder to reverse.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>I left Bitcoin out in 2025 because it doesn’t run general-purpose smart contracts. That was the wrong test. For self-custody and final settlement, Bitcoin is the reference point the other nine get measured against.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>It’s a poor home for dollars. Circle doesn’t issue USDC on Bitcoin, and Tether ended support for its old Omni-based USDT. Fees are bid per byte, so a small payment can cost a lot when blocks are full. Most “Bitcoin DeFi” runs on other layers or wrapped BTC, which add custody and bridge risk.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}bitcoin-fees-mempool.jpg" width="1400" height="418" alt="Screenshot of mempool.space showing Bitcoin fee rates of 0.2 to 2 sat/vB on 22 October 2026." loading="lazy">
+<figcaption>Bitcoin fees on 22 October 2026: 0.2 to 2 sat/vB, about $0.02 to $0.17 per transaction. They climb fast when blocks fill up. Source: mempool.space</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="ethereum">
+<h3 id="ethereum"><span class="n">2</span>Ethereum <span class="token">ETH</span></h3>
+<p>Ethereum launched in July 2015 and introduced the smart-contract platform most of crypto still builds on: the Ethereum Virtual Machine (EVM). It runs on proof of stake, with 12-second slots and final settlement about two epochs (around 13 minutes) later.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>It holds the most dollars by a wide margin: $144 billion in stablecoins and $49.7 billion in DeFi in the snapshot. Circle and Tether both issue natively on Ethereum, and apps like Aave, Uniswap, Sky and Lido run here. Much of the cheap, everyday activity has moved to Layer 2 rollups that settle back to Ethereum.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>Fees on the main chain make small transactions inefficient. ETH supply isn’t fixed: staking creates new ETH and fees burn some, so “ETH is always deflationary” is false. In May 2023, the chain briefly stopped finalizing twice while blocks kept coming. The next major upgrade, Glamsterdam, is still in development.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}ethereum-supply-ultrasound.jpg" width="1400" height="695" alt="Screenshot of ultrasound.money showing about 13,440 ETH issued and 132 ETH burned over seven days." loading="lazy">
+<figcaption>Over the past seven days, about 13,440 ETH was issued and 132 ETH burned, so supply grew at roughly 0.88% a year. Source: ultrasound.money, 22 October 2026</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="solana">
+<h3 id="solana"><span class="n">3</span>Solana <span class="token">SOL</span></h3>
+<p>Solana launched its mainnet beta in March 2020. It runs programs in parallel when they don’t touch the same accounts, which keeps fees low: the base fee is 5,000 lamports (0.000005 SOL) per signature, before priority fees.</p>
+<p><strong>The big change:</strong> on 21 October 2026, the first phase of Solana’s Alpenglow upgrade went live. It replaced the old voting system with signed certificates, and the developer team Anza reports about 150 milliseconds to finality. Proof of History, the clock most Solana explainers still describe, no longer paces block production.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>In the 24 hours I captured, Solana’s DEX volume ($2.28 billion) was higher than Ethereum’s main chain. It holds $15.9 billion in stablecoins, with native USDC and USDT. Jupiter, Raydium, Kamino and Jito anchor the ecosystem.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>The new consensus has no track record yet. Solana halted for about five hours in February 2024 after a software bug. And forget the old “65,000 TPS” line: the new system no longer counts votes as transactions, so old and new throughput figures can’t be compared.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}solana-alpenglow.jpg" width="1400" height="661" alt="Screenshot of Solana’s Alpenglow upgrade page, showing the upgrade live on mainnet." loading="lazy">
+<figcaption>Solana’s Alpenglow upgrade page, live on mainnet. Source: solana.com/upgrades/alpenglow</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="tron">
+<h3 id="tron"><span class="n">4</span>TRON <span class="token">TRX</span></h3>
+<p>TRON was founded by Justin Sun in 2017 and moved to its own mainnet in 2018. It runs Solidity-compatible smart contracts and is secured by 27 “Super Representatives” elected by token-holder votes every six hours. Instead of paying gas, users spend “bandwidth” and “energy”, which they can get by staking TRX, renting it or burning TRX.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>TRON holds $94.9 billion in stablecoins, second only to Ethereum, and about 98% of that is USDT. For a lot of people, TRON is how USDT moves between exchanges.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>27 producers is a small group, and large voting blocs concentrate influence. It’s a one-stablecoin network: Circle stopped minting USDC on TRON in February 2024. “Sending USDT costs a cent” isn’t reliable either, because energy pricing changes. Exchange fees can matter more: Kraken charges 1 USDT to withdraw on TRON, with a 6 USDT minimum. DeFi activity is thin compared with the dollar balance.</p></div>
+</div>
+</section>
+
+<section class="network" aria-labelledby="bnb">
+<h3 id="bnb"><span class="n">5</span>BNB Smart Chain <span class="token">BNB</span></h3>
+<p>BNB Smart Chain (BSC) launched in September 2020 as an EVM-compatible chain backed by Binance. The Fermi upgrade in January 2026 cut block times to 0.45 seconds; the three-second figure in older articles, including mine, is obsolete. There are 45 elected validators, and 21 of them produce blocks in each epoch.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>Familiar Ethereum tooling at low cost, plus Binance’s distribution. BSC holds $13.7 billion in stablecoins and $5.7 billion in DeFi, led by PancakeSwap and Venus.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>Validation is concentrated, and that has consequences. In October 2022, an attacker exploited the Token Hub bridge and created 2 million BNB (about $586 million at the time). Validators paused the whole chain to contain it. That helped, but it also proved a small group can stop everyone’s transactions. Most dollars on BSC are Binance-pegged versions of USDC and USDT, not tokens issued by Circle or Tether.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}bnb-fermi-blocks.jpg" width="1400" height="709" alt="Screenshot of BNB Chain’s announcement that the Fermi hard fork brings 0.45-second block times." loading="lazy">
+<figcaption>BNB Chain’s Fermi hard fork cut block times to 0.45 seconds. Source: bnbchain.org</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="hyperliquid">
+<h3 id="hyperliquid"><span class="n">6</span>Hyperliquid <span class="token">HYPE</span></h3>
+<p>Hyperliquid is a Layer 1 built for trading. One consensus system, HyperBFT, runs two parts: HyperCore (onchain order books for perpetual futures and spot) and HyperEVM (general smart contracts). The team is self-funded, and the HYPE token launched in November 2024.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>It’s one of the few chains where onchain trading is the main business, not a side effect. Hyperliquid held $7 billion in stablecoins (mostly trading collateral) and $2.4 billion in DeFi in the snapshot. Circle now issues native USDC on HyperEVM, so “all Hyperliquid USDC is bridged from Arbitrum” is out of date.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>On 29 July 2025, the main API went down for about 37 minutes. The chain kept producing blocks, but traders couldn’t manage their positions; refunds followed. In March 2025, validators delisted and settled the JELLY market, which shows they can step in. Running a validator requires a 10,000 HYPE self-bond.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}hyperliquid-hype-usdc.jpg" width="1400" height="709" alt="Screenshot of Hyperliquid’s HYPE-USDC perpetual futures market." loading="lazy">
+<figcaption>Hyperliquid’s HYPE-USDC perpetual market: about $552M traded in 24 hours and $1.6B in open interest. Source: app.hyperliquid.xyz, 22 October 2026</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="avalanche">
+<h3 id="avalanche"><span class="n">7</span>Avalanche <span class="token">AVAX</span></h3>
+<p>Avalanche launched in September 2020. Its Primary Network has three chains: the C-Chain runs EVM smart contracts, the P-Chain handles validators and staking, and the X-Chain handles creating and exchanging assets. Teams can also launch independent “Avalanche L1s” (formerly subnets) with their own validators and rules.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>It’s an established EVM ecosystem with native USDC and USDT on the C-Chain, plus apps like Aave, BENQI, LFJ and GMX. It’s also a common home for institutional tokenization experiments.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>It’s much smaller than the top five: $572 million in DeFi. The $1.3 billion stablecoin figure includes BlackRock’s BUIDL fund, which retail users can’t spend. The C-Chain stopped finalizing blocks for about five hours in February 2024. And independent Avalanche L1s don’t share the C-Chain’s security just because they use Avalanche software.</p></div>
+</div>
+</section>
+
+<section class="network" aria-labelledby="xrpl">
+<h3 id="xrpl"><span class="n">8</span>XRP Ledger <span class="token">XRP</span></h3>
+<p>The XRP Ledger launched in June 2012 with payments, issued assets, an order book and an automated market maker built into the protocol. There’s no mining or staking: validators agree using lists of trusted validators. All 100 billion XRP were created at launch, and fees are destroyed.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>It’s built for payments. The base fee is 0.00001 XRP, and the account reserve dropped to 1 XRP in December 2024 (older guides still say 10 or 20). It now has issuer-native dollars too: Circle’s USDC and Ripple’s RLUSD, with about $1 billion in stablecoins, mostly RLUSD.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>Security depends on validators’ trusted lists overlapping enough. The ledger halted for about 10 minutes in November 2024 and about 64 minutes in February 2025. DeFi is thin ($40 million). At exchanges, a missing destination tag can strand a deposit, and an XRP deposit route doesn’t mean the exchange accepts RLUSD or USDC on the ledger.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}xrpl-reserves.jpg" width="1400" height="389" alt="Screenshot of the XRP Ledger documentation listing a 1 XRP base reserve and 0.2 XRP owner reserve." loading="lazy">
+<figcaption>Current XRP Ledger reserves: 1 XRP per account and 0.2 XRP per owned item. Source: xrpl.org</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="aptos">
+<h3 id="aptos"><span class="n">9</span>Aptos <span class="token">APT</span></h3>
+<p>Aptos was founded by former Meta engineers who worked on the Diem project and launched in October 2022. It uses the Move language and Block-STM, which runs transactions in parallel and re-checks the ones that conflict.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>Both Circle and Tether issue natively on Aptos, and it holds $859 million in stablecoins. It’s a real alternative for dollar transfers outside the EVM world.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>Activity looks bigger than the economy behind it. Aptos has $859 million in stablecoins but only $43 million in DeFi, so moving large amounts can be harder than the headline suggests. The official dashboard and DefiLlama report different daily transaction counts (9.5 million and 14.1 million), so treat either with care. Monthly APT emissions are far larger than the amount burned, so the token isn’t deflationary. On 22 October, OKX listed Aptos USDT withdrawals as under maintenance, while deposits and USDC worked normally.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}circle-native-usdc.jpg" width="1400" height="938" alt="Screenshot of Circle’s developer documentation listing the chains with native USDC, including Aptos and Avalanche C-Chain." loading="lazy">
+<figcaption>Circle’s official list of chains with native USDC, including Aptos and Avalanche C-Chain. Source: developers.circle.com</figcaption>
+</figure>
+</section>
+
+<section class="network" aria-labelledby="sui">
+<h3 id="sui"><span class="n">10</span>Sui <span class="token">SUI</span></h3>
+<p>Sui was built by Mysten Labs, another ex-Meta team, and launched in May 2023. It treats every asset as an “object”, which lets unrelated transactions run in parallel. Its current consensus, Mysticeti v2, folds transaction checks into consensus; the old “simple transfers skip consensus” explanation is out of date.</p>
+<div class="t-account">
+<div class="t-why"><h4>Why it’s here</h4><p>Sui has $497 million in DeFi, more than Aptos, the XRP Ledger or Cardano. Suilend, NAVI, Cetus, DeepBook and Bluefin cover lending and trading, and Circle issues USDC natively.</p></div>
+<div class="t-catch"><h4>The catch</h4><p>Sui has halted twice: about 2.5 hours in November 2024 and about six hours in January 2026. In May 2025, the Cetus exchange on Sui was exploited for about $223 million. That was an app bug, not a chain hack. But validators then blocked transactions involving about $162 million of the stolen funds and later voted on recovery. Good for victims, but it shows validators can act on specific transactions. Phantom also ended Sui support on 24 September 2026, so older wallet guides are wrong.</p></div>
+</div>
+<figure class="figure">
+<img src="{{ img }}sui-stall-postmortem.jpg" width="1400" height="680" alt="Screenshot of Sui’s postmortem for the January 2026 network stall." loading="lazy">
+<figcaption>Sui’s postmortem for the January 2026 network stall. Source: sui.io</figcaption>
+</figure>
+<figure class="figure">
+<img src="{{ img }}phantom-ends-sui.jpg" width="1400" height="622" alt="Screenshot of Phantom’s help centre announcing the end of Sui support on 24 September 2026." loading="lazy">
+<figcaption>Phantom ended Sui support on 24 September 2026. Source: help.phantom.com</figcaption>
+</figure>
+</section>
+
+<h2 id="bonus">Five more networks worth knowing</h2>
+
+<dl class="bonus">
+<dt>Stellar</dt>
+<dd>Payments and cash access. Native USDC, MoneyGram cash-in and cash-out through partner apps, and fees of 0.00001 XLM per operation. If you care more about remittances than DeFi variety, it could replace Aptos in the top ten.</dd>
+<dt>TON</dt>
+<dd>Telegram’s distribution plus native USDT ($651 million in stablecoins). The native coin was renamed <strong>Gram (GRAM)</strong> in June 2026, though some exchanges still label it TON. It went down for hours in August 2024 under heavy load.</dd>
+<dt>Cardano</dt>
+<dd>A distinct design (eUTXO), staking that doesn’t lock your ADA, and onchain governance since the Plomin upgrade in January 2025. The network split for about 14 hours in November 2025 before converging. Its USDCx is backed by USDC but isn’t issued by Circle.</dd>
+<dt>Celestia</dt>
+<dd>A data-availability layer for rollups, not a chain you’d use to send dollars. The 1 billion TIA was the starting supply, not a cap: inflation is about 2.5% and falling toward 1.5%.</dd>
+<dt>Plasma</dt>
+<dd>A stablecoin-focused EVM chain that launched in September 2025, with $1.3 billion in stablecoins and sponsored USDT0 transfers. Validators were permissioned at launch, and with about 13 months of history, it’s one to watch.</dd>
+</dl>
+
+<figure class="figure">
+<img src="{{ img }}ton-gram-naming.jpg" width="1400" height="486" alt="Screenshot of TON’s documentation referring to Gram and USDT payments." loading="lazy">
+<figcaption>TON’s own documentation now refers to Gram and USDT payments. Source: docs.ton.org</figcaption>
+</figure>
+
+<h2 id="choose">How to choose by what you want to do</h2>
+
+<div class="table-wrap" role="region" aria-label="How to choose a Layer 1" tabindex="0">
+<table class="data choose stack">
+<thead>
+<tr><th scope="col">If you want to</th><th scope="col">Look at</th><th scope="col">Watch out for</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row">Hold crypto yourself long term</th><td data-label="Look at">Bitcoin, Ethereum</td><td data-label="Watch out for" class="note-cell">Key management is on you</td></tr>
+<tr><th scope="row">Hold dollars yourself</th><td data-label="Look at">Ethereum, Solana, Avalanche C-Chain (native USDC and USDT)</td><td data-label="Watch out for" class="note-cell">Issuers can still freeze tokens</td></tr>
+<tr><th scope="row">Send small payments often</th><td data-label="Look at">Solana, Stellar, XRP Ledger</td><td data-label="Watch out for" class="note-cell">Account reserves and recipient setup</td></tr>
+<tr><th scope="row">Move USDT between exchanges</th><td data-label="Look at">TRON, Ethereum, Solana</td><td data-label="Watch out for" class="note-cell">Pick the exact same network on both ends</td></tr>
+<tr><th scope="row">Use DeFi</th><td data-label="Look at">Ethereum (breadth), Solana (trading), BNB Chain (retail)</td><td data-label="Watch out for" class="note-cell">App risk is separate from chain risk</td></tr>
+<tr><th scope="row">Trade perpetuals onchain</th><td data-label="Look at">Hyperliquid</td><td data-label="Watch out for" class="note-cell">Liquidations and API outages</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>One tip that saves money: the network fee is rarely the biggest cost. Exchange withdrawal fees and minimums usually are. Always match the asset and the network on both sides; the same token symbol can live on a dozen chains.</p>
+
+<h2 id="faq">Questions</h2>
+
+<div class="faq">
+<details>
+<summary>What counts as a Layer 1 blockchain?</summary>
+<p>Any base chain with its own consensus and ledger. It doesn’t need smart contracts: Bitcoin and the XRP Ledger count.</p>
+</details>
+<details>
+<summary>What’s the difference between a Layer 1 and a Layer 2?</summary>
+<p>A Layer 2 processes transactions off the main chain and posts results back to it. You get lower fees, but you also take on the L2’s operators, bridge and withdrawal rules.</p>
+</details>
+<details>
+<summary>Is the fastest blockchain the best one?</summary>
+<p>No. Advertised transactions-per-second figures mix different units (transactions, votes, messages, orders) and lab conditions. What matters is whether the network has the assets, apps and exchange support you need, and how it behaves under stress.</p>
+</details>
+<details>
+<summary>Which Layer 1 is the most decentralized?</summary>
+<p>There’s no honest league table. Validator counts mislead: a thousand validators run by a few companies can be less independent than a smaller, more varied set.</p>
+</details>
+</div>
+
+<h2 id="sources">Sources</h2>
+
+<p class="source">Network data: <a href="https://defillama.com/chains">DefiLlama chains</a> and <a href="https://defillama.com/stablecoins/chains">stablecoins by chain</a>, retrieved 22 October 2026. Stablecoin support: <a href="https://developers.circle.com/stablecoins/usdc-contract-addresses">Circle’s USDC addresses</a> and <a href="https://tether.to/en/supported-protocols/">Tether’s supported protocols</a>. Network details come from each project’s documentation and incident reports: <a href="https://solana.com/upgrades/alpenglow">Solana Alpenglow</a>, <a href="https://www.bnbchain.org/en/blog/fermi-hard-fork-accelerates-bsc-to-0-45-second-block-times">BNB Chain Fermi</a>, <a href="https://www.sui.io/blog/sui-mainnet-network-stall-resolution">Sui January 2026 postmortem</a>, <a href="https://xrpl.org/docs/concepts/accounts/reserves">XRPL reserves</a>, <a href="https://aptosnetwork.com/apt-supply">Aptos supply</a>, <a href="https://docs.celestia.org/learn/TIA/staking-governance-supply/">Celestia supply</a>. Screenshots taken on 22 October 2026.</p>

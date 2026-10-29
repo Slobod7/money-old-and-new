@@ -1,0 +1,14 @@
+# "Old money, new money" pairs on the home page.
+# When you publish a pair, put the guide's address in url, e.g. url: /dividend-vs-staking-reward/
+- old: Dividend
+  new: Staking reward
+  url: ""
+- old: Bank deposit
+  new: Stablecoin
+  url: ""
+- old: Stock exchange
+  new: DEX
+  url: ""
+- old: Gold bar
+  new: Tokenized gold
+  url: ""
