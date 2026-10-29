@@ -1,11 +1,13 @@
 {%- comment -%}
 The site's one signup route: Substack's own signup page at substack_url, with a line explaining the handoff.
 Until substack_url holds a real address, a plain notice replaces both so nobody is sent to a dead page.
-Optional: include.label, include.note
+Optional: include.label, include.note, include.no_note (true to show the button alone)
 {%- endcomment -%}
 {%- if site.substack_url == nil or site.substack_url == "" or site.substack_url contains "YOUR-NAME" -%}
 <p class="signup-closed">Signup isn’t open yet.</p>
 {%- else -%}
 <a class="button" href="{{ site.substack_url }}/subscribe">{{ include.label | default: "Subscribe on Substack" }}</a>
+{%- unless include.no_note %}
 <p class="meta">{{ include.note | default: "You’ll finish on Substack, which sends the letter and emails you a link to confirm." }}</p>
+{%- endunless -%}
 {%- endif -%}

@@ -17,11 +17,8 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 |---|---|
 | `url` and `baseurl` | Already set to `https://moneyoldandnew.com` and `""`. If the domain ever changes, update `url` and the `CNAME` file together |
 | `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://newsletter.slobodzean.com`). While it still says `YOUR-NAME`, every Subscribe button is replaced by "Signup isn't open yet", so nobody is sent to a dead page |
-| `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first. It appears beside the About page introduction |
-| `author.outline_time`, `author.edit_rounds` | How quickly you send an outline and how many rounds of edits you include. The About page leaves the specifics out until these are filled in |
-| `author.testimonial`, `author.testimonial_by` | A real one-line quote from a past editor or client, and who said it. Hidden until filled in |
-| `kit.price` | The Starter Kit price, once you know it. Hidden while it contains square brackets |
-| `kit.format`, `kit.licence`, `kit.refunds` | Answers to the Starter Kit questions. Each question appears once its answer is filled in |
+| `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first. It appears beside the About page introduction. Use a 4:5 portrait, at least 800px wide |
+| `author.avatar` | A square photo cropped close to your face, at least 320px, for the circle in "Who writes it" on the home page. Left empty, the home page uses `author.photo` |
 
 ---
 
@@ -60,8 +57,7 @@ Also verify the domain in your GitHub account (**Settings → Pages → Add a do
 1. Create the publication on Substack and copy its address into `substack_url`.
 2. To use your own subdomain (for example `newsletter.slobodzean.com`), go to Substack's **Settings → Domain**. Substack charges a one-time fee and shows the exact DNS record to add. At the time of writing, that's a CNAME for `newsletter` pointing to `target.substack-custom-domains.com`.
 3. In Substack's theme settings, set the accent colour to `#173C32` (the site's forest green) so the signup page matches the site.
-4. Turn on **Sections** in Substack if you want a separate "Starter Kit news" list for the waitlist.
-5. Every Subscribe button on the site goes to `substack_url/subscribe`, Substack's own signup page. The site never collects email addresses itself.
+4. Every Subscribe button on the site goes to `substack_url/subscribe`, Substack's own signup page. The site never collects email addresses itself.
 
 ## Google Search Console
 
@@ -71,16 +67,17 @@ Add your domain in Search Console and verify it with the DNS record it gives you
 
 ## Design system
 
-Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. No fills, gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
+Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. The only filled surfaces are the two forest blocks on the home page: the Sunday letter, with white cards, and the closing signup. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
 
-- **Type:** Besley regular for headings, guides and introductions; Archivo for navigation, dates, bylines and buttons. Guides are set at 19px (18px on phones) with a 680px reading column.
+- **Type:** Besley regular for headings, guides and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Guides are set at 19px (18px on phones) with a 680px reading column.
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and a guide's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
 - **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
-- **Masthead:** the full wordmark centred at 540px with Guides, About and Subscribe beneath. At 640px and below, the gateway mark replaces it at the left, with the same three links at the right. The wordmark is never shrunk or wrapped.
+- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Guides, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
+- **Home page:** top to bottom, the slogan "Finance, explained" with the Subscribe button, the Latest articles carousel (hidden until the first guide is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
 
 ### Known limitation: the wordmark
 
-`assets/brand/wordmark.svg` is the approved live-type approximation. Its lettering is set in Georgia inside the SVG, so it depends on the fonts installed on the reader's device: Georgia on macOS, iOS and Windows, a similar serif elsewhere (most Android and Linux devices). It isn't final outlined artwork. When the final lettering is chosen, replace the file with an outlined version of the same size and the site will pick it up.
+`assets/brand/wordmark.svg` is the approved live-type approximation. Its lettering is set in Georgia inside the SVG, so it depends on the fonts installed on the reader's device: Georgia on macOS, iOS and Windows, a similar serif elsewhere (most Android and Linux devices). It isn't final outlined artwork. The site doesn't currently use it: the header sets the name as text in Besley, which is hosted with the site and looks the same everywhere. When the final lettering is chosen, replace the file with an outlined version and swap it into `_includes/header.html`.
 
 ---
 
@@ -97,7 +94,7 @@ description: "One sentence that says what the reader gets."
 date: 2026-11-07 09:00:00 +0200
 read_time: 8
 topic: Crypto explained
-start_here: true
+image: /assets/img/guides/what-is-pump-fun/cover.jpg
 toc:
   - id: how-it-works
     label: How it works
@@ -106,7 +103,9 @@ toc:
 ---
 ```
 
-4. Commit. The guide is live within a minute or two, appears on the home page as the latest guide, and goes into the RSS feed.
+Give every guide its own `image`: it's the picture on the home page card and when the guide is shared. Without one, the card shows only the title and date, and shared links have no picture.
+
+4. Commit. The guide is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the guide's `image` (cropped to 16:9 from the top left), its title and its updated date.
 5. Write the Sunday letter on Substack and link to the guide.
 
 A post dated in the future is skipped until GitHub rebuilds the site after that date, which only happens when you push something. To publish on a set day, commit on that day.
@@ -178,21 +177,18 @@ Questions that open and close:
 
 You can also write a guide in Markdown (name the file `.md` instead of `.html`); the building blocks above still work inside it.
 
-### The "Old money, new money" board
-
-Edit `_data/series.yml`. When a pair is published, add its address to `url` and it becomes a link on the home page.
-
 ---
 
 ## Where things are
 
 | File or folder | What it controls |
 |---|---|
-| `_config.yml` | Site name, your details, Substack address, kit price |
+| `_config.yml` | Site name, your details, Substack address |
+| `_config.preview.yml` | Local preview only: a stand-in Substack address so the Subscribe buttons show, and the sample guides in `_drafts/` (images in `assets/img/samples/`, both ignored by git). GitHub Pages ignores this file |
 | `index.html` | Home page |
 | `guides/index.html` | The list of all guides |
 | `_posts/` | The guides themselves |
-| `about.html`, `starter-kit.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
+| `about.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |
@@ -203,19 +199,29 @@ Edit `_data/series.yml`. When a pair is published, add its address to `url` and 
 
 ## Preview on your own computer (optional)
 
-You don't need this, because GitHub builds the site for you. If you want to preview locally, install Ruby 3, then in this folder run:
+You don't need this, because GitHub builds the site for you. On a Mac, the built-in Ruby is enough. Once, install Bundler and the site's gems (they go into your home folder, not this one):
 
 ```bash
-bundle install
+gem install --user-install bundler -v 2.4.22
 ```
 
 ```bash
-bundle exec jekyll serve
+~/.gem/ruby/2.6.0/bin/bundle _2.4.22_ config set --local path ~/.gem/money-old-and-new-site/bundle
 ```
 
-and open `http://localhost:4000`.
+```bash
+~/.gem/ruby/2.6.0/bin/bundle _2.4.22_ install
+```
+
+Then, each time you want to preview, run this in this folder:
+
+```bash
+~/.gem/ruby/2.6.0/bin/bundle _2.4.22_ exec jekyll serve --config _config.yml,_config.preview.yml --destination ~/Library/Caches/money-old-and-new-site/_site
+```
+
+and open `http://localhost:4000`. The built pages go to `~/Library/Caches`, so nothing extra appears in this folder.
 
 ## Good to know
 
-- **Commercial use:** GitHub's rules say Pages isn't meant for sites whose main purpose is commercial transactions. A newsletter and portfolio are fine. Keep the Starter Kit checkout on Substack, Gumroad or Lemon Squeezy, not on this site. If you'd rather avoid the question entirely, Cloudflare Pages or Netlify can host this same repository.
+- **Commercial use:** GitHub's rules say Pages isn't meant for sites whose main purpose is commercial transactions. A newsletter and portfolio are fine. If you ever sell something, keep the checkout on Substack, Gumroad or Lemon Squeezy, not on this site. If you'd rather avoid the question entirely, Cloudflare Pages or Netlify can host this same repository.
 - **No tracking:** the site has no analytics or cookies. If you add analytics later, choose a privacy-friendly one and update `privacy.md`.

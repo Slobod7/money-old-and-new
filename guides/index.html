@@ -13,6 +13,9 @@ permalink: /guides/
 </header>
 
 <div class="section">
+{%- if site.posts.size == 0 %}
+<div class="row"><p class="body section-intro">The first guide is on its way. <a href="{{ '/subscribe/' | relative_url }}">Subscribe</a> to get it on Sunday.</p></div>
+{%- endif %}
 <ul class="guide-list">
 {%- for post in site.posts %}
 {%- assign updated = post.updated | default: post.date %}

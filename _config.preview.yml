@@ -1,0 +1,7 @@
+# Local preview only. GitHub Pages reads _config.yml alone, so nothing here reaches the live site.
+# A stand-in Substack address, so the Subscribe buttons show as they will once substack_url is filled in.
+# Clicking one goes to a Substack page that doesn't exist.
+substack_url: "https://example.substack.com"
+
+# Shows the sample guides in _drafts, so the Latest articles carousel has cards. Those files are never committed.
+show_drafts: true

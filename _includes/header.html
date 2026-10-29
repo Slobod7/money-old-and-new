@@ -3,8 +3,8 @@
 <div class="wrap">
 <div class="masthead">
 <a class="brand" href="{{ '/' | relative_url }}"{% if path == '/' %} aria-current="page"{% endif %}>
-<img class="brand-wordmark" src="{{ '/assets/brand/wordmark.svg' | relative_url }}" alt="{{ site.title }}" width="1200" height="180">
-<img class="brand-gateway" src="{{ '/assets/brand/gateway.svg' | relative_url }}" alt="{{ site.title }}" width="40" height="40">
+<img class="brand-mark" src="{{ '/assets/brand/gateway.svg' | relative_url }}" alt="" width="36" height="36">
+<span class="brand-name">{{ site.title }}</span>
 </a>
 <nav class="site-nav" aria-label="Main">
 <a href="{{ '/guides/' | relative_url }}"{% if path == '/guides/' or page.layout == 'post' %} aria-current="page"{% endif %}>Guides</a>

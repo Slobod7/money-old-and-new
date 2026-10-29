@@ -1,6 +1,7 @@
 /* Money, Old and New
    Warm white, forest and an occasional burgundy. Besley for reading, Archivo for the interface.
-   Every large surface stays warm white: no fills, gradients, shadows or textures. */
+   Large surfaces stay warm white, except the two forest blocks on the home page.
+   No gradients, shadows or textures anywhere. */
 
 :root {
   --bg: #FAF9F6;        /* every page and section surface */
@@ -10,6 +11,9 @@
   --burgundy: #6B2938;  /* focus ring and rare editorial accents: 10:1. Never next to forest. */
   --rule: #DEDFD7;      /* decorative dividers only, too light for control boundaries */
   --edge: #626960;      /* boundaries of form controls */
+  --on-forest: #FAF9F6;       /* text on forest: 11.5:1 */
+  --on-forest-muted: #C5CFC8; /* secondary text on forest: 7.6:1 */
+  --sage: #A9C5B4;            /* small labels and drawing accents on forest: 6.5:1 */
   --serif: 'Besley', Georgia, 'Times New Roman', serif;
   --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --page: 1040px;
@@ -50,10 +54,9 @@ a:hover { text-decoration-thickness: 2px; }
 .page-lede { margin: 0; max-width: 34em; font: 400 20px/1.65 var(--serif); }
 .section-title { margin: 0 0 16px; font: 400 clamp(25px, 0.8vw + 19px, 30px)/1.3 var(--serif); letter-spacing: -0.01em; }
 .section-intro { margin: 0 0 28px; max-width: 34em; font: 400 19px/1.7 var(--serif); }
-.serif-text { font: 400 18px/1.7 var(--serif); }
 
 /* Actions: one filled button per section, everything else is an underlined link */
-.button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border: 1px solid var(--forest); background: var(--forest); color: var(--bg); font: 500 15px/1.25 var(--sans); letter-spacing: 0.01em; text-align: center; text-decoration: none; cursor: pointer; }
+.button { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 28px; border: 1px solid var(--forest); background: var(--forest); color: var(--bg); font: 500 18px/1.25 var(--serif); letter-spacing: 0; text-align: center; text-decoration: none; cursor: pointer; }
 .button:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
 .action { display: inline-flex; align-items: center; min-height: 44px; font: 500 15px/1.3 var(--sans); }
 .link-button { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: var(--forest); font: 500 15px/1.3 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; cursor: pointer; }
@@ -61,45 +64,97 @@ a:hover { text-decoration-thickness: 2px; }
 .link-button[hidden] { display: none; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 32px; }
 
-/* Masthead: the full wordmark centred, navigation beneath */
-.masthead { display: flex; flex-direction: column; align-items: center; padding-top: 36px; border-bottom: 1px solid var(--rule); }
-.brand { display: block; width: 540px; max-width: 100%; }
-.brand-wordmark { display: block; width: 100%; height: auto; }
-.brand-gateway { display: none; }
-.site-nav { display: flex; justify-content: center; gap: 0 36px; padding: 6px 0 10px; }
+/* Masthead: the gateway mark and site name at left, navigation at right */
+.masthead { display: flex; justify-content: space-between; align-items: center; gap: 12px 32px; padding: 22px 0; }
+.brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--forest); text-decoration: none; }
+.brand-mark { display: block; flex: none; width: 36px; height: 36px; }
+.brand-name { font: 400 22px/1.2 var(--serif); letter-spacing: -0.01em; white-space: nowrap; }
+.site-nav { display: flex; gap: 0 28px; margin-right: -4px; }
 .site-nav a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 4px; color: var(--text); font: 400 15px/1.2 var(--sans); letter-spacing: 0.01em; text-decoration: none; text-underline-offset: 7px; }
 .site-nav a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .site-nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--forest); text-decoration-thickness: 1px; }
 
-/* Compact masthead: the gateway at left, navigation at right */
+/* Compact masthead: the name is too wide beside the links, so only the mark shows (the name stays for screen readers) */
 @media (max-width: 640px) {
-  .masthead { flex-direction: row; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; }
-  .brand { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin-left: -2px; }
-  .brand-wordmark { display: none; }
-  .brand-gateway { display: block; width: 40px; height: 40px; }
-  .site-nav { gap: 0 4px; padding: 0; margin-right: -8px; }
+  .masthead { padding: 12px 0; }
+  .brand { margin-left: -2px; }
+  .brand-name { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .site-nav { gap: 0 4px; margin-right: -8px; }
   .site-nav a { padding-inline: 8px; }
 }
 
 /* Footer */
-.footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px 48px; padding: 32px 0 48px; border-top: 1px solid var(--rule); }
+.footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px 48px; padding: 32px 0 48px; }
 .footer-note { flex: 1 1 320px; margin: 0; max-width: 34em; font: 400 14px/1.65 var(--sans); color: var(--muted); }
 .footer-title { font: 400 16px/1.5 var(--serif); color: var(--text); }
 .footer-nav ul { display: flex; flex-wrap: wrap; gap: 0 22px; margin: -10px 0 0; padding: 0; list-style: none; }
 .footer-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text); font: 400 14px/1.3 var(--sans); text-decoration: none; }
 .footer-nav a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 
-/* Home */
-.intro { padding: 56px 0 52px; }
-.intro h1 { margin: 0 0 18px; max-width: 22em; font: 400 clamp(27px, 0.9vw + 21px, 34px)/1.42 var(--serif); letter-spacing: -0.01em; }
-.intro-by { margin: 0; font: 400 15px/1.6 var(--sans); color: var(--muted); }
+/* Home, top to bottom: the slogan with the signup, the latest guides, the Sunday letter block,
+   who writes it, and a closing signup. No divider lines: space alone separates the sections. */
+.intro { padding: 88px 0 104px; text-align: center; }
+.intro h1 { margin: 0 0 22px; font: 400 clamp(44px, 3.4vw + 28px, 72px)/1.1 var(--serif); letter-spacing: -0.025em; color: var(--forest); }
+.intro-lede { margin: 0 auto 32px; max-width: 28em; font: 400 clamp(19px, 0.3vw + 17px, 21px)/1.6 var(--serif); text-wrap: balance; }
+.signup-center { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.signup-center .meta { max-width: 26em; text-wrap: balance; }
 
-.feature { padding: 48px 0 60px; border-top: 1px solid var(--rule); }
-.feature-meta .meta { margin-bottom: 20px; }
-.feature-title { margin: 0 0 16px; max-width: 19em; font: 400 clamp(28px, 1.3vw + 20px, 38px)/1.28 var(--serif); letter-spacing: -0.015em; }
-.feature-title a { color: var(--text); text-decoration: none; }
-.feature-title a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.feature-preview { margin: 0 0 16px; max-width: 32em; font: 400 20px/1.7 var(--serif); }
+/* The Sunday letter block: heading at left, illustration at right, three cards beneath.
+   On phones it runs edge to edge and everything stacks. */
+.letter-block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head art" "cards cards"; align-items: center; gap: 32px 56px; margin: 0 0 96px; padding: 56px; background: var(--forest); color: var(--on-forest); }
+.letter-head { grid-area: head; }
+.letter-head .kicker { color: var(--sage); }
+.letter-head h2 { margin: 0 0 16px; font: 400 clamp(32px, 1.6vw + 22px, 44px)/1.15 var(--serif); letter-spacing: -0.02em; text-wrap: balance; }
+.letter-head p:not(.kicker) { margin: 0; max-width: 24em; font: 400 19px/1.6 var(--serif); color: var(--on-forest-muted); }
+.letter-art { grid-area: art; justify-self: end; width: 100%; max-width: 420px; }
+.letter-art svg { display: block; width: 100%; height: auto; }
+.letter-cards { grid-area: cards; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; margin: 0; padding: 0; list-style: none; }
+/* Each card shares its parent's rows (number, title, description), so the descriptions start level even when one title is shorter */
+.letter-cards li { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; padding: 24px 24px 28px; background: var(--bg); color: var(--text); }
+.letter-cards .num { display: block; margin-bottom: 20px; font: 500 13px/1 var(--sans); letter-spacing: 0.1em; color: var(--forest); }
+.letter-cards h3 { margin: 0 0 10px; font: 400 21px/1.3 var(--serif); text-wrap: balance; }
+.letter-cards p { margin: 0; font: 400 15.5px/1.6 var(--sans); }
+@media (max-width: 860px) {
+  .letter-block { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "art" "cards"; }
+  .letter-art { justify-self: center; max-width: 360px; }
+  .letter-cards { grid-template-columns: minmax(0, 1fr); }
+  .letter-cards li + li { margin-top: 16px; }
+}
+
+.writer { display: flex; align-items: center; gap: 28px 48px; max-width: 860px; padding: 0 0 96px; }
+.writer-photo { flex: none; width: 160px; height: 160px; border-radius: 50%; object-fit: cover; }
+.writer-initials { display: flex; align-items: center; justify-content: center; border: 1px solid var(--forest); color: var(--forest); font: 400 46px/1 var(--serif); letter-spacing: 0.02em; }
+.writer-text .section-title { margin-bottom: 12px; }
+.writer-text p:not(.kicker) { margin: 0 0 8px; max-width: 34em; font: 400 18px/1.65 var(--serif); }
+
+/* The closing signup: a second forest block, with the button reversed to warm white */
+.closing { margin: 0 0 96px; padding: 72px 32px; background: var(--forest); color: var(--on-forest); text-align: center; }
+.closing .section-title { margin-bottom: 28px; font-size: clamp(30px, 1.4vw + 22px, 40px); }
+.closing .button { border-color: var(--on-forest); background: var(--on-forest); color: var(--forest); }
+.closing .button:hover { border-color: var(--sage); background: var(--sage); color: var(--forest); }
+.closing .meta { color: var(--on-forest-muted); }
+/* Burgundy doesn't show on forest, so focus rings there are warm white */
+.letter-block :focus-visible, .closing :focus-visible { outline-color: var(--on-forest); }
+
+/* Latest articles: a row of cards that scrolls sideways and snaps to each card.
+   Without JavaScript it's a swipeable row; site.js adds the arrows and autoplay.
+   The track's 8px padding keeps focus rings from being clipped. */
+.latest { padding: 0 0 96px; }
+.latest-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.latest-head .section-title { margin: 0; }
+.carousel-arrows { display: flex; gap: 8px; }
+.carousel-arrows[hidden] { display: none; }
+.carousel-arrow { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--edge); background: none; color: var(--forest); cursor: pointer; }
+.carousel-arrow:hover { border-color: var(--forest); background: var(--forest); color: var(--bg); }
+.carousel { --cards: 3; --gap: 28px; display: flex; gap: var(--gap); margin: -8px; padding: 8px; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; scrollbar-width: none; }
+.carousel::-webkit-scrollbar { display: none; }
+.card { flex: 0 0 calc((100% - (var(--cards) - 1) * var(--gap)) / var(--cards)); scroll-snap-align: start; }
+.card-link { display: block; color: var(--text); text-decoration: none; }
+.card-image { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: left top; border: 1px solid var(--rule); }
+.card-title { margin: 16px 0 6px; font: 400 clamp(20px, 0.4vw + 17px, 23px)/1.32 var(--serif); letter-spacing: -0.01em; }
+.card-link:hover .card-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+@media (max-width: 960px) { .carousel { --cards: 2; } }
+@media (max-width: 640px) { .carousel { --cards: 1.15; --gap: 16px; } }
 
 .subscribe { padding: 36px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .subscribe-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 48px; }
@@ -111,17 +166,6 @@ a:hover { text-decoration-thickness: 2px; }
 .signup-closed { margin: 0; font: 500 15px/1.5 var(--sans); }
 .signup { flex-direction: column; align-items: flex-start; gap: 10px; }
 .signup .meta { max-width: 30em; }
-
-.series { padding: 60px 0 64px; }
-.pairs { width: 100%; max-width: 620px; border-collapse: collapse; }
-.pairs th { padding: 0 16px 10px 0; text-align: left; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--rule); }
-.pairs td { width: 50%; padding: 14px 16px 14px 0; font: 400 20px/1.4 var(--serif); border-bottom: 1px solid var(--rule); }
-.series-note { margin-top: 18px; }
-
-.more { padding: 40px 0 72px; border-top: 1px solid var(--rule); }
-.more-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px 56px; }
-.more h2 { margin: 0 0 8px; font: 400 21px/1.35 var(--serif); }
-.more p { margin: 0 0 4px; max-width: 30em; font: 400 15px/1.6 var(--sans); color: var(--muted); }
 
 /* Lists of guides */
 .guide-list { margin: 0; padding: 0; list-style: none; }
@@ -264,41 +308,24 @@ a:hover { text-decoration-thickness: 2px; }
 .portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 @media (min-width: 960px) { .portrait { grid-column: 1; grid-row: 1; margin: 6px 0 0; } }
 .page-intro p { margin: 0 0 16px; max-width: 34em; font: 400 20px/1.65 var(--serif); }
-.services { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px 40px; margin: 0; }
-.services div { padding-top: 16px; border-top: 1px solid var(--rule); }
-.services dt { margin: 0 0 8px; font: 400 21px/1.35 var(--serif); }
-.services dd { margin: 0; font: 400 17px/1.65 var(--serif); }
 .link-list { margin: 0; padding: 0; list-style: none; }
 .link-list li { padding: 18px 0; border-top: 1px solid var(--rule); }
 .link-list li:last-child { border-bottom: 1px solid var(--rule); }
 .link-list a { font: 400 21px/1.4 var(--serif); }
 .link-list p:not(.meta) { margin: 4px 0 0; max-width: 34em; font: 400 15px/1.6 var(--sans); color: var(--muted); }
 .link-list .meta { margin-top: 2px; }
-.steps { margin: 0 0 24px; padding-left: 1.4em; font: 400 18px/1.7 var(--serif); }
-.steps li { margin: 0 0 14px; padding-left: 6px; }
-.steps li::marker { font: 500 15px/1 var(--sans); color: var(--muted); }
-.steps strong { font-weight: 600; }
-.testimonial { margin: 32px 0 0; padding: 0 0 0 24px; max-width: 34em; border-left: 1px solid var(--rule); font: italic 400 19px/1.65 var(--serif); }
-.contact-email { display: inline-block; max-width: 100%; margin-top: 4px; font: 400 clamp(23px, 1.4vw + 16px, 32px)/1.35 var(--serif); overflow-wrap: anywhere; }
-
-/* Starter Kit */
-.sequence { margin: 0; padding: 0; list-style: none; }
-.sequence li { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 2px 24px; padding: 16px 0; border-top: 1px solid var(--rule); }
-.sequence li:last-child { border-bottom: 1px solid var(--rule); }
-.sequence .day { grid-row: span 2; padding-top: 4px; font: 500 14px/1.5 var(--sans); color: var(--muted); }
-.sequence .title { font: 400 20px/1.4 var(--serif); }
-.sequence .job { font: 400 16px/1.6 var(--sans); color: var(--muted); }
-.for-not { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px 56px; }
-.for-not h2 { margin: 0 0 12px; font: 400 23px/1.35 var(--serif); }
 
 @media (max-width: 640px) {
-  .intro { padding: 36px 0 36px; }
-  .feature { padding: 32px 0 40px; }
-  .feature-preview { font-size: 18px; }
+  .intro { padding: 56px 0 72px; }
+  .latest, .writer { padding-bottom: 64px; }
+  .letter-block { gap: 28px; margin: 0 calc(-1 * var(--gutter)) 64px; padding: 40px var(--gutter); }
+  .letter-head h2 { margin-bottom: 12px; }
+  .letter-art { max-width: 300px; }
+  .writer { flex-direction: column; align-items: flex-start; }
+  .writer-photo { width: 112px; height: 112px; }
+  .writer-initials { font-size: 34px; }
+  .closing { margin: 0 calc(-1 * var(--gutter)) 64px; padding: 56px var(--gutter); }
   .subscribe { padding: 32px 0; }
-  .series { padding: 40px 0 44px; }
-  .pairs td { font-size: 18px; }
-  .more { padding: 32px 0 48px; }
   .page-head { padding: 36px 0 36px; }
   .section { padding-bottom: 48px; }
   .article-head { padding: 32px 0 32px; }

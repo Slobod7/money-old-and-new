@@ -1,7 +1,7 @@
 ---
 layout: default
 title: About
-description: Bogdan Slobodzean explains finance and crypto for a living. Content writer at Bitcoin.com, available for explainers, SEO articles and email.
+description: Bogdan Slobodzean explains finance and crypto for a living. Content writer at Bitcoin.com and author of Money, Old and New.
 permalink: /about/
 ---
 <div class="wrap">
@@ -12,8 +12,8 @@ permalink: /about/
 <div class="body">
 <h1 class="page-title">I’m Bogdan. I explain money for a living.</h1>
 <div class="page-intro">
-<p>By day I’m a content writer at Bitcoin.com, turning finance and crypto topics into pieces beginners actually finish. Before that I was senior finance copywriter at Satoshi Club, where I owned everything the outlet published across X, Telegram, Medium and YouTube, and senior copywriter and editor at Coinweb.</p>
-<p>More than 500 finance and crypto articles so far, written from <span class="nowrap">{{ site.author.city }}</span>.</p>
+<p>Today I’m a content writer at Bitcoin.com. Before that I was senior finance copywriter at Satoshi Club, where I owned everything the outlet published across X, Telegram, Medium and YouTube, and senior copywriter and editor at Coinweb.</p>
+<p>More than 500 finance and crypto articles so far.</p>
 </div>
 <div class="actions">
 <a class="button" href="mailto:{{ site.author.email }}">Email me</a>
@@ -39,18 +39,6 @@ permalink: /about/
 </div>
 </section>
 
-<section class="section row" aria-labelledby="services-title">
-<div class="body">
-<h2 id="services-title" class="section-title">What I write for clients</h2>
-<p class="section-intro">For fintech brands, content agencies and teams whose work doesn’t overlap with my role at Bitcoin.com.</p>
-<dl class="services">
-<div><dt>Explainers and guides</dt><dd>Long-form pieces on DeFi, market mechanics and traditional finance next to crypto, written so beginners finish them.</dd></div>
-<div><dt>SEO articles</dt><dd>Researched with Ahrefs and Semrush, structured to rank, and written to be read.</dd></div>
-<div><dt>Email</dt><dd>Welcome sequences, newsletters and launch emails, with subject lines people open.</dd></div>
-</dl>
-</div>
-</section>
-
 <section class="section row" aria-labelledby="samples-title">
 <div class="body">
 <h2 id="samples-title" class="section-title">Read my work</h2>
@@ -60,28 +48,6 @@ permalink: /about/
 <li><a href="https://trakx.io/resources/insights/ethereum-gas-fees-crypto/">Understanding Ethereum Gas Fees</a><p>Why Ethereum transactions cost what they cost, and how to pay less.</p><p class="meta">Trakx</p></li>
 <li><a href="https://www.bitcoin.com/get-started/defi-and-web3/basics-dapps/what-is-aave/">What Is Aave?</a><p>How lending and borrowing work without a bank in the middle.</p><p class="meta">Bitcoin.com</p></li>
 </ul>
-</div>
-</section>
-
-<section class="section row" aria-labelledby="process-title">
-<div class="body">
-<h2 id="process-title" class="section-title">How a project works</h2>
-<ol class="steps">
-<li><strong>Send the brief.</strong> What it’s for, who reads it, and the deadline. Email is fine.</li>
-<li><strong>Agree the outline.</strong> You get an outline {% if site.author.outline_time and site.author.outline_time != "" %}within {{ site.author.outline_time }}{% else %}first{% endif %}, so we settle the angle before I write.</li>
-<li><strong>Draft and edit.</strong> {% if site.author.edit_rounds and site.author.edit_rounds != "" %}A full draft, then {{ site.author.edit_rounds }} of edits included.{% else %}A full draft, with edits included.{% endif %}</li>
-</ol>
-<p class="serif-text">Rates depend on scope and length. Email me for a quote.</p>
-{%- if site.author.testimonial and site.author.testimonial != "" %}
-<blockquote class="testimonial"><p>{{ site.author.testimonial }}</p>{% if site.author.testimonial_by and site.author.testimonial_by != "" %}<p class="meta">{{ site.author.testimonial_by }}</p>{% endif %}</blockquote>
-{%- endif %}
-</div>
-</section>
-
-<section class="section row" aria-labelledby="contact-title">
-<div class="body ruled">
-<h2 id="contact-title" class="section-title">Have a project? Write to me.</h2>
-<a class="contact-email" href="mailto:{{ site.author.email }}">{{ site.author.email | replace: "@", "@<wbr>" }}</a>
 </div>
 </section>
 </div>

@@ -1,0 +1,44 @@
+<svg class="illustration" viewBox="0 0 420 300" aria-hidden="true" focusable="false">
+<!-- Old money (a coin with a bank's columns) passes through the Sunday letter to new money (blocks). Drawn for this site. -->
+<style>
+.illustration .ink { fill: none; stroke: var(--on-forest); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.illustration .thin { fill: none; stroke: var(--sage); stroke-width: 1.25; }
+.illustration .path { fill: none; stroke: var(--sage); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1 8; }
+.illustration .panel { fill: var(--forest); }
+.illustration .c-top { fill: #DCE7E0; }
+.illustration .c-left { fill: var(--sage); }
+.illustration .c-right { fill: #86A898; }
+.illustration .c-top, .illustration .c-left, .illustration .c-right { stroke: var(--forest); stroke-width: 1.5; stroke-linejoin: round; }
+</style>
+<path class="path" d="M92 150C150 40 290 40 352 132"/>
+<path d="M215 52l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z" fill="var(--on-forest)"/>
+<circle cx="150" cy="78" r="2.5" fill="var(--sage)"/>
+<circle cx="292" cy="80" r="2.5" fill="var(--sage)"/>
+
+<circle class="panel ink" cx="88" cy="196" r="50"/>
+<circle class="thin" cx="88" cy="196" r="41"/>
+<path class="ink" d="M66 182L88 167L110 182ZM64 187H112M71 192V214M82 192V214M94 192V214M105 192V214M62 219H114"/>
+
+<ellipse class="panel ink" cx="52" cy="270" rx="30" ry="9"/>
+<ellipse class="panel ink" cx="52" cy="262" rx="30" ry="9"/>
+<ellipse class="panel ink" cx="52" cy="254" rx="30" ry="9"/>
+
+<rect x="135" y="158" width="160" height="104" fill="#CFDCD3"/>
+<polygon points="135,158 215,104 295,158" fill="#B9CDC0"/>
+<rect x="152" y="112" width="126" height="130" fill="var(--on-forest)"/>
+<g transform="translate(164 123) scale(0.36)"><path fill="var(--forest)" d="M4 56Q9 55 9 50V30Q9 21 29 6L42 17H55V50Q55 55 60 56H37V31Q37 25 29 19Q19 27 19 33V56Z"/></g>
+<rect x="194" y="131" width="66" height="6" rx="3" fill="var(--forest)"/>
+<rect x="164" y="152" width="102" height="4" rx="2" fill="#B9CDC0"/>
+<rect x="164" y="164" width="92" height="4" rx="2" fill="#B9CDC0"/>
+<rect x="164" y="176" width="102" height="4" rx="2" fill="#B9CDC0"/>
+<rect x="164" y="188" width="64" height="4" rx="2" fill="#B9CDC0"/>
+<polygon points="135,178 215,222 295,178 295,262 135,262" fill="#E6EDE8"/>
+<path d="M135 262L202 214M295 262L228 214" fill="none" stroke="#CFDCD3" stroke-width="1.5"/>
+
+<polygon class="c-top" points="352,170 378,185 352,200 326,185"/><polygon class="c-left" points="326,185 352,200 352,230 326,215"/><polygon class="c-right" points="352,200 378,185 378,215 352,230"/>
+<polygon class="c-top" points="352,140 378,155 352,170 326,155"/><polygon class="c-left" points="326,155 352,170 352,200 326,185"/><polygon class="c-right" points="352,170 378,155 378,185 352,200"/>
+<polygon class="c-top" points="326,185 352,200 326,215 300,200"/><polygon class="c-left" points="300,200 326,215 326,245 300,230"/><polygon class="c-right" points="326,215 352,200 352,230 326,245"/>
+<polygon class="c-top" points="378,185 404,200 378,215 352,200"/><polygon class="c-left" points="352,200 378,215 378,245 352,230"/><polygon class="c-right" points="378,215 404,200 404,230 378,245"/>
+<path class="path" d="M380 150L397 112"/>
+<polygon class="c-top" points="404,76 418,84 404,92 390,84"/><polygon class="c-left" points="390,84 404,92 404,108 390,100"/><polygon class="c-right" points="404,92 418,84 418,100 404,108"/>
+</svg>

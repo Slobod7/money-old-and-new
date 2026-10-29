@@ -19,8 +19,7 @@ permalink: /subscribe/
 <div class="body ruled">
 <h2 id="arrives-title" class="section-title">What arrives each Sunday</h2>
 <ul class="plain-list">
-<li>A guide like <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>, rebuilt whenever the facts change</li>
-<li>A pair from Old money, new money: a banking idea and its crypto twin</li>
+<li>{% if site.posts.size > 0 %}A guide like <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>{% else %}One topic explained properly, in a guide{% endif %}, rebuilt whenever the facts change</li>
 <li>What changed this week, and what it costs you</li>
 <li>No price calls. Sponsored posts are always labelled.</li>
 </ul>

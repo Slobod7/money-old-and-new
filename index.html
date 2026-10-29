@@ -1,86 +1,88 @@
 ---
 layout: default
 ---
-{%- assign latest = site.posts.first -%}
-<div class="wrap">
+<div class="wrap home">
 
-<section class="intro row" aria-labelledby="intro-title">
-<div class="body">
-<h1 id="intro-title">A Sunday letter about how money works, from bank deposits to blockchains.</h1>
-<p class="intro-by">Written by <a href="{{ '/about/' | relative_url }}">{{ site.author.name }}</a>, who explains finance and crypto for a living.</p>
+<section class="intro" aria-labelledby="intro-title">
+<h1 id="intro-title">Finance, explained</h1>
+<p class="intro-lede">A free Sunday letter about how money works, from bank deposits to blockchains.</p>
+<div class="signup-center">
+{% include signup-button.html label="Get the Sunday letter" no_note=true %}
 </div>
 </section>
 
-{%- if latest %}
-<section class="feature row" aria-labelledby="latest-title">
-<div class="feature-meta">
-<p class="kicker">Latest guide</p>
-<p class="meta">Published <time datetime="{{ latest.date | date: '%Y-%m-%d' }}">{{ latest.date | date: "%-d %B %Y" }}</time>.{% if latest.read_time %}<br>About {{ latest.read_time }} minutes to read.{% endif %}</p>
+{%- if site.posts.size > 0 %}
+<section class="latest" aria-labelledby="latest-title" data-carousel>
+<div class="latest-head">
+<h2 id="latest-title" class="section-title">Latest articles</h2>
+<div class="carousel-arrows" data-carousel-arrows hidden>
+<button type="button" class="carousel-arrow" data-carousel-prev aria-label="Previous articles"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+<button type="button" class="carousel-arrow" data-carousel-next aria-label="Next articles"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
 </div>
-<div class="body">
-<h2 id="latest-title" class="feature-title"><a href="{{ latest.url | relative_url }}">{{ latest.title }}</a></h2>
-<p class="feature-preview">{{ latest.description }}</p>
-<a class="action" href="{{ latest.url | relative_url }}">Read the guide</a>
 </div>
-</section>
+<ul class="carousel" role="list" data-carousel-track>
+{%- for post in site.posts limit: 10 %}
+{%- assign updated = post.updated | default: post.date %}
+<li class="card">
+<a class="card-link" href="{{ post.url | relative_url }}">
+{%- if post.image %}
+<img class="card-image" src="{{ post.image | relative_url }}" alt="" width="640" height="360"{% if forloop.index > 3 %} loading="lazy"{% endif %}>
 {%- endif %}
-
-{% include subscribe.html id="newsletter-title" row=true %}
-
-{%- assign starters = site.posts | where: "start_here", true -%}
-{%- if starters.size > 1 %}
-<section class="series row" aria-labelledby="start-title">
-<div class="body">
-<h2 id="start-title" class="section-title">Start with these</h2>
-<ul class="guide-list">
-{%- for post in starters limit: 4 %}
-<li>
-<p class="meta">{{ post.topic }}</p>
-<h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-<p>{{ post.description }}</p>
+<h3 class="card-title">{{ post.title }}</h3>
+<p class="meta">Updated <time datetime="{{ updated | date: '%Y-%m-%d' }}">{{ updated | date: "%-d %B %Y" }}</time></p>
+</a>
 </li>
 {%- endfor %}
 </ul>
-</div>
 </section>
 {%- endif %}
 
-<section class="series row" aria-labelledby="series-title">
-<div class="body">
-<h2 id="series-title" class="section-title">Old money, new money</h2>
-<p class="section-intro">A short series on how banks and blockchains solve the same problem, and where the comparison breaks. One pair at a time.</p>
-{%- assign published_pairs = 0 %}
-<table class="pairs">
-<caption class="visually-hidden">Pairs in the Old money, new money series</caption>
-<thead><tr><th scope="col">Old</th><th scope="col">New</th></tr></thead>
-<tbody>
-{%- for pair in site.data.series %}
-<tr>
-<td>{% if pair.url != "" %}<a href="{{ pair.url | relative_url }}">{{ pair.old }}</a>{% else %}{{ pair.old }}{% endif %}</td>
-<td>{% if pair.url != "" %}<a href="{{ pair.url | relative_url }}">{{ pair.new }}</a>{% assign published_pairs = published_pairs | plus: 1 %}{% else %}{{ pair.new }}{% endif %}</td>
-</tr>
-{%- endfor %}
-</tbody>
-</table>
-{%- if published_pairs == 0 %}
-<p class="meta series-note">The first pair arrives in the Sunday letter in December.</p>
+<section class="letter-block" aria-labelledby="letter-title">
+<div class="letter-head">
+<p class="kicker">The Sunday letter</p>
+<h2 id="letter-title">What arrives each Sunday</h2>
+<p>One letter, free, every Sunday. Here’s what’s in it.</p>
+</div>
+<div class="letter-art">{% include illustration-sunday-letter.svg %}</div>
+<ul class="letter-cards" role="list">
+<li>
+<span class="num" aria-hidden="true">01</span>
+<h3>One topic, explained properly</h3>
+<p>How a bank deposit works or what a stablecoin really is, in plain words and real examples.</p>
+</li>
+<li>
+<span class="num" aria-hidden="true">02</span>
+<h3>What changed this week</h3>
+<p>The news from the past seven days that matters for your money, and what it means in practice.</p>
+</li>
+<li>
+<span class="num" aria-hidden="true">03</span>
+<h3>No hype, no price calls</h3>
+<p>I explain how things work, never what to buy. And sponsored posts are always clearly labelled.</p>
+</li>
+</ul>
+</section>
+
+<section class="writer" aria-labelledby="writer-title">
+{%- assign avatar = site.author.avatar | default: site.author.photo %}
+{%- if avatar and avatar != "" %}
+<img class="writer-photo" src="{{ avatar | relative_url }}" alt="" width="160" height="160" loading="lazy">
+{%- else %}
+<span class="writer-photo writer-initials" aria-hidden="true">{{ site.author.initials }}</span>
 {%- endif %}
+<div class="writer-text">
+<p class="kicker">Who writes it</p>
+<h2 id="writer-title" class="section-title">I’m {{ site.author.name | split: " " | first }}, and I explain money for a living.</h2>
+<p>Today I’m a content writer at Bitcoin.com. Before that, I wrote for Satoshi Club and Coinweb. More than 500 finance and crypto articles so far.</p>
+<a class="action" href="{{ '/about/' | relative_url }}">More about me</a>
 </div>
 </section>
 
-<div class="more row">
-<div class="body more-grid">
-<section aria-labelledby="kit-title">
-<h2 id="kit-title">Crypto Project Email Starter Kit</h2>
-<p>Five welcome emails, twenty subject lines, a tagging map and a launch email, written for crypto and fintech teams. Out in {{ site.kit.launch }}.</p>
-<a class="action" href="{{ '/starter-kit/' | relative_url }}">See what’s in the kit</a>
-</section>
-<section aria-labelledby="hire-title">
-<h2 id="hire-title">Hire me to write</h2>
-<p>I write explainers, SEO articles and email for fintech brands and content teams whose work doesn’t overlap with my job at Bitcoin.com.</p>
-<a class="action" href="{{ '/about/' | relative_url }}">How I work and what I’ve written</a>
-</section>
+<section class="closing" aria-labelledby="closing-title">
+<h2 id="closing-title" class="section-title">Get next Sunday’s letter</h2>
+<div class="signup-center">
+{% include signup-button.html label="Subscribe, it’s free" note="You’ll finish on Substack, which sends the letter and emails you a link to confirm." %}
 </div>
-</div>
+</section>
 
 </div>
