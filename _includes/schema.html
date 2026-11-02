@@ -1,6 +1,7 @@
 {%- comment -%}
 Structured data for search engines: one JSON-LD graph per page, its parts linked by @id.
-Every page describes the site and its author. Articles add the BlogPosting and its breadcrumb, plus
+Every page describes the site and its author. The Person has no job title or employer, so it matches the bio readers see.
+Articles add the BlogPosting and its breadcrumb, plus
 FAQPage when their front matter has faq and Review when it has review (the score comes from
 review_scores in _config.yml, as on the page). Any other page with faq, such as the home page, is
 also an FAQPage; faq-fill.html fills in the figures its answers quote, as on the page. Other pages pick their type with schema_type in
@@ -53,12 +54,6 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 "url": {{ about_url | jsonify }}
 {%- if person_image and person_image != '' %},
 "image": {{ person_image | absolute_url | jsonify }}
-{%- endif %}
-{%- if site.author.job_title %},
-"jobTitle": {{ site.author.job_title | jsonify }}
-{%- endif %}
-{%- if site.author.employer.name %},
-"worksFor": { "@type": "Organization", "name": {{ site.author.employer.name | jsonify }}{% if site.author.employer.url %}, "url": {{ site.author.employer.url | jsonify }}{% endif %} }
 {%- endif %}
 {%- if site.author.knows_about.size > 0 %},
 "knowsAbout": {{ site.author.knows_about | jsonify }}

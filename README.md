@@ -81,7 +81,7 @@ Every page carries schema.org markup (JSON-LD) that tells search engines what th
 
 | Page | What it says |
 |---|---|
-| Every page | The site (WebSite) and you (Person: name, photo, job, employer, topics, LinkedIn and Substack) |
+| Every page | The site (WebSite) and you (Person: name, photo, topics, LinkedIn and Substack). There's no job title or employer, so it matches the bio readers see |
 | An article | The article (BlogPosting: title, description, image, published and updated dates, author, word count), its breadcrumb (Home › Articles › the article), and its questions (FAQPage) when it has `faq`, and the review (Review: what you reviewed, your verdict and its score) when it has `review` |
 | Home | Its common questions (FAQPage), from `faq` in `index.html`'s front matter |
 | About | Your profile (ProfilePage) |
