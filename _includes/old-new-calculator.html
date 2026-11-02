@@ -108,7 +108,7 @@ adds the form, the ranking and the chart.
 {%- capture cc_rules %}
 <ul>
 <li>Each purchase is made at the end of a month, at that month’s closing value, and today’s value is at the end of {{ cc_to }}. Dollar prices convert to euros at the ECB’s last rate of the month. Gold is the exception: it uses the month’s average price and average rate, because that’s the only free monthly gold price.</li>
-<li>Bank deposit: the average rate euro area banks paid households on new deposits fixed for up to a year, as if the money were put in again every month. Figures start in {{ df.from.deposit | append: "-01" | date: "%B %Y" }}.{% for m in df.deposit_filled %} The rate for {{ m | append: "-01" | date: "%B %Y" }} isn’t out yet, so the month before’s is used.{% endfor %}</li>
+<li>Bank deposit: the average rate euro area banks paid households on new deposits fixed for up to a year, as if the money were put in again every month. Figures start in {{ df.from.deposit | append: "-01" | date: "%B %Y" }}, and the ECB marks those for 2000 to 2002 as estimates.{% for m in df.deposit_filled %} The rate for {{ m | append: "-01" | date: "%B %Y" }} isn’t out yet, so the month before’s is used.{% endfor %}</li>
 <li>German bonds: worked out from the 10-year Bund’s monthly average yield. Each month the bond is valued at the new yield, then swapped for a new 10-year bond.</li>
 <li>Stocks: the whole market, with dividends reinvested. US stocks are every company listed in the US, which move almost exactly with the S&amp;P 500. European stocks are the developed markets of Europe, including the UK and Switzerland.</li>
 <li>Bitcoin: prices start in {{ df.from.bitcoin | append: "-01" | date: "%B %Y" }}.</li>
