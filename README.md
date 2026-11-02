@@ -18,6 +18,7 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 | `url` and `baseurl` | Already set to `https://moneyoldandnew.com` and `""`. If the domain ever changes, update `url` and the `CNAME` file together |
 | `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://newsletter.slobodzean.com`). While it still says `YOUR-NAME`, every Subscribe button is replaced by "Signup isn't open yet", so nobody is sent to a dead page |
 | `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first. It appears beside the About page introduction. Use a 4:5 portrait, at least 800px wide |
+| `cloudflare_analytics_token` | Optional. Your Cloudflare Web Analytics site token (see "Analytics" below). Left empty, no analytics script loads and the privacy page says there are no analytics |
 | `author.avatar` | A square photo cropped close to your face, at least 320px, for the circle in "Who writes it" on the home page. Left empty, the home page uses `author.photo` |
 
 ---
@@ -58,6 +59,17 @@ Also verify the domain in your GitHub account (**Settings → Pages → Add a do
 2. To use your own subdomain (for example `newsletter.slobodzean.com`), go to Substack's **Settings → Domain**. Substack charges a one-time fee and shows the exact DNS record to add. At the time of writing, that's a CNAME for `newsletter` pointing to `target.substack-custom-domains.com`.
 3. In Substack's theme settings, set the accent colour to `#173C32` (the site's forest green) so the signup page matches the site.
 4. Every Subscribe button on the site goes to `substack_url/subscribe`, Substack's own signup page. The site never collects email addresses itself.
+
+## Analytics
+
+The site is set up for Cloudflare Web Analytics, and it's off until you add a token. Because the domain's DNS records are **DNS only**, Cloudflare can't add the script by itself, so the site does it.
+
+1. In the Cloudflare dashboard, open **Web Analytics**, choose **Add a site** and enter `moneyoldandnew.com`.
+2. Under **Manage site**, copy the token from the JS snippet into `cloudflare_analytics_token` in `_config.yml`. Check that the snippet still matches the one in `_layouts/default.html`.
+3. Check the site isn't set to exclude EU visitors, or most of your readers won't be counted.
+4. Push, open the site, and check that visits appear in the dashboard after a few minutes.
+
+`privacy.md` changes by itself with the token: without one it says there are no analytics; with one it describes Cloudflare's script, with links to what Cloudflare says about it. Check that wording again if Cloudflare changes its terms, and bump "Last updated" when you change the page.
 
 ## Google Search Console
 
@@ -495,4 +507,4 @@ and open `http://localhost:4000`. The built pages go to `~/Library/Caches`, so n
 ## Good to know
 
 - **Commercial use:** GitHub's rules say Pages isn't meant for sites whose main purpose is commercial transactions. A newsletter and portfolio are fine. If you ever sell something, keep the checkout on Substack, Gumroad or Lemon Squeezy, not on this site. If you'd rather avoid the question entirely, Cloudflare Pages or Netlify can host this same repository.
-- **No tracking:** the site has no analytics or cookies. If you add analytics later, choose a privacy-friendly one and update `privacy.md`.
+- **No tracking cookies:** the site sets no cookies. The only analytics option is Cloudflare Web Analytics (see "Analytics"), off until you add its token.
