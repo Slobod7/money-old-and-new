@@ -16,7 +16,7 @@ Open `_config.yml` and change every line marked `CHANGE ME`:
 | Setting | What to put |
 |---|---|
 | `url` and `baseurl` | Already set to `https://moneyoldandnew.com` and `""`. If the domain ever changes, update `url` and the `CNAME` file together |
-| `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://newsletter.slobodzean.com`). While it still says `YOUR-NAME`, every Subscribe button is replaced by "Signup isn't open yet", so nobody is sent to a dead page |
+| `substack_url` | Your Substack address, for example `https://moneyoldandnew.substack.com` (later `https://letter.moneyoldandnew.com`). While it still says `YOUR-NAME`, every Subscribe button is replaced by "Signup isn't open yet", so nobody is sent to a dead page |
 | `author.photo` | Path to your portrait, for example `/assets/img/bogdan.jpg`. Upload the photo to `assets/img/` first. It appears beside the About page introduction. Use a 4:5 portrait, at least 800px wide |
 | `cloudflare_analytics_token` | Optional. Your Cloudflare Web Analytics site token (see "Analytics" below). Left empty, no analytics script loads and the privacy page says there are no analytics |
 | `author.avatar` | A square photo cropped close to your face, at least 320px, for the circle in "Who writes it" on the home page. Left empty, the home page uses `author.photo` |
@@ -56,7 +56,7 @@ Also verify the domain in your GitHub account (**Settings → Pages → Add a do
 ## Connect Substack
 
 1. Create the publication on Substack and copy its address into `substack_url`.
-2. To use your own subdomain (for example `newsletter.slobodzean.com`), go to Substack's **Settings → Domain**. Substack charges a one-time fee and shows the exact DNS record to add. At the time of writing, that's a CNAME for `newsletter` pointing to `target.substack-custom-domains.com`.
+2. To use your own subdomain (for example `letter.moneyoldandnew.com`), go to Substack's **Settings → Domain**. Substack charges a one-time fee and shows the exact DNS record to add. At the time of writing, that's a CNAME for `letter` pointing to `target.substack-custom-domains.com`.
 3. In Substack's theme settings, set the accent colour to `#173C32` (the site's forest green) so the signup page matches the site.
 4. Every Subscribe button on the site goes to `substack_url/subscribe`, Substack's own signup page. The site never collects email addresses itself.
 
