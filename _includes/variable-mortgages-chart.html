@@ -1,0 +1,45 @@
+{%- comment -%}
+Bar chart: the share of new mortgages on a variable rate in each euro area country, most variable first.
+  {% include variable-mortgages-chart.html title="New mortgages on a variable rate" %}
+Optional: title (set as a level-4 heading, for a chart under an h3), id (for a second copy on the same page).
+Plain HTML and CSS, no script. The data is fixed: _data/variable_mortgages.json. The countries listed in its "marked"
+are drawn in forest and named in bold; the rest are muted, and the euro area sits beneath them as a reference.
+{%- endcomment -%}
+{%- assign mv = site.data.variable_mortgages -%}
+{%- assign mc = include.id | default: "variable-mortgages" -%}
+{%- assign mv_top = mv.rows | first -%}
+{%- assign mv_bottom = mv.rows | last -%}
+{%- assign mv_area = mv.euro_area -%}
+{%- capture mv_period %}{{ mv.from | append: "-01" | date: "%B %Y" }} to {{ mv.to | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- capture mv_marked %}{% for r in mv.rows %}{% if mv.marked contains r[0] %}{{ r[1] }} {{ r[3] }}%, {% endif %}{% endfor %}{% endcapture -%}
+{%- assign mv_short = mv.rows | where_exp: "r", "r[4] < 12" -%}
+<figure class="oil-widget mv-chart" id="{{ mc }}">
+{%- if include.title %}
+<h4 class="oil-title">{{ include.title }}</h4>
+{%- endif %}
+<p class="oil-summary">Share of new loans for house purchase with a floating rate or a rate fixed for a year or less, {{ mv_period }}.</p>
+<div class="mv-bars" role="img" aria-label="Bar chart of the share of new mortgages on a variable rate in each euro area country, {{ mv_period }}. It runs from {{ mv_top[1] }}, {{ mv_top[3] }}%, to {{ mv_bottom[1] }}, {{ mv_bottom[3] }}%. {{ mv_marked }}and the euro area as a whole {{ mv_area[3] }}%. Every country is in the table below.">
+<ol class="mv-list">
+{%- for r in mv.rows %}
+<li class="mv-row{% if mv.marked contains r[0] %} is-marked{% endif %}"><span class="mv-name">{{ r[1] }}{% if r[4] < 12 %}*{% endif %}</span><span class="mv-track"><span class="mv-bar" style="--v: {{ r[2] }}"></span><span class="mv-value">{{ r[3] }}%</span></span></li>
+{%- endfor %}
+</ol>
+<p class="mv-row mv-total"><span class="mv-name">{{ mv_area[1] }}</span><span class="mv-track"><span class="mv-bar" style="--v: {{ mv_area[2] }}"></span><span class="mv-value">{{ mv_area[3] }}%</span></span></p>
+</div>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Share of new mortgages on a variable rate by country" tabindex="0">
+<table class="data mv-table">
+<thead><tr><th scope="col">Country</th><th scope="col" class="num">Variable or fixed for up to a year</th><th scope="col" class="num">Months of data</th></tr></thead>
+<tbody>
+{%- for r in mv.rows %}
+<tr><th scope="row">{{ r[1] }}</th><td class="num">{{ r[2] }}%</td><td class="num">{{ r[4] }}</td></tr>
+{%- endfor %}
+</tbody>
+<tfoot><tr><th scope="row">{{ mv_area[1] }}</th><td class="num">{{ mv_area[2] }}%</td><td class="num">{{ mv_area[4] }}</td></tr></tfoot>
+</table>
+</div>
+<p class="oil-note">Each figure is the average of the monthly shares. The ECB doesn’t publish every month for every country, so a few cover fewer than 12.</p>
+</details>
+<figcaption class="oil-source">Source: European Central Bank, MFI interest rate statistics: new loans to households for house purchase, by initial rate fixation. {{ mv_period }}, average of the monthly shares.{% if mv_short.size > 0 %} *Fewer months: {% for r in mv_short %}{{ r[1] }} {{ r[4] }}{% unless forloop.last %}, {% endunless %}{% endfor %}. {{ mv.short_note }}{% endif %}</figcaption>
+</figure>

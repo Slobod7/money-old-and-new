@@ -1,0 +1,137 @@
+{%- comment -%}
+The old-vs-new calculator: what euros put into cash, a bank deposit, German bonds, gold, US or European stocks, or
+Bitcoin from a given month would be worth today, ranked, with a chart of whichever the reader picks.
+  {% include old-new-calculator.html %}
+Optional: id (needed only for a second calculator on the same page), title (replaces the heading),
+labelledby (the id of a heading outside the include that names it: the include then drops its own heading),
+compact (true to fold the rules and sources into "How it works, and sources", as on the home page).
+Without JavaScript it shows the default case (€1,000 at the end of January 2016, in today's money), worked out ahead
+of time by scripts/update-old-new-data.py, with the rules. assets/js/old-new-calculator.js, added once per page below,
+adds the form, the ranking and the chart.
+{%- endcomment -%}
+{%- assign cc = include.id | default: "old-new" -%}
+{%- assign df = site.data.old_new -%}
+{%- assign cc_to = df.to | append: "-01" | date: "%B %Y" -%}
+{%- assign cc_start = df.start | append: "-01" | date: "%B %Y" -%}
+{%- assign cc_last_year = df.to | slice: 0, 4 | plus: 0 -%}
+{%- assign cc_start_year = df.start | slice: 0, 4 | plus: 0 -%}
+{%- capture cc_label %}{% if include.labelledby %}{{ include.labelledby }}{% else %}{{ cc }}-title{% endif %}{% endcapture -%}
+{%- assign cc_months = "January,February,March,April,May,June,July,August,September,October,November,December" | split: "," -%}
+<section class="oil-widget onc" id="{{ cc }}" data-old-new data-src="{{ '/assets/data/old-new.json' | relative_url }}" aria-labelledby="{{ cc_label }}">
+{%- unless include.labelledby %}
+<h3 class="oil-title" id="{{ cc }}-title">{{ include.title | default: "Old money or new: what would your euros be worth?" }}</h3>
+{%- endunless %}
+<p class="oil-fallback" data-fallback>€{{ df.amount }} put into each of these at the end of {{ cc_start }} would be worth this at the end of {{ cc_to }}, in today’s money. Prices rose in that time, so the €{{ df.amount }} itself is now worth €{{ df.put_in_real }}. With JavaScript on, you can try your own amount and dates here.</p>
+<div class="table-wrap" data-fallback role="region" aria-label="What €{{ df.amount }} from {{ cc_start }} would be worth" tabindex="0">
+<table class="data">
+<thead><tr><th scope="col">Put into</th><th scope="col" class="num">Worth now</th><th scope="col" class="num">A year</th><th scope="col" class="num">Biggest fall</th></tr></thead>
+<tbody>
+{%- for r in df.rows %}
+<tr><th scope="row">{{ r[0] }}</th><td class="num">€{{ r[1] }}</td><td class="num">{{ r[2] }}</td><td class="num">{{ r[3] }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+
+<form class="oil-form" data-form hidden>
+<fieldset class="oil-field">
+<legend>How you buy</legend>
+<div class="oil-choices">
+<label><input type="radio" name="mode" value="lump" checked> One lump sum</label>
+<label><input type="radio" name="mode" value="monthly"> Every month</label>
+</div>
+</fieldset>
+<div class="oil-field">
+<label for="{{ cc }}-amount"><span data-amount-label>Amount</span><span class="visually-hidden"> in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" aria-hidden="true">€</span><input id="{{ cc }}-amount" data-amount type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="{{ df.amount }}" aria-describedby="{{ cc }}-amount-error"></div>
+<p class="oil-error" id="{{ cc }}-amount-error" data-amount-error></p>
+</div>
+<fieldset class="oil-field">
+<legend>Starting at the end of</legend>
+<div class="oil-pair">
+<div><label for="{{ cc }}-month">Month</label><select id="{{ cc }}-month" data-month>
+{%- for name in cc_months %}
+<option value="{{ forloop.index }}"{% if forloop.first %} selected{% endif %}>{{ name }}</option>
+{%- endfor %}
+</select></div>
+<div><label for="{{ cc }}-year">Year</label><select id="{{ cc }}-year" data-year>
+{%- for y in (1999..cc_last_year) %}
+<option value="{{ y }}"{% if y == cc_start_year %} selected{% endif %}>{{ y }}</option>
+{%- endfor %}
+</select></div>
+</div>
+</fieldset>
+<fieldset class="oil-field">
+<legend>Inflation</legend>
+<div class="oil-choices">
+<label><input type="radio" name="real" value="yes" checked> In today’s money</label>
+<label><input type="radio" name="real" value="no"> Don’t adjust</label>
+</div>
+</fieldset>
+</form>
+
+<div class="onc-results" data-results hidden>
+<p class="onc-putin" data-out="putin"></p>
+<div class="onc-cols">
+<div class="onc-rank">
+<div class="onc-head">
+<p class="onc-ranked" data-out="ranked"></p>
+<p class="onc-key" aria-hidden="true"><span class="onc-key-put"></span>The money you put in</p>
+</div>
+<ol class="onc-list" data-list aria-label="Each asset, highest value first. Choose one to see its chart."></ol>
+<p class="oil-note" data-out="annual-note"></p>
+<p class="oil-note" data-out="scale-note"></p>
+<p class="oil-note" data-out="unavailable"></p>
+</div>
+<div class="onc-side">
+<figure class="oil-mini-figure onc-figure">
+<figcaption class="oil-note" data-out="chart-title"></figcaption>
+<ul class="oil-key" aria-hidden="true">
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-line" x1="1" x2="23" y1="5" y2="5"/></svg><span data-out="key-value">Value</span></li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Money put in</li>
+</ul>
+<div class="oil-plot onc-plot" data-plot></div>
+<p class="oil-note onc-hint" aria-hidden="true">Tap or drag along the chart to read each month.</p>
+</figure>
+<p class="oil-worst" data-out="worst"></p>
+</div>
+</div>
+<p class="visually-hidden" aria-live="polite" data-out="live"></p>
+</div>
+
+<div class="onc-foot">
+
+<p class="oil-honesty"><strong>Before you read too much into this:</strong> it’s history, not a forecast or advice. The month you start in changes everything: try December 2017 for Bitcoin, or 2000 and 2007 for stocks. Index returns leave out the fees any real fund or broker charges. Disclosure: I write for Bitcoin.com and own some Bitcoin.</p>
+{%- capture cc_rules %}
+<ul>
+<li>Each purchase is made at the end of a month, at that month’s closing value, and today’s value is at the end of {{ cc_to }}. Dollar prices convert to euros at the ECB’s last rate of the month. Gold is the exception: it uses the month’s average price and average rate, because that’s the only free monthly gold price.</li>
+<li>Bank deposit: the average rate euro area banks paid households on new deposits fixed for up to a year, as if the money were put in again every month. Figures start in {{ df.from.deposit | append: "-01" | date: "%B %Y" }}.{% for m in df.deposit_filled %} The rate for {{ m | append: "-01" | date: "%B %Y" }} isn’t out yet, so the month before’s is used.{% endfor %}</li>
+<li>German bonds: worked out from the 10-year Bund’s monthly average yield. Each month the bond is valued at the new yield, then swapped for a new 10-year bond.</li>
+<li>Stocks: the whole market, with dividends reinvested. US stocks are every company listed in the US, which move almost exactly with the S&amp;P 500. European stocks are the developed markets of Europe, including the UK and Switzerland.</li>
+<li>Bitcoin: prices start in {{ df.from.bitcoin | append: "-01" | date: "%B %Y" }}.</li>
+<li>In today’s money, every figure is adjusted with euro area consumer prices (HICP, to {{ df.hicp_to | append: "-01" | date: "%B %Y" }}).</li>
+<li>The biggest fall is the largest drop from a high to a later low in the asset itself, after you start. It’s checked at the end of each month, so falls within a month were deeper.</li>
+<li>Fees, taxes and the cost of keeping gold safe aren’t included.</li>
+</ul>
+{%- endcapture %}
+{%- capture cc_source %}
+<p class="oil-source">Sources: European Central Bank (deposit rates, German bond yields, euro reference rates, and euro area HICP from Eurostat); World Bank Commodity Price Data (gold); Kenneth R. French Data Library (US stocks from CRSP, European stocks from Bloomberg); Coin Metrics (Bitcoin). Figures to the end of {{ cc_to }}. Updated {{ df.updated | date: "%-d %B %Y" }}.</p>
+{%- endcapture %}
+{%- if include.compact %}
+<details class="oil-data onc-more">
+<summary>How it works, and sources</summary>
+<div class="oil-rules">{{ cc_rules }}</div>
+{{ cc_source }}
+</details>
+{%- else %}
+<div class="oil-rules">
+<h4 class="oil-rules-title">How it works</h4>{{ cc_rules }}
+</div>
+{{ cc_source }}
+{%- endif %}
+</div>
+</section>
+{%- unless old_new_script %}
+{%- assign old_new_script = true %}
+<script src="{{ '/assets/js/old-new-calculator.js' | relative_url }}" defer></script>
+{%- endunless %}

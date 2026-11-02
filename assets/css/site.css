@@ -99,6 +99,18 @@ a:hover { text-decoration-thickness: 2px; }
 .signup-center { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .signup-center .meta { max-width: 26em; text-wrap: balance; }
 
+/* The old-vs-new calculator, across the full page width: the heading, an introduction that runs the full width,
+   the links, then a rule, a short "Try it" line and the calculator, which arranges itself by its own width (see .onc). */
+.home-tool { padding: 0 0 96px; }
+.home-tool-head .section-title { margin-bottom: 20px; font-size: clamp(30px, 1.4vw + 22px, 40px); line-height: 1.2; text-wrap: balance; }
+.home-tool-head p { margin: 0 0 18px; font: 400 clamp(18px, 0.25vw + 16px, 20px)/1.7 var(--serif); }
+.home-tool-links { display: flex; flex-wrap: wrap; gap: 0 28px; margin: 0 0 28px; }
+.home-tool-head p.home-tool-try { margin: 0 0 20px; padding-top: 20px; border-top: 1px solid var(--rule); font: 500 15px/1.5 var(--sans); }
+.home-tool .oil-widget { margin: 0; }
+@media (max-width: 640px) {
+  .home-tool { padding-bottom: 64px; }
+}
+
 /* The Sunday letter block: heading at left, illustration at right, three cards beneath.
    On phones it runs edge to edge and everything stacks. */
 .letter-block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head art" "cards cards"; align-items: center; gap: 32px 56px; margin: 0 0 96px; padding: 56px; background: var(--forest); color: var(--on-forest); }
@@ -126,6 +138,18 @@ a:hover { text-decoration-thickness: 2px; }
 .writer-initials { display: flex; align-items: center; justify-content: center; border: 1px solid var(--forest); color: var(--forest); font: 400 46px/1 var(--serif); letter-spacing: 0.02em; }
 .writer-text .section-title { margin-bottom: 12px; }
 .writer-text p:not(.kicker) { margin: 0 0 8px; max-width: 34em; font: 400 18px/1.65 var(--serif); }
+
+/* Common questions: two columns of questions that open and close, one above the other on narrower screens */
+.home-faq { padding: 0 0 96px; }
+.home-faq-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 40px 56px; margin: 8px 0 24px; }
+.home-faq-col .kicker { margin-bottom: 12px; }
+.home-faq .faq { margin: 0; }
+@media (max-width: 860px) {
+  .home-faq-cols { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .home-faq { padding-bottom: 64px; }
+}
 
 /* The closing signup: a second forest block, with the button reversed to warm white */
 .closing { margin: 0 0 96px; padding: 72px 32px; background: var(--forest); color: var(--on-forest); text-align: center; }
@@ -304,6 +328,236 @@ a:hover { text-decoration-thickness: 2px; }
   .stack th, .stack td { padding: 3px 0 !important; border: 0 !important; text-align: left !important; white-space: normal !important; }
   .stack td[data-label]::before { content: attr(data-label) ": "; font: 500 13px/1.5 var(--sans); letter-spacing: 0.02em; color: var(--muted); }
   .stack td:empty { display: none; }
+}
+
+/* Oil widgets: the Brent chart and the oil calculator (_includes/oil-chart.html and oil-calculator.html,
+   drawn by assets/js/oil-widgets.js, which only those includes load). Archivo for every label, button and number;
+   Besley only for a widget's heading. Forest draws the price and your oil's value, muted the money put in.
+   Without JavaScript the chart is a plain line of yearly averages and the calculator shows its default case. */
+.oil-widget { margin: 40px 0 44px; font: 400 15px/1.55 var(--sans); }
+.oil-widget [hidden] { display: none !important; }
+.oil-widget p { margin: 0 0 12px; }
+.prose .oil-title { margin: 0 0 14px; font: 400 clamp(22px, 0.4vw + 19px, 25px)/1.3 var(--serif); }
+.oil-widget .oil-note, .oil-widget .oil-source, .oil-widget .oil-hint { font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+.oil-widget .oil-source { margin: 14px 0 0; }
+
+/* Chart controls: text tabs like the site navigation, the chosen one underlined in forest */
+.oil-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 24px; margin: 0 -8px 4px; }
+.oil-tabs { display: flex; flex-wrap: wrap; gap: 0 2px; }
+.oil-tabs button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; background: none; color: var(--text); font: 400 15px/1.2 var(--sans); text-underline-offset: 7px; cursor: pointer; }
+.oil-tabs button:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.oil-tabs button[aria-pressed="true"] { color: var(--forest); text-decoration: underline; text-decoration-color: var(--forest); text-decoration-thickness: 2px; }
+.oil-widget .oil-summary { margin: 0 0 10px; max-width: 40em; }
+
+/* The plot: 320px tall, 240px on phones. It takes sideways drags only, so a vertical swipe still scrolls the page. */
+.oil-plot { position: relative; height: 320px; margin: 0 0 12px; -webkit-user-select: none; user-select: none; }
+.oil-plot.is-live { touch-action: pan-y; cursor: crosshair; }
+.oil-svg { display: block; overflow: visible; }
+.oil-svg text { font-family: var(--sans); }
+.oil-grid { stroke: var(--rule); }
+.oil-axis, .oil-cross, .oil-leader { stroke: var(--muted); }
+.oil-tick { fill: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.oil-line { fill: none; stroke: var(--forest); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.oil-put { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.oil-kept { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 0.5 4; stroke-linecap: round; }
+.oil-mark { fill: var(--bg); stroke: var(--text); stroke-width: 1.5; }
+.oil-dot { fill: var(--forest); stroke: var(--bg); stroke-width: 2; }
+.oil-label { fill: var(--text); font-size: 12.5px; font-weight: 500; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+.oil-tip { position: absolute; z-index: 1; width: max-content; max-width: min(260px, 72%); padding: 8px 12px 9px; border: 1px solid var(--edge); background: var(--bg); pointer-events: none; }
+.oil-tip.is-below { width: 100%; max-width: none; }
+.oil-widget .oil-tip p { margin: 0; }
+.oil-tip-date, .oil-tip-sub { font-size: 13px; color: var(--muted); }
+.oil-tip-value { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.oil-widget .oil-tip .oil-tip-event { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--rule); font-size: 13.5px; line-height: 1.45; }
+.oil-tip-event strong { font-weight: 500; }
+
+/* The no-JavaScript line: drawn on a stretched 0 to 1000 grid, with the axis labels placed in percent */
+.oil-static { position: absolute; inset: 12px 12px 30px 46px; }
+.oil-static svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.oil-static line, .oil-static polyline { vector-effect: non-scaling-stroke; }
+.oil-static-y, .oil-static-x { position: absolute; font-size: 12.5px; line-height: 1; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.oil-static-y { right: calc(100% + 8px); transform: translateY(50%); }
+.oil-static-x { top: calc(100% + 11px); transform: translateX(-50%); }
+
+/* Show the data: a disclosure like the phone contents, holding a .data table */
+.oil-data { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.oil-data summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; font: 500 15px/1.3 var(--sans); cursor: pointer; list-style: none; }
+.oil-data summary::-webkit-details-marker { display: none; }
+.oil-data summary::after { content: "+"; font: 400 22px/1 var(--sans); color: var(--forest); }
+.oil-data[open] summary::after { content: "\2212"; }
+.oil-data .table-wrap { margin: 0 0 8px; }
+
+/* Calculator: the form in two columns, one on phones */
+.oil-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px; margin: 0 0 28px; }
+.oil-field { min-width: 0; margin: 0; padding: 0; border: 0; }
+.oil-field legend, .oil-field label[for] { display: block; margin: 0 0 6px; padding: 0; font: 500 14px/1.4 var(--sans); }
+.oil-choices { display: flex; flex-wrap: wrap; gap: 0 20px; }
+.oil-choices label { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; cursor: pointer; }
+.oil-choices input { flex: none; width: 18px; height: 18px; margin: 0; accent-color: var(--forest); cursor: pointer; }
+.oil-choices label:has(input:disabled) { color: var(--muted); cursor: not-allowed; }
+.oil-amount { position: relative; max-width: 220px; }
+.oil-symbol { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 17px; color: var(--muted); pointer-events: none; }
+.oil-amount input, .oil-field select { width: 100%; min-height: 44px; margin: 0; border: 1px solid var(--edge); border-radius: 0; background-color: var(--bg); color: var(--text); font: 400 17px/1.3 var(--sans); font-variant-numeric: tabular-nums; }
+.oil-amount input { padding: 8px 12px 8px 30px; }
+.oil-amount input[aria-invalid="true"] { border-width: 2px; border-color: var(--text); }
+.oil-field select { padding: 8px 36px 8px 12px; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23242824' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; cursor: pointer; }
+.oil-pair { display: flex; gap: 12px; max-width: 320px; }
+.oil-pair > div { flex: 1 1 0; min-width: 0; }
+.oil-pair > div:first-child { flex-grow: 1.5; }
+.oil-pair label[for] { font-weight: 400; color: var(--muted); }
+.oil-widget .oil-error { margin: 6px 0 0; font-size: 14px; font-weight: 500; }
+.oil-widget .oil-error:empty { display: none; }
+.oil-widget .oil-hint { margin: 2px 0 0; }
+
+/* Calculator results */
+.oil-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; margin: 0 0 14px; }
+.oil-figures > div { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.oil-figures dt { font-size: 14px; color: var(--muted); }
+.oil-figures dd { margin: 2px 0 0; font: 500 22px/1.3 var(--sans); font-variant-numeric: tabular-nums; }
+.oil-figures .oil-sub { display: block; font-size: 14px; font-weight: 400; color: var(--muted); }
+.oil-widget .oil-worst { margin: 0 0 22px; font-size: 16px; }
+.oil-mini-figure { margin: 0 0 24px; }
+.oil-widget .oil-key { display: flex; flex-wrap: wrap; gap: 0 20px; margin: 0 0 6px; padding: 0; list-style: none; font-size: 13.5px; }
+.oil-widget .oil-key li { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 0; }
+.oil-swatch { flex: none; width: 24px; height: 10px; overflow: visible; }
+.oil-mini { position: relative; height: 200px; }
+.oil-widget .oil-honesty { margin: 0 0 16px; padding: 14px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 14.5px; line-height: 1.6; }
+.oil-honesty strong { font-weight: 600; }
+.prose .oil-rules-title { margin: 0 0 6px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.oil-widget .oil-rules ul { margin: 0; padding-left: 1.1em; font-size: 14px; line-height: 1.55; }
+.oil-widget .oil-rules li { margin: 0 0 4px; }
+
+@media (max-width: 600px) {
+  .oil-plot { height: 240px; }
+  .oil-static { left: 38px; right: 8px; }
+  .oil-static-x.is-minor { display: none; }
+  .oil-form { grid-template-columns: minmax(0, 1fr); }
+  .oil-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+  .oil-figures dd { font-size: 20px; }
+  .oil-mini { height: 170px; }
+}
+
+/* The old-vs-new calculator (_includes/old-new-calculator.html, drawn by assets/js/old-new-calculator.js). It shares
+   the oil widgets' form, chart, readout and rules. The ranking is a list of buttons, one per asset, each with a bar
+   from €0 and a tick for the money put in. Muted bars; the asset whose chart is showing in forest, its name in bold.
+   A bar that would run far past the rest is cut short with a notch. */
+.oil-widget .onc-putin { margin: 0 0 18px; font-size: 16px; }
+.onc-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 20px; }
+.oil-widget .onc-head p { margin: 0 0 6px; font-size: 13.5px; color: var(--muted); }
+.onc-key { display: inline-flex; align-items: center; gap: 8px; }
+.onc-key-put { flex: none; width: 2px; height: 16px; background: var(--text); }
+.oil-widget .onc-list { margin: 0 0 12px; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+.oil-widget .onc-row { margin: 0; padding: 0; border-bottom: 1px solid var(--rule); }
+.onc-pick { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name value" "track track" "meta meta"; gap: 6px 16px; width: 100%; min-height: 44px; margin: 0; padding: 10px 0 11px; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.onc-name { grid-area: name; font-size: 15px; font-weight: 500; text-underline-offset: 4px; }
+.onc-pick:hover .onc-name { text-decoration: underline; text-decoration-thickness: 1px; }
+.onc-pick[aria-pressed="true"] .onc-name { font-weight: 700; color: var(--forest); }
+.onc-value { grid-area: value; font: 500 17px/1.3 var(--sans); font-variant-numeric: tabular-nums; text-align: right; }
+.onc-track { grid-area: track; position: relative; display: block; height: 12px; border-left: 1px solid var(--muted); }
+.onc-bar { position: absolute; left: 0; top: 0; display: block; height: 12px; border-radius: 0 4px 4px 0; background: var(--muted); }
+.onc-pick[aria-pressed="true"] .onc-bar { background: var(--forest); }
+.onc-bar.is-broken { border-radius: 0; }
+.onc-bar.is-broken::after { content: ""; position: absolute; right: 18px; top: -3px; bottom: -3px; width: 5px; background: var(--bg); transform: skewX(-24deg); }
+.onc-put { position: absolute; top: -4px; bottom: -4px; display: block; width: 2px; margin-left: -1px; background: var(--text); box-shadow: -1px 0 0 var(--bg), 1px 0 0 var(--bg); }
+.onc-meta { grid-area: meta; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.oil-widget .onc-figure { margin-top: 24px; }
+.onc-plot { height: 260px; }
+.onc-plot .oil-svg { position: absolute; left: 0; top: 0; }  /* so the drawing never holds the plot open when it should shrink */
+.oil-widget .onc-results .oil-note:empty { display: none; }
+/* compact=true folds the rules and sources away, under the honesty note, whose bottom line it shares */
+.oil-widget .onc-more { margin-top: -16px; border-top: 0; }
+.oil-widget .onc-more .oil-rules { padding-top: 2px; }
+.oil-widget .onc-more .oil-source { margin: 12px 0 16px; }
+/* The calculator sizes itself to its own width, not the screen's: in an article column it's one column; given the
+   full page, as on the home page, the form runs in one row, the chart sits beside the ranking, and the honesty note
+   beside the rules. */
+.onc { container-type: inline-size; }
+@container (min-width: 860px) {  /* on the home page, from about 960px */
+  /* The form in one row: every control fills its column and starts level, so the Month and Year labels are
+     left to screen readers (the choices say which is which) */
+  .onc .oil-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px 28px; }  /* the month and year need the room */
+  .onc .oil-amount, .onc .oil-pair { max-width: none; }
+  .onc .oil-pair label[for] { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* The ranking and the chart side by side, the same height: each opens with a one-line caption and a key, and
+     the chart grows to fill the height of the ranking beside it */
+  .onc-cols, .onc-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 48px; }
+  .onc-foot { align-items: start; margin-top: 12px; }
+  .onc-head { display: block; }
+  /* Each row on two lines: name, figures and value, then the bar */
+  .onc-pick { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "name meta value" "track track track"; align-items: baseline; column-gap: 20px; padding: 12px 0 13px; }
+  .onc-meta { text-align: right; }
+  .onc-side { display: flex; flex-direction: column; }
+  .oil-widget .onc-figure { display: flex; flex-direction: column; flex: 1 1 auto; margin: 0 0 12px; }
+  .onc-figure figcaption { margin-bottom: 6px; }
+  .onc-plot { flex: 1 1 auto; height: auto; min-height: 280px; margin-bottom: 0; }
+  .oil-widget .onc-side .oil-worst { margin: 0; }
+  .oil-widget .onc-foot .oil-honesty { margin: 0; }
+  .oil-widget .onc-more { margin-top: 0; border-top: 1px solid var(--rule); }
+}
+.oil-widget .onc-hint { display: none; }
+@media (max-width: 600px) {
+  .onc-plot { height: 210px; margin-bottom: 0; }
+  /* On phones the chart's readout drops below it, into this slot, so it never covers the text that follows */
+  .oil-widget .onc-hint { display: block; min-height: 88px; margin: 0; padding-top: 10px; }
+}
+
+/* The ECB chart (_includes/ecb-rates-chart.html): inflation above the ECB's two rates, one time scale, and a point
+   the same height in both panels. Drawn by Jekyll as inline SVG; assets/js/ecb-chart.js only adds the readout.
+   It shares the oil widgets' frame, key, table and source line. Forest for core inflation and the deposit rate,
+   muted for headline inflation and the main rate; the hiking episodes are shaded in the divider colour. */
+.ecb-chart { --ecb-unit: 22px; --ecb-left: 40px; }
+.ecb-plots { position: relative; }
+.ecb-plots.is-live { touch-action: pan-y; cursor: crosshair; -webkit-user-select: none; user-select: none; }
+.ecb-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 20px; margin: 0 0 6px; }
+.oil-widget .ecb-panel { margin: 0; font-size: 14px; font-weight: 500; }
+.oil-widget .ecb-head .oil-key { margin: 0; }
+.ecb-head-rates { margin-top: 24px; }
+.ecb-episodes { position: relative; height: 14px; margin: 6px 0 4px var(--ecb-left); }
+.ecb-episodes span, .ecb-y, .ecb-x span { position: absolute; font-size: 12.5px; line-height: 1; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ecb-episodes span { bottom: 0; transform: translateX(-50%); }
+.ecb-episodes .is-last { right: 0; left: auto !important; transform: none; }
+.ecb-plot { position: relative; height: calc(var(--span) * var(--ecb-unit)); margin-left: var(--ecb-left); }
+.ecb-plot svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; }
+.ecb-plot line, .ecb-plot polyline, .ecb-plot path { vector-effect: non-scaling-stroke; }
+.ecb-band { fill: var(--rule); fill-opacity: 0.6; }
+.ecb-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ecb-line.is-strong { stroke: var(--forest); }
+.ecb-line.is-soft { stroke: var(--muted); }
+.ecb-y { right: calc(100% + 8px); transform: translateY(50%); }
+.ecb-x { position: relative; height: 26px; margin-left: var(--ecb-left); }
+.ecb-x span { top: 10px; transform: translateX(-50%); }
+.ecb-cross { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--muted); pointer-events: none; }
+.ecb-dot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px solid var(--bg); border-radius: 50%; pointer-events: none; }
+.ecb-dot.is-strong { background: var(--forest); }
+.ecb-dot.is-soft { background: var(--muted); }
+.ecb-cross[hidden], .ecb-dot[hidden] { display: none; }
+.oil-widget .ecb-tip .ecb-tip-row { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.6; }
+.ecb-tip-value { min-width: 3.4em; font-weight: 500; font-variant-numeric: tabular-nums; }
+.ecb-table th[scope="row"] { white-space: nowrap; }
+.ecb-table thead .num, .mv-table thead .num { white-space: normal; }
+@media (max-width: 600px) {
+  .ecb-chart { --ecb-unit: 16px; --ecb-left: 34px; }
+  .ecb-table { font-size: 13px; }
+  .ecb-table th, .ecb-table td { padding-right: 6px; }
+  .ecb-x .is-minor { display: none; }
+  /* Too close to the band before it on a phone, so the open episode's label drops just inside the plot */
+  .ecb-episodes .is-last { bottom: auto; top: calc(100% + 5px); }
+}
+
+/* The variable-rate mortgage chart (_includes/variable-mortgages-chart.html): plain HTML and CSS bars, one per country,
+   most variable first, each growing from one baseline with its value at the tip. Muted bars; the countries the
+   article contrasts in forest with their names in bold; the euro area beneath a divider. */
+.oil-widget .mv-list { margin: 4px 0 0; padding: 0; list-style: none; }
+.oil-widget .mv-row { display: grid; grid-template-columns: 7.4em minmax(0, 1fr); align-items: center; column-gap: 12px; margin: 0; padding: 0; }
+.mv-name { font-size: 14px; line-height: 1.3; }
+.mv-track { display: flex; align-items: center; min-width: 0; min-height: 26px; border-left: 1px solid var(--muted); }
+.mv-bar { flex: none; width: calc((100% - 3.2em) * var(--v) / 100); height: 12px; border-radius: 0 4px 4px 0; background: var(--muted); }
+.mv-value { margin-left: 6px; font-size: 13.5px; line-height: 1; font-variant-numeric: tabular-nums; }
+.mv-row.is-marked .mv-bar { background: var(--forest); }
+.mv-row.is-marked .mv-name, .mv-row.is-marked .mv-value { font-weight: 600; }
+.oil-widget .mv-total { margin: 6px 0 14px; padding-top: 6px; border-top: 1px solid var(--rule); }
+@media (max-width: 600px) {
+  .oil-widget .mv-row { grid-template-columns: 6.6em minmax(0, 1fr); column-gap: 8px; }
 }
 
 .article-end { margin: 56px 0 0; padding-top: 28px; max-width: var(--read); border-top: 1px solid var(--rule); }

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Oil calculator maths test</title>
+<!--
+Checks the calculator's maths in assets/js/oil-widgets.js against three cases worked out by hand from the raw
+EIA, ECB and FRED downloads. Open this file in a browser (double-click it; no server needed). The page says
+"All checks passed" or lists what failed. It reads oil-fixture.js, a frozen copy of the data, so the answers never move.
+Jekyll doesn't publish this folder (see exclude in _config.yml).
+-->
+<style>
+  body { max-width: 860px; margin: 32px auto; padding: 0 16px; background: #FAF9F6; color: #242824; font: 15px/1.55 'Helvetica Neue', Arial, sans-serif; }
+  h1 { font-weight: 400; } h2 { margin-top: 36px; font-weight: 500; font-size: 19px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 10px 6px 0; border-bottom: 1px solid #DEDFD7; text-align: left; vertical-align: top; }
+  th { font-weight: 500; color: #626960; font-size: 13px; }
+  .pass { color: #173C32; font-weight: 600; } .fail { color: #6B2938; font-weight: 600; }
+  pre { margin: 8px 0; padding: 12px; overflow-x: auto; border: 1px solid #DEDFD7; font-size: 13px; line-height: 1.5; }
+  #result { font-size: 18px; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Oil calculator maths test</h1>
+<p id="result">Running…</p>
+<p>Data: EIA Europe Brent spot price (release of 28 October 2026, latest price $123.10 on 27 October 2026), ECB euro reference rates (1.1150 on 27 October 2026), FRED CPIAUCSL (latest September 2026, 336.298; October 2025 never published, filled as the geometric midpoint of September and November 2025, 324.654).</p>
+
+<h2>Case 1: $1,000 lump sum, January 2000, US dollars</h2>
+<pre>First EIA price in January 2000: 4 January 2000, $23.95
+Barrels  = 1,000 / 23.95                 = 41.753653
+Value    = 41.753653 × 123.10            = $5,139.8747
+Gain     = 5,139.8747 − 1,000            = $4,139.8747  (+413.99%)
+Days     = 4 Jan 2000 to 27 Oct 2026     = 9,793
+CAGR     = 5.1398747 ^ (365 / 9,793) − 1 = 6.2914%
+Worst    = lowest first-trading-day price from January 2000 on: $14.97 on 1 April 2020
+           41.753653 × 14.97 = $625.0522, which is 37.49% below $1,000
+
+Adjusted for inflation (CPI January 2000 = 169.300, September 2026 = 336.298):
+Put in, today's dollars = 1,000 × 336.298 / 169.300 = $1,986.4028
+Gain after inflation    = 5,139.8747 − 1,986.4028   = $3,153.4719  (+158.75%)
+Real CAGR               = (5,139.8747 / 1,986.4028) ^ (365 / 9,793) − 1 = 3.6069%
+Worst: 1 April 2020, $625.0522 against what $1,000 needed to keep up with inflation by then:
+       1,000 × 256.032 (CPI April 2020) / 169.300 = $1,512.2977, so 58.67% below</pre>
+<table id="case1"></table>
+
+<h2>Case 2: $100 a month from October 2025, US dollars</h2>
+<pre>Month     Bought on     Price     Barrels (100 / price)   Running total
+Oct 2025  1 Oct 2025    $66.67    1.499925                 1.499925
+Nov 2025  3 Nov 2025    $65.79    1.519988                 3.019913
+Dec 2025  1 Dec 2025    $64.22    1.557147                 4.577060
+Jan 2026  2 Jan 2026    $61.98    1.613424                 6.190484
+Feb 2026  2 Feb 2026    $67.72    1.476669                 7.667152
+Mar 2026  2 Mar 2026    $77.24    1.294666                 8.961818
+Apr 2026  1 Apr 2026    $119.56   0.836400                 9.798219
+May 2026  1 May 2026    $118.26   0.845594                10.643813
+Jun 2026  1 Jun 2026    $98.29    1.017397                11.661211
+Jul 2026  1 Jul 2026    $69.24    1.444252                13.105462
+Aug 2026  3 Aug 2026    $88.90    1.124859                14.230322
+Sep 2026  1 Sep 2026    $96.02    1.041450                15.271771
+Oct 2026  1 Oct 2026    $114.82   0.870928                16.142700
+Put in   = 13 × $100                     = $1,300
+Value    = 16.142700 × 123.10            = $1,987.1664
+Gain     = $687.1664 (+52.86%)
+XIRR     = the r where Σ −100 / (1 + r)^(days from 1 Oct 2025 / 365) + 1,987.1664 / (1 + r)^(391 / 365) = 0
+         = 101.9743% a year (the sum is 0.0000 at that rate; it's high because most payments went in under a year ago)
+Worst    = 1 July 2026: 13.105462 × 69.24 = $907.4222 against $1,000 put in, 9.26% below</pre>
+<table id="case2"></table>
+
+<h2>Case 3: €1,000 lump sum, May 2008, euros</h2>
+<pre>First EIA price in May 2008: 1 May 2008, $107.30. The ECB published no rate that day (Labour Day),
+so the purchase uses its last rate before: 30 April 2008, 1.5540 dollars per euro.
+Dollars  = 1,000 × 1.5540                = $1,554.00
+Barrels  = 1,554.00 / 107.30             = 14.482759
+Value    = 14.482759 × 123.10 / 1.1150   = €1,598.9485
+Gain     = €598.9485 (+59.89%)
+Days     = 1 May 2008 to 27 Oct 2026     = 6,753
+CAGR     = 1.5989485 ^ (365 / 6,753) − 1 = 2.5693%
+Worst    = 1 April 2020: 14.482759 × 14.97 / 1.0936 = €198.2506, 80.17% below €1,000</pre>
+<table id="case3"></table>
+
+<h2>Formatting</h2>
+<table id="format"></table>
+
+<script src="../assets/js/oil-widgets.js"></script>
+<script src="oil-fixture.js"></script>
+<script>
+(function () {
+  var W = window.OilWidgets, d = W.prepare(window.OIL_FIXTURE), failures = 0, total = 0;
+
+  function row(table, name, expected, actual, ok) {
+    total++;
+    if (!ok) failures++;
+    var tr = document.createElement('tr');
+    [name, String(expected), String(actual), ok ? 'pass' : 'FAIL'].forEach(function (text, i) {
+      var td = document.createElement('td');
+      td.textContent = text;
+      if (i === 3) td.className = ok ? 'pass' : 'fail';
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  }
+  function near(table, name, expected, actual, tolerance) {
+    row(table, name, expected, actual, typeof actual === 'number' && Math.abs(actual - expected) <= tolerance);
+  }
+  function same(table, name, expected, actual) { row(table, name, expected, actual, expected === actual); }
+  function head(id) {
+    var t = document.getElementById(id);
+    t.innerHTML = '<tr><th>Check</th><th>By hand</th><th>Calculator</th><th></th></tr>';
+    return t;
+  }
+
+  var t = head('case1');
+  var r = W.calculate(d, { mode: 'lump', amount: 1000, start: '2000-01', currency: 'USD', real: false });
+  same(t, 'Bought on', '2000-01-04', r.buys[0].date);
+  near(t, 'Barrels', 41.753653, r.barrels, 0.000001);
+  near(t, 'Value', 5139.8747, r.value, 0.0001);
+  near(t, 'Gain', 4139.8747, r.gain, 0.0001);
+  near(t, 'Gain %', 4.1398747, r.gainPct, 0.0000001);
+  near(t, 'Days', 9793, r.days, 0);
+  near(t, 'CAGR', 0.062914, r.annual, 0.000001);
+  same(t, 'Worst moment', '2020-04-01', r.worst.date);
+  near(t, 'Worst value', 625.0522, r.worst.value, 0.0001);
+  near(t, 'Worst gap', -0.374948, r.worst.gap, 0.000001);
+  r = W.calculate(d, { mode: 'lump', amount: 1000, start: '2000-01', currency: 'USD', real: true });
+  near(t, 'Inflation: put in, today’s dollars', 1986.4028, r.putInReal, 0.0001);
+  near(t, 'Inflation: gain', 3153.4719, r.gain, 0.0001);
+  near(t, 'Inflation: gain %', 1.587529, r.gainPct, 0.000001);
+  near(t, 'Inflation: real CAGR', 0.036069, r.annual, 0.000001);
+  same(t, 'Inflation: worst moment', '2020-04-01', r.worst.date);
+  near(t, 'Inflation: worst needed to keep up', 1512.2977, r.worst.against, 0.0001);
+  near(t, 'Inflation: worst gap', -0.586687, r.worst.gap, 0.000001);
+
+  t = head('case2');
+  r = W.calculate(d, { mode: 'monthly', amount: 100, start: '2025-10', currency: 'USD', real: false });
+  same(t, 'Purchases', 13, r.buys.length);
+  same(t, 'First purchase', '2025-10-01', r.buys[0].date);
+  same(t, 'Last purchase', '2026-10-01', r.buys[12].date);
+  near(t, 'Put in', 1300, r.putIn, 0);
+  near(t, 'Barrels', 16.142700, r.barrels, 0.000001);
+  near(t, 'Value', 1987.1664, r.value, 0.0001);
+  near(t, 'Gain', 687.1664, r.gain, 0.0001);
+  near(t, 'Gain %', 0.528590, r.gainPct, 0.000001);
+  near(t, 'XIRR', 1.019743, r.annual, 0.000001);
+  same(t, 'Worst moment', '2026-07-01', r.worst.date);
+  near(t, 'Worst value', 907.4222, r.worst.value, 0.0001);
+  near(t, 'Worst gap', -0.092578, r.worst.gap, 0.000001);
+  // XIRR on its own: one payment of 100 that doubles in exactly 365 days is 100% a year
+  near(t, 'XIRR of a doubling in 365 days', 1, W.xirr([['2025-01-01', -100], ['2026-01-01', 200]]), 0.0000001);
+
+  t = head('case3');
+  r = W.calculate(d, { mode: 'lump', amount: 1000, start: '2008-05', currency: 'EUR', real: false });
+  same(t, 'Bought on', '2008-05-01', r.buys[0].date);
+  near(t, 'Barrels (rate of 30 April 2008)', 14.482759, r.barrels, 0.000001);
+  near(t, 'Value', 1598.9485, r.value, 0.0001);
+  near(t, 'Gain %', 0.598949, r.gainPct, 0.000001);
+  near(t, 'Days', 6753, r.days, 0);
+  near(t, 'CAGR', 0.025693, r.annual, 0.000001);
+  same(t, 'Worst moment', '2020-04-01', r.worst.date);
+  near(t, 'Worst value', 198.2506, r.worst.value, 0.0001);
+  near(t, 'Worst gap', -0.801749, r.worst.gap, 0.000001);
+
+  t = head('format');
+  same(t, 'Dollars', '$5,140', W.money(5139.8747, 'USD'));
+  same(t, 'Euros', '€1,599', W.money(1598.9485, 'EUR'));
+  same(t, 'Gain with sign', '+$4,140', W.money(4139.8747, 'USD', 0, true));
+  same(t, 'Loss with sign', '−$375', W.money(-374.9478, 'USD', 0, true));
+  same(t, 'Percent with sign', '+414%', W.pct(4.1398747, 0, true));
+  same(t, 'Yearly return', '6.3%', W.pct(0.062914, 1));
+
+  var result = document.getElementById('result');
+  result.textContent = failures ? failures + ' of ' + total + ' checks FAILED' : 'All ' + total + ' checks passed';
+  result.className = failures ? 'fail' : 'pass';
+})();
+</script>
+</body>
+</html>

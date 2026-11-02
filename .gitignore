@@ -15,3 +15,6 @@ Gemfile.lock
 # Sample guides for the local preview (shown only with _config.preview.yml)
 _drafts/
 assets/img/samples/
+
+# Python bytecode from the data scripts
+__pycache__/

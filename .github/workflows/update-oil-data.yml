@@ -1,0 +1,73 @@
+# Updates the data behind the charts once a month: runs scripts/update-oil-data.py (the oil widgets),
+# scripts/update-ecb-data.py (the ECB rates chart) and scripts/update-old-new-data.py (the old-vs-new calculator),
+# and commits their files, but only when the data changed.
+# If a download fails or looks wrong, that script stops with an error and leaves its files as they were: the other
+# script's update is still committed, the old data stays on the site, and this run shows as failed (GitHub emails you
+# about failed runs).
+name: Update oil data
+
+on:
+  schedule:
+    - cron: '30 6 18 * *'   # 06:30 UTC on the 18th, after the month's US CPI, euro area HICP and EIA's weekly Brent update
+  workflow_dispatch:         # to run it by hand: Actions → Update oil data → Run workflow
+
+permissions:
+  contents: write   # to push the data commit
+  pages: write      # to ask GitHub Pages to rebuild: a push made with GITHUB_TOKEN doesn't start a Pages build
+
+concurrency:
+  group: update-oil-data
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download the oil data and rebuild its files
+        run: python3 scripts/update-oil-data.py
+
+      - name: Download the ECB data and rebuild its file
+        if: ${{ !cancelled() }}   # runs even if the oil data failed
+        run: python3 scripts/update-ecb-data.py
+
+      - name: Download the old-vs-new data and rebuild its files
+        if: ${{ !cancelled() }}   # runs even if the others failed
+        run: python3 scripts/update-old-new-data.py
+
+      - name: Commit if the data changed
+        id: commit
+        if: ${{ !cancelled() }}
+        run: |
+          oil_files="assets/data/oil.json _data/brent_annual.json"
+          ecb_files="_data/ecb_rates_inflation.json"
+          old_new_files="assets/data/old-new.json _data/old_new.json"
+          parts=()
+          if ! git diff --quiet -- $oil_files; then
+            parts+=("Brent to $(python3 -c 'import json; print(json.load(open("assets/data/oil.json"))["brent_to"])')")
+          fi
+          if ! git diff --quiet -- $ecb_files; then
+            parts+=("euro area inflation to $(python3 -c 'import json; print(json.load(open("_data/ecb_rates_inflation.json"))["hicp_to"])')")
+          fi
+          if ! git diff --quiet -- $old_new_files; then
+            parts+=("old-vs-new calculator to $(python3 -c 'import json; print(json.load(open("assets/data/old-new.json"))["to"])')")
+          fi
+          if [ ${#parts[@]} -eq 0 ]; then
+            echo "No change in the data, so nothing to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $oil_files $ecb_files $old_new_files
+          message=$(printf '%s, ' "${parts[@]}")
+          git commit -m "Update chart data: ${message%, }"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Ask GitHub Pages to rebuild the site
+        if: ${{ !cancelled() && steps.commit.outputs.changed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"

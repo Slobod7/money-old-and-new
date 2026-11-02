@@ -74,3 +74,5 @@ exclude:
   - Gemfile.lock
   - vendor
   - .bundle
+  - scripts   # the oil data script (run by .github/workflows/update-oil-data.yml)
+  - tests     # the oil calculator's maths test, opened straight from the folder

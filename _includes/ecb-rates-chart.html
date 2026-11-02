@@ -1,0 +1,108 @@
+{%- comment -%}
+The ECB chart: euro area inflation (headline and core) above the ECB's two policy rates, monthly since January 2007,
+with each time the ECB raised rates into an energy shock shaded from its first hike to its first cut.
+  {% include ecb-rates-chart.html id="ecb-rates" %}
+Optional: title (a heading above the chart). Give each chart on a page its own id.
+Jekyll draws it from _data/ecb_rates_inflation.json as inline SVG, so it reads the same without JavaScript, and the table
+beneath has every month. assets/js/ecb-chart.js, added once per page below, adds a readout on hover, tap and the arrow keys.
+The two panels give a percentage point the same height, so a rate and inflation can be compared across them.
+{%- endcomment -%}
+{%- assign ec = include.id | default: "ecb-rates" -%}
+{%- assign ed = site.data.ecb_rates_inflation -%}
+{%- assign en = ed.months -%}
+{%- assign e_first = ed.rows | first -%}
+{%- assign e_last = ed.rows | last -%}
+{%- assign e_open = ed.episodes | last -%}
+{%- assign e_words = "no,one,two,three,four,five,six,seven,eight,nine" | split: "," -%}
+{%- assign ilo = ed.scales.inflation[0] -%}{%- assign ihi = ed.scales.inflation[1] -%}{%- assign ispan = ihi | minus: ilo -%}
+{%- assign rlo = ed.scales.rates[0] -%}{%- assign rhi = ed.scales.rates[1] -%}{%- assign rspan = rhi | minus: rlo -%}
+{%- assign e_y0 = ed.first_month | slice: 0, 4 | plus: 0 -%}{%- assign e_y1 = ed.hicp_to | slice: 0, 4 | plus: 0 -%}
+{%- capture e_from %}{{ e_first[0] | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- capture e_to %}{{ e_last[0] | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- capture e_desc -%}
+Two charts on one time scale, from {{ e_from }} to {{ e_to }}. The upper one shows euro area inflation, headline and core; the lower one shows the ECB’s main refinancing rate and deposit rate. Shaded: the {{ e_words[ed.episodes.size] }} times the ECB raised rates into an energy shock, from the decision on the first hike to the first cut: {% for e in ed.episodes %}{% if forloop.last and forloop.length > 1 %}and {% endif %}{{ e[0] | date: "%-d %B %Y" }} {% if e[1] %}to {{ e[1] | date: "%-d %B %Y" }}{% else %}until now{% endif %}{% if forloop.last %}.{% else %}, {% endif %}{% endfor %} Headline inflation peaked at {{ ed.headline_peak[1] }}% in {{ ed.headline_peak[0] | append: "-01" | date: "%B %Y" }} and core inflation at {{ ed.core_peak[1] }}% in {{ ed.core_peak[0] | append: "-01" | date: "%B %Y" }}. In {{ e_to }}, headline inflation was {{ e_last[1] | replace: "-", "−" }}% and core {{ e_last[2] | replace: "-", "−" }}%; the main rate was {{ e_last[3] | replace: "-", "−" }}% and the deposit rate {{ e_last[4] | replace: "-", "−" }}%. Every month is in the table below.
+{%- endcapture -%}
+<figure class="oil-widget ecb-chart" id="{{ ec }}" data-ecb-chart data-months="{{ en }}" data-scales="{{ ilo }} {{ ihi }} {{ rlo }} {{ rhi }}" data-episodes="{% for e in ed.episodes %}{{ e[2] }} {{ e[3] }} {{ e[4] }}{% unless forloop.last %};{% endunless %}{% endfor %}">
+{%- if include.title %}
+<h3 class="oil-title">{{ include.title }}</h3>
+{%- endif %}
+<p class="oil-summary">Shaded: the {{ e_words[ed.episodes.size] }} times the ECB raised rates into an energy shock, from its first hike to its first cut.{% unless e_open[1] %} The last is still open.{% endunless %}</p>
+<p hidden id="{{ ec }}-desc">{{ e_desc }}</p>
+<div class="ecb-plots" data-plots role="img" aria-label="{{ e_desc | escape }}">
+<div class="ecb-head">
+<p class="ecb-panel">Inflation, % a year</p>
+<ul class="oil-key">
+<li><svg class="oil-swatch" viewBox="0 0 24 10" aria-hidden="true"><line class="ecb-line is-soft" x1="1" x2="23" y1="5" y2="5"/></svg>Headline</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10" aria-hidden="true"><line class="ecb-line is-strong" x1="1" x2="23" y1="5" y2="5"/></svg>Core</li>
+</ul>
+</div>
+<div class="ecb-episodes">
+{%- for e in ed.episodes %}
+<span{% if forloop.last %} class="is-last"{% endif %} style="left: {{ e[2] | plus: e[3] | times: 50.0 | divided_by: en | round: 2 }}%">{{ e[4] }}</span>
+{%- endfor %}
+</div>
+<div class="ecb-plot" data-panel="inflation" style="--span: {{ ispan }}">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+{%- for e in ed.episodes %}
+<rect class="ecb-band" x="{{ e[2] | times: 1000.0 | divided_by: en | round: 2 }}" y="0" width="{{ e[3] | minus: e[2] | times: 1000.0 | divided_by: en | round: 2 }}" height="1000"/>
+{%- endfor %}
+{%- for t in (ilo..ihi) %}{% assign m2 = t | modulo: 2 %}{% if m2 == 0 %}
+<line class="{% if t == 0 %}oil-axis{% else %}oil-grid{% endif %}" x1="0" x2="1000" y1="{{ ihi | minus: t | times: 1000.0 | divided_by: ispan | round: 1 }}" y2="{{ ihi | minus: t | times: 1000.0 | divided_by: ispan | round: 1 }}"/>
+{%- endif %}{% endfor %}
+<polyline class="ecb-line is-soft" points="{% for row in ed.rows %}{% assign v = row[1] | plus: 0 %}{{ forloop.index0 | plus: 0.5 | times: 1000.0 | divided_by: en | round: 1 }},{{ ihi | minus: v | times: 1000.0 | divided_by: ispan | round: 1 }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"/>
+<polyline class="ecb-line is-strong" points="{% for row in ed.rows %}{% assign v = row[2] | plus: 0 %}{{ forloop.index0 | plus: 0.5 | times: 1000.0 | divided_by: en | round: 1 }},{{ ihi | minus: v | times: 1000.0 | divided_by: ispan | round: 1 }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"/>
+</svg>
+{%- for t in (ilo..ihi) %}{% assign m2 = t | modulo: 2 %}{% if m2 == 0 %}
+<span class="ecb-y" style="bottom: {{ t | minus: ilo | times: 100.0 | divided_by: ispan | round: 2 }}%">{{ t | replace: "-", "−" }}%</span>
+{%- endif %}{% endfor %}
+</div>
+<div class="ecb-head ecb-head-rates">
+<p class="ecb-panel">ECB interest rates, %</p>
+<ul class="oil-key">
+<li><svg class="oil-swatch" viewBox="0 0 24 10" aria-hidden="true"><line class="ecb-line is-soft" x1="1" x2="23" y1="5" y2="5"/></svg>Main rate</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10" aria-hidden="true"><line class="ecb-line is-strong" x1="1" x2="23" y1="5" y2="5"/></svg>Deposit rate</li>
+</ul>
+</div>
+<div class="ecb-plot" data-panel="rates" style="--span: {{ rspan }}">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+{%- for e in ed.episodes %}
+<rect class="ecb-band" x="{{ e[2] | times: 1000.0 | divided_by: en | round: 2 }}" y="0" width="{{ e[3] | minus: e[2] | times: 1000.0 | divided_by: en | round: 2 }}" height="1000"/>
+{%- endfor %}
+{%- for t in (rlo..rhi) %}{% assign m2 = t | modulo: 2 %}{% if m2 == 0 %}
+<line class="{% if t == 0 %}oil-axis{% else %}oil-grid{% endif %}" x1="0" x2="1000" y1="{{ rhi | minus: t | times: 1000.0 | divided_by: rspan | round: 1 }}" y2="{{ rhi | minus: t | times: 1000.0 | divided_by: rspan | round: 1 }}"/>
+{%- endif %}{% endfor %}
+{%- comment -%} Step lines: each rate holds until the day a change takes effect {%- endcomment -%}
+{%- assign s0 = ed.steps | first %}
+<path class="ecb-line is-soft" d="M0,{{ rhi | minus: s0[2] | times: 1000.0 | divided_by: rspan | round: 1 }}{% for s in ed.steps offset: 1 %} H{{ s[1] | times: 1000.0 | divided_by: en | round: 1 }} V{{ rhi | minus: s[2] | times: 1000.0 | divided_by: rspan | round: 1 }}{% endfor %} H1000"/>
+<path class="ecb-line is-strong" d="M0,{{ rhi | minus: s0[3] | times: 1000.0 | divided_by: rspan | round: 1 }}{% for s in ed.steps offset: 1 %} H{{ s[1] | times: 1000.0 | divided_by: en | round: 1 }} V{{ rhi | minus: s[3] | times: 1000.0 | divided_by: rspan | round: 1 }}{% endfor %} H1000"/>
+</svg>
+{%- for t in (rlo..rhi) %}{% assign m2 = t | modulo: 2 %}{% if m2 == 0 %}
+<span class="ecb-y" style="bottom: {{ t | minus: rlo | times: 100.0 | divided_by: rspan | round: 2 }}%">{{ t | replace: "-", "−" }}%</span>
+{%- endif %}{% endfor %}
+</div>
+<div class="ecb-x">
+{%- for y in (e_y0..e_y1) %}{% assign k = y | minus: 2008 %}{% assign m2 = k | modulo: 2 %}{% assign m4 = k | modulo: 4 %}{% if y > e_y0 and m2 == 0 %}
+<span{% if m4 != 0 %} class="is-minor"{% endif %} style="left: {{ y | minus: e_y0 | times: 1200.0 | divided_by: en | round: 2 }}%">{{ y }}</span>
+{%- endif %}{% endfor %}
+</div>
+</div>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Euro area inflation and ECB rates by month" tabindex="0">
+<table class="data ecb-table">
+<thead><tr><th scope="col">Month</th><th scope="col" class="num">Headline inflation</th><th scope="col" class="num">Core inflation</th><th scope="col" class="num">Main rate</th><th scope="col" class="num">Deposit rate</th></tr></thead>
+<tbody>
+{%- for row in ed.rows reversed %}
+<tr data-month="{{ row[0] }}"><th scope="row">{{ row[0] | append: "-01" | date: "%b %Y" }}</th><td class="num">{{ row[1] | replace: "-", "−" }}%</td><td class="num">{{ row[2] | replace: "-", "−" }}%</td><td class="num">{{ row[3] | replace: "-", "−" }}%</td><td class="num">{{ row[4] | replace: "-", "−" }}%</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<p class="oil-note">Inflation is the rise in consumer prices (HICP) over the year to each month. Core inflation leaves out energy, food, alcohol and tobacco. Rates are those in force at the end of each month: a change takes effect a few days after the decision. The main rate was the minimum bid rate of the ECB’s weekly tenders until 14 October 2008, and has been a fixed rate since. The shading runs from the day of each decision.</p>
+</details>
+<figcaption class="oil-source">Source: Eurostat, euro area HICP, via the ECB Data Portal; European Central Bank, key interest rates. Inflation to {{ e_to }}. Updated {{ ed.updated | date: "%-d %B %Y" }}.</figcaption>
+</figure>
+{%- unless ecb_chart_script %}
+{%- assign ecb_chart_script = true %}
+<script src="{{ '/assets/js/ecb-chart.js' | relative_url }}" defer></script>
+{%- endunless %}

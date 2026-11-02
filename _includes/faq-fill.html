@@ -1,0 +1,12 @@
+{%- comment -%}
+Fills in the figures an FAQ answer quotes from the old-vs-new calculator: each [name] in the text becomes faq.name from
+_data/old_new.json, which scripts/update-old-new-data.py works out with the calculator's data, so the answers move
+with it. The page and its FAQPage markup (schema.html) both use this, so they always say the same.
+  {% capture answer %}{% include faq-fill.html text=item.answer %}{% endcapture %}
+{%- endcomment -%}
+{%- assign fill = include.text -%}
+{%- for pair in site.data.old_new.faq -%}
+{%- assign token = "[" | append: pair[0] | append: "]" -%}
+{%- assign fill = fill | replace: token, pair[1] -%}
+{%- endfor -%}
+{{- fill -}}

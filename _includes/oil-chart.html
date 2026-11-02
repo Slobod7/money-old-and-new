@@ -1,0 +1,75 @@
+{%- comment -%}
+The Brent chart: the Europe Brent spot price over time, with ranges, today's dollars, a tooltip and keyboard reading.
+  {% include oil-chart.html id="brent-since-1990" %}
+Optional: title (a heading above the chart), range (1y, 5y, 10y, 20y or all, the default).
+More than one per page is fine: give each its own id.
+Without JavaScript it shows annual averages from _data/brent_annual.json as a plain line, and the table beneath.
+assets/js/oil-widgets.js, added once per page below, turns it into the interactive chart using assets/data/oil.json.
+{%- endcomment -%}
+{%- assign oc = include.id | default: "oil-chart" -%}
+{%- assign ba = site.data.brent_annual -%}
+{%- assign oc_first = ba.rows | first -%}
+{%- assign oc_last = ba.rows | last -%}
+{%- assign oc_to = ba.brent_to | date: "%-d %B %Y" -%}
+<figure class="oil-widget oil-chart" id="{{ oc }}" data-oil-chart data-range="{{ include.range | default: 'all' }}" data-src="{{ '/assets/data/oil.json' | relative_url }}">
+{%- if include.title %}
+<h3 class="oil-title">{{ include.title }}</h3>
+{%- endif %}
+<div class="oil-controls" data-controls hidden>
+<div class="oil-tabs" role="group" aria-label="Time range">
+<button type="button" data-range="1y" aria-pressed="false">1Y<span class="visually-hidden">, 1 year</span></button>
+<button type="button" data-range="5y" aria-pressed="false">5Y<span class="visually-hidden">, 5 years</span></button>
+<button type="button" data-range="10y" aria-pressed="false">10Y<span class="visually-hidden">, 10 years</span></button>
+<button type="button" data-range="20y" aria-pressed="false">20Y<span class="visually-hidden">, 20 years</span></button>
+<button type="button" data-range="all" aria-pressed="true">Since 1990</button>
+</div>
+<div class="oil-tabs" role="group" aria-label="Prices">
+<button type="button" data-real="false" aria-pressed="true">Price at the time</button>
+<button type="button" data-real="true" aria-pressed="false">In today’s dollars</button>
+</div>
+</div>
+<p class="oil-summary" data-summary aria-live="polite">{% if include.range and include.range != "all" %}Without JavaScript, this chart shows yearly averages since {{ oc_first[0] }}. {% endif %}Brent averaged ${{ oc_first[1] }} a barrel in {{ oc_first[0] }} and ${{ oc_last[1] }} in {{ oc_last[0] }}{% if oc_last[0] == ba.partial_year %} so far{% endif %}.</p>
+<div class="oil-plot" data-plot>
+{%- comment -%} The no-JavaScript line: annual averages on a 0 to 1000 grid, stretched to fit, with the axis labels placed in percent. {%- endcomment -%}
+{%- assign oc_top = 0 -%}
+{%- for row in ba.rows -%}{%- assign v = row[1] | remove: "," | plus: 0 -%}{%- if v > oc_top %}{% assign oc_top = v %}{% endif -%}{%- endfor -%}
+{%- assign oc_step = 20 -%}{%- if oc_top > 100 %}{% assign oc_step = 40 %}{% endif -%}{%- if oc_top > 200 %}{% assign oc_step = 80 %}{% endif -%}
+{%- assign oc_top = oc_top | divided_by: oc_step | ceil | times: oc_step -%}
+{%- assign oc_ticks = oc_top | divided_by: oc_step -%}
+{%- assign oc_n = ba.rows.size | minus: 1 %}
+<div class="oil-static" role="img" aria-label="Line chart of Brent’s yearly average price from {{ oc_first[0] }} to {{ oc_last[0] }}, in US dollars a barrel. The figures are in the table below.">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+{%- for t in (0..oc_ticks) %}{% assign y = t | times: oc_step | times: 1000.0 | divided_by: oc_top | minus: 1000 | times: -1 | round: 1 %}
+<line class="{% if t == 0 %}oil-axis{% else %}oil-grid{% endif %}" x1="0" x2="1000" y1="{{ y }}" y2="{{ y }}"/>
+{%- endfor %}
+<polyline class="oil-line" points="{% for row in ba.rows %}{% assign v = row[1] | remove: ',' | plus: 0 %}{{ forloop.index0 | times: 1000.0 | divided_by: oc_n | round: 1 }},{{ v | times: 1000.0 | divided_by: oc_top | minus: 1000 | times: -1 | round: 1 }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"/>
+</svg>
+{%- for t in (0..oc_ticks) %}
+<span class="oil-static-y" style="bottom: {{ t | times: oc_step | times: 100.0 | divided_by: oc_top | round: 2 }}%">${{ t | times: oc_step }}</span>
+{%- endfor %}
+{%- for row in ba.rows %}{% assign m5 = row[0] | modulo: 5 %}{% if m5 == 0 %}{% assign m10 = row[0] | modulo: 10 %}
+<span class="oil-static-x{% if m10 != 0 %} is-minor{% endif %}" style="left: {{ forloop.index0 | times: 100.0 | divided_by: oc_n | round: 2 }}%">{{ row[0] }}</span>
+{%- endif %}{% endfor %}
+</div>
+</div>
+<p class="visually-hidden" id="{{ oc }}-events" data-events></p>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Brent yearly averages" tabindex="0">
+<table class="data">
+<thead><tr><th scope="col">Year</th><th scope="col" class="num">Average price</th><th scope="col" class="num">In today’s dollars</th></tr></thead>
+<tbody>
+{%- for row in ba.rows %}
+<tr><th scope="row">{{ row[0] }}{% if row[0] == ba.partial_year %} so far{% endif %}</th><td class="num">${{ row[1] }}</td><td class="num">${{ row[2] }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<p class="oil-note">US dollars a barrel: the average of EIA’s daily Europe Brent spot prices each year{% if ba.partial_year %}, with {{ ba.partial_year }} up to {{ oc_to }}{% endif %}. In today’s dollars, each year’s average is scaled up by US consumer prices (CPI) to {{ ba.cpi_to | append: "-01" | date: "%B %Y" }}.{% for m in ba.cpi_filled %} CPI for {{ m | append: "-01" | date: "%B %Y" }} was never published, so it’s taken as halfway between the months either side.{% endfor %}</p>
+</details>
+<figcaption class="oil-source">Source: U.S. Energy Information Administration, Europe Brent spot price FOB. Today’s dollars: U.S. Bureau of Labor Statistics consumer prices (CPI), via FRED. Prices to {{ oc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.</figcaption>
+</figure>
+{%- unless oil_widgets_script %}
+{%- assign oil_widgets_script = true %}
+<script src="{{ '/assets/js/oil-widgets.js' | relative_url }}" defer></script>
+{%- endunless %}

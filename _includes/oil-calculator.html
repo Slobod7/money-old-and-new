@@ -1,0 +1,101 @@
+{%- comment -%}
+The oil calculator: if you had put money into oil from a given month, what would you have today?
+  {% include oil-calculator.html %}
+Optional: id (needed only for a second calculator on the same page), title (replaces the heading).
+Without JavaScript it shows the default case, worked out ahead of time by scripts/update-oil-data.py, with the rules
+and the note on what the spot price means. assets/js/oil-widgets.js, added once per page below, adds the form and results.
+{%- endcomment -%}
+{%- assign cc = include.id | default: "oil-calc" -%}
+{%- assign ba = site.data.brent_annual -%}
+{%- assign ex = ba.calculator_default -%}
+{%- assign cc_to = ba.brent_to | date: "%-d %B %Y" -%}
+{%- assign cc_months = "January,February,March,April,May,June,July,August,September,October,November,December" | split: "," -%}
+<section class="oil-widget oil-calc" id="{{ cc }}" data-oil-calculator data-src="{{ '/assets/data/oil.json' | relative_url }}" aria-labelledby="{{ cc }}-title">
+<h3 class="oil-title" id="{{ cc }}-title">{{ include.title | default: "What if you had bought oil?" }}</h3>
+<p class="oil-fallback" data-fallback>$1,000 put into Brent at the spot price of ${{ ex.price }} a barrel on {{ ex.date | date: "%-d %B %Y" }} would have bought {{ ex.barrels }} barrels. At ${{ ex.latest_price }} on {{ cc_to }}, they’d be worth ${{ ex.value }}. With JavaScript on, you can try your own amount and dates here.</p>
+
+<form class="oil-form" data-form hidden>
+<fieldset class="oil-field">
+<legend>How you buy</legend>
+<div class="oil-choices">
+<label><input type="radio" name="mode" value="lump" checked> One lump sum</label>
+<label><input type="radio" name="mode" value="monthly"> Every month</label>
+</div>
+</fieldset>
+<div class="oil-field">
+<label for="{{ cc }}-amount"><span data-amount-label>Amount</span><span class="visually-hidden" data-currency-name> in US dollars</span></label>
+<div class="oil-amount"><span class="oil-symbol" data-symbol aria-hidden="true">$</span><input id="{{ cc }}-amount" data-amount type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1,000" aria-describedby="{{ cc }}-amount-error"></div>
+<p class="oil-error" id="{{ cc }}-amount-error" data-amount-error></p>
+</div>
+<fieldset class="oil-field">
+<legend>Starting in</legend>
+<div class="oil-pair">
+<div><label for="{{ cc }}-month">Month</label><select id="{{ cc }}-month" data-month>
+{%- for name in cc_months %}
+<option value="{{ forloop.index }}"{% if forloop.first %} selected{% endif %}>{{ name }}</option>
+{%- endfor %}
+</select></div>
+<div><label for="{{ cc }}-year">Year</label><select id="{{ cc }}-year" data-year>
+{%- for row in ba.rows %}
+<option value="{{ row[0] }}"{% if row[0] == 2000 %} selected{% endif %}>{{ row[0] }}</option>
+{%- endfor %}
+</select></div>
+</div>
+</fieldset>
+<fieldset class="oil-field">
+<legend>Currency</legend>
+<div class="oil-choices">
+<label><input type="radio" name="currency" value="USD" checked> US dollars</label>
+<label><input type="radio" name="currency" value="EUR" aria-describedby="{{ cc }}-eur-note"> Euros</label>
+</div>
+<p class="oil-hint" id="{{ cc }}-eur-note" data-eur-note hidden>Euros start in January 1999, when the currency was launched.</p>
+</fieldset>
+<fieldset class="oil-field">
+<legend>Inflation</legend>
+<div class="oil-choices">
+<label><input type="radio" name="real" value="no" checked> Don’t adjust</label>
+<label><input type="radio" name="real" value="yes"> Adjust for inflation</label>
+</div>
+</fieldset>
+</form>
+
+<div class="oil-results" data-results hidden>
+<dl class="oil-figures">
+<div><dt>You put in</dt><dd><span data-out="putin"></span><span class="oil-sub" data-out="putin-real" hidden></span></dd></div>
+<div><dt>Barrels</dt><dd data-out="barrels"></dd></div>
+<div><dt data-out="value-label">Value today</dt><dd data-out="value"></dd></div>
+<div><dt data-out="gain-label">Gain</dt><dd><span data-out="gain"></span><span class="oil-sub" data-out="gain-pct"></span></dd></div>
+<div><dt data-out="annual-label">Yearly return</dt><dd data-out="annual"></dd></div>
+</dl>
+<p class="oil-note" data-out="annual-note"></p>
+<p class="oil-worst" data-out="worst"></p>
+<figure class="oil-mini-figure">
+<figcaption class="oil-note" data-out="mini-title"></figcaption>
+<ul class="oil-key" aria-hidden="true">
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-line" x1="1" x2="23" y1="5" y2="5"/></svg>Value of your oil</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Money put in</li>
+<li data-kept-key hidden><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-kept" x1="2" x2="24" y1="5" y2="5"/></svg>Money put in, kept up with inflation</li>
+</ul>
+<div class="oil-mini" data-mini></div>
+</figure>
+<p class="visually-hidden" aria-live="polite" data-out="live"></p>
+</div>
+
+<p class="oil-honesty"><strong>Before you read too much into this:</strong> it uses the spot price, for whole cargoes of physical oil, which no ordinary investor could buy and keep. Funds that track oil futures earned far less than the spot price, because rolling from one contract to the next usually costs money. USO, a US fund that holds oil futures, shows the gap. From its launch on 10 April 2006 to the end of 2025, its value per share fell 87%. The spot price of WTI, the US crude it tracks, fell 16%. This is history, not a forecast or advice.</p>
+<div class="oil-rules">
+<h4 class="oil-rules-title">How it works</h4>
+<ul>
+<li>Each purchase is at EIA’s Brent spot price on the first trading day of the month. A lump sum buys once, in the start month.</li>
+<li>Fractions of a barrel are allowed.</li>
+<li>Today’s value uses the latest daily price: ${{ ex.latest_price }} on {{ cc_to }}.</li>
+<li>In euros, each purchase converts at the ECB’s rate for that day (or its last rate before, on days it published none), and the value converts back at its rate for {{ cc_to }}.</li>
+<li>Adjusting for inflation uses US consumer prices (CPI, to {{ ba.cpi_to | append: "-01" | date: "%B %Y" }}) for dollars and euro area consumer prices (HICP, to {{ ba.hicp_to | append: "-01" | date: "%B %Y" }}) for euros. Later months count as today’s money.{% for m in ba.cpi_filled %} US CPI for {{ m | append: "-01" | date: "%B %Y" }} was never published, so it’s taken as halfway between the months either side.{% endfor %}{% for m in ba.hicp_filled %} HICP for {{ m | append: "-01" | date: "%B %Y" }} is taken as halfway between the months either side.{% endfor %}</li>
+<li>Fees, taxes and storage aren’t included.</li>
+</ul>
+</div>
+<p class="oil-source">Sources: U.S. Energy Information Administration (Brent spot price); European Central Bank (euro reference rates, and euro area HICP from Eurostat); U.S. Bureau of Labor Statistics consumer prices, via FRED. Prices to {{ cc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.</p>
+</section>
+{%- unless oil_widgets_script %}
+{%- assign oil_widgets_script = true %}
+<script src="{{ '/assets/js/oil-widgets.js' | relative_url }}" defer></script>
+{%- endunless %}

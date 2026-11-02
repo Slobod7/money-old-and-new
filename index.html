@@ -1,5 +1,81 @@
 ---
 layout: default
+# The questions at the end of the page, in two columns, which also become FAQPage markup (schema.html).
+# [name] in an answer is a figure from the calculator's data (faq in _data/old_new.json), so it updates by itself.
+# Every other figure is typed in with its month: check them each month and change faq_checked, which the page shows.
+faq_checked: 2026-11-01
+faq_columns:
+  numbers: The numbers
+  money: Your money
+faq:
+  - column: numbers
+    question: "How much value has the euro lost since 1999?"
+    answer: >-
+      About [lost] of its buying power. Euro area prices rose [prices_up] between January 1999 and [to], so €1,000
+      kept in a drawer since then buys what [drawer] did. The calculator shows every result in today’s money: it
+      multiplies each month’s value by how much prices have risen since, using Eurostat’s euro area consumer price
+      index (HICP). Choose “Don’t adjust” to see plain euros.
+  - column: numbers
+    question: "Why do the results change so much with the start date?"
+    answer: >-
+      Because the price you pay at the start shapes everything after it. €1,000 put into European stocks at the end
+      of March 2000, near the dot-com peak, has returned [europe_2000] a year after inflation. From March 2003 it’s
+      [europe_2003] a year; from February 2009, [europe_2009]. Bitcoin bought in December 2017 lost three-quarters of
+      its value within 13 months. History, not a forecast.
+  - column: numbers
+    question: "Is it better to invest a lump sum or monthly?"
+    answer: >-
+      Historically, a lump sum has ended ahead more often. [Vanguard found](https://corporate.vanguard.com/content/dam/corp/research/pdf/cost_averaging_invest_now_or_temporarily_hold_your_cash.pdf)
+      that investing a windfall at once beat spreading it over three months about two-thirds of the time, including in
+      European stocks. Spreading wins when a crash follows soon after. The calculator’s “Every month” option answers a
+      different question: what saving the same amount from each month’s income would have become.
+  - column: numbers
+    question: "Why did German bonds do so badly?"
+    answer: >-
+      Because interest rates rose from below zero. When new bonds pay more, older ones paying less fall in price. In
+      August 2019 a 10-year Bund yielded −0.65%; by October 2023, 2.8%. Over that time the calculator’s Bund lost 27%
+      in euros, or 38% after inflation. Germany never missed a payment: the risk was rates and inflation, not default.
+  - column: numbers
+    question: "Where do the figures come from, and what’s left out?"
+    answer: >-
+      From public sources: the ECB (deposit rates, German bond yields, exchange rates, and Eurostat’s euro area
+      inflation index), the World Bank (gold), Kenneth French’s Data Library (US and European stocks, dividends
+      reinvested) and Coin Metrics (Bitcoin, from July 2010). These are index figures, so fees, taxes and the cost of
+      storing gold are left out. Your own account or fund would differ, mostly by its costs.
+  - column: money
+    question: "Do savings accounts beat inflation?"
+    answer: >-
+      Not at the moment. In August 2026, euro area banks paid households an average 2.13% on deposits fixed for up to
+      a year and 0.29% on money they can withdraw any time, while prices rose 3.8% in the year to September. Since
+      January 2000, the average fixed deposit has returned [deposit_2000] a year after inflation, before tax.
+  - column: money
+    question: "How do ECB rate decisions affect my savings?"
+    answer: >-
+      Partly, and with a delay. The ECB sets the rate banks earn on money they leave with it: 2.50% since 16 September
+      2026, its second rise this year. Banks pass some of that on to new fixed-term deposits but barely touch everyday
+      accounts. Between May and August 2026, the average short fixed-deposit rate rose from 1.92% to 2.13%; the
+      everyday-account rate, from 0.27% to 0.29%.
+  - column: money
+    question: "Is gold or Bitcoin a hedge against inflation?"
+    answer: >-
+      Not reliably: both have had long stretches of losing value after inflation. Gold has returned [gold_1999] a year
+      after inflation since January 1999, but lost 35% of its real value between September 2012 and December 2013.
+      Bitcoin lost 73% after inflation from October 2021 to December 2022, as euro area inflation hit a record 10.6%.
+      Disclosure: I write for Bitcoin.com and own some Bitcoin.
+  - column: money
+    question: "Does the official inflation rate match what I pay?"
+    answer: >-
+      Only as an average. Euro area inflation, 3.8% in September 2026, is a weighted average of about 700 goods and
+      services across 21 countries. Your rate depends on what you buy: rent, fuel and food weigh more for some
+      households, and the cost of owning a home isn’t counted yet. National rates differ too: in September, 3.3% in
+      Germany and 6.5% in Romania, which isn’t in the euro.
+  - column: money
+    question: "What’s in the Sunday letter, and will you tell me what to buy?"
+    answer: >-
+      It’s a free English-language letter, written from Bucharest, on how ECB decisions, inflation and currencies reach
+      your savings, and where old money (cash, deposits, bonds, gold, stocks) and new money (Bitcoin, stablecoins)
+      fit. Weeks rotate between a macro deep dive, a review and an opinion piece. No price calls, no tips on what to
+      buy or sell. Disclosure: I write for Bitcoin.com and own some Bitcoin.
 ---
 <div class="wrap home">
 
@@ -36,6 +112,22 @@ layout: default
 </ul>
 </section>
 {%- endif %}
+
+{%- assign since = site.data.old_new.since %}
+<section class="home-tool" aria-labelledby="tool-title">
+<div class="home-tool-head">
+<h2 id="tool-title" class="section-title">What would your euros be worth today?</h2>
+<p>Money that sits still loses value. Since the euro began in {{ since.from | append: "-01" | date: "%B %Y" }}, prices in the euro area have risen {{ since.prices_up }}%, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did.</p>
+<p>Making your money work for you means beating that, without taking risks you can’t live with. Every option below has had its bad years: stocks that halved, German bonds that lost two-fifths of their value after inflation from 2019, and Bitcoin, which has fallen by three-quarters more than once. What matters is knowing why each one moves, and holding a mix you won’t panic out of.</p>
+<p>That’s what this site is for. In a series of articles and the Sunday letter, I’ll show you how to do that: how ECB decisions reach your savings, what really protects you from inflation, and where old money and new money each fit. I explain how things work; the choices stay yours.</p>
+<div class="home-tool-links">
+<a class="action" href="{{ '/subscribe/' | relative_url }}">Get the Sunday letter</a>
+<a class="action" href="{{ '/guides/' | relative_url }}">Read the articles</a>
+</div>
+<p class="home-tool-try">Try it: put the same money into each, from any month since 1999.</p>
+</div>
+{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}
+</section>
 
 <section class="letter-block" aria-labelledby="letter-title">
 <div class="letter-head">
@@ -76,6 +168,26 @@ layout: default
 <p>Today I’m a content writer at Bitcoin.com. Before that, I wrote for Satoshi Club and Coinweb. More than 500 finance and crypto articles so far.</p>
 <a class="action" href="{{ '/about/' | relative_url }}">More about me</a>
 </div>
+</section>
+
+{%- assign faq_to = site.data.old_new.to | append: "-01" | date: "%B %Y" %}
+<section class="home-faq" aria-labelledby="faq-title">
+<h2 id="faq-title" class="section-title">Common questions</h2>
+<div class="home-faq-cols">
+{%- for column in page.faq_columns %}
+<div class="home-faq-col">
+<h3 class="kicker">{{ column[1] }}</h3>
+<div class="faq">
+{%- assign items = page.faq | where: "column", column[0] %}
+{%- for item in items %}
+{%- capture answer %}{% include faq-fill.html text=item.answer %}{% endcapture %}
+<details><summary>{{ item.question }}</summary>{{ answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</div>
+{%- endfor %}
+</div>
+<p class="meta">Answers checked {{ page.faq_checked | date: "%-d %B %Y" }}. Figures from the calculator run to the end of {{ faq_to }} and update with it.</p>
 </section>
 
 <section class="closing" aria-labelledby="closing-title">

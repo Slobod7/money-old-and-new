@@ -72,7 +72,8 @@ layout: default
 <h2 id="faq">{{ faq_heading }}</h2>
 <div class="faq">
 {%- for item in page.faq %}
-<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- capture answer %}{% include faq-fill.html text=item.answer %}{% endcapture %}
+<details><summary>{{ item.question }}</summary>{{ answer | markdownify }}</details>
 {%- endfor %}
 </div>
 {%- endif %}
