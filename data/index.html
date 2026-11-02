@@ -13,21 +13,13 @@ permalink: /data/
 </div>
 <div class="feature-art">{% include illustration-data.svg %}</div>
 <ul class="feature-cards link-cards" role="list">
+{%- for card in site.data.data_pages %}
 <li>
-<span class="feature-label">Calculator</span>
-<h2><a href="{{ '/data/euro-inflation-calculator/' | relative_url }}">Euro inflation calculator</a></h2>
-<p>What your euros would be worth today, across seven kinds of savings and investment.</p>
+<span class="feature-label">{{ card.label }}</span>
+<h2><a href="{{ card.url | relative_url }}">{{ card.title }}</a></h2>
+<p>{{ card.description }}</p>
 </li>
-<li>
-<span class="feature-label">Chart</span>
-<h2><a href="{{ '/data/ecb-interest-rates/' | relative_url }}">ECB interest rates</a></h2>
-<p>The ECB’s main rates against euro area inflation, by month.</p>
-</li>
-<li>
-<span class="feature-label">Chart</span>
-<h2><a href="{{ '/data/brent-oil-price-history/' | relative_url }}">Brent oil price history</a></h2>
-<p>The price of a barrel since 1990, with a calculator.</p>
-</li>
+{%- endfor %}
 </ul>
 </section>
 </div>

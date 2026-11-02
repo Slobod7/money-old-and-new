@@ -1,0 +1,13 @@
+# The cards on the Data page (data/index.html), in this order. To add a card, put the page in data/ and add an entry.
+- label: Calculator
+  title: Euro inflation calculator
+  description: "What your euros would be worth today, across seven kinds of savings and investment."
+  url: /data/euro-inflation-calculator/
+- label: Chart
+  title: ECB interest rates
+  description: "The ECB’s main rates against euro area inflation, by month."
+  url: /data/ecb-interest-rates/
+- label: Chart
+  title: Brent oil price history
+  description: "The price of a barrel since 1990, with a calculator."
+  url: /data/brent-oil-price-history/

@@ -457,6 +457,11 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 
 ---
 
+## Add a data page
+
+1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
+2. Add one entry to `_data/data_pages.yml`, with `label`, `title`, `description` and `url`. The Data page shows the cards in that order, and needs no HTML or CSS changes.
+
 ## Where things are
 
 | File or folder | What it controls |
@@ -468,6 +473,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `_posts/` | The articles themselves |
 | `about.html`, `how-i-work.md`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
 | `data/` | The Data page (`index.html`) and a page for each chart and calculator, at `/data/…`. Their introductions read their figures from `_data/`, so they update with the charts. Keep typed figures out of them. Each moved page keeps its old address working with `redirect_from` in its front matter |
+| `_data/data_pages.yml` | The cards on the Data page (see "Add a data page") |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |
