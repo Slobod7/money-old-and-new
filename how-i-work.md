@@ -7,7 +7,7 @@ permalink: /how-i-work/
 
 **Sources.** I go to primary sources first, such as the ECB, Eurostat and the original research, and I link to them so you can check what I say.
 
-**Charts.** Each chart names its source beneath it and shows how recent its figures are. The ECB, Brent and calculator data update by themselves on the 18th of each month. If a download fails or looks wrong, the chart keeps its last good figures. A chart that doesn’t update by itself gives the period it covers.
+**Charts.** Each chart names its source beneath it and shows how recent its figures are. The [ECB, Brent and calculator data]({{ '/data/' | relative_url }}) update by themselves on the 18th of each month. If a download fails or looks wrong, the chart keeps its last good figures. A chart that doesn’t update by itself gives the period it covers.
 
 **Corrections.** If you spot an error, email me at [{{ site.author.email }}](mailto:{{ site.author.email }}) with the article and what’s wrong. When I change an article, the change is noted on it, with the date.
 

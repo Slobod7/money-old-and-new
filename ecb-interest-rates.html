@@ -1,0 +1,16 @@
+---
+layout: default
+title: ECB interest rates
+seo_title: "ECB interest rates since 2007: chart and data"
+description: "The ECB's main refinancing rate and deposit rate against euro area inflation, month by month since January 2007, with every figure in a table."
+permalink: /ecb-interest-rates/
+---
+{%- assign ecb = site.data.ecb_rates_inflation %}
+{%- assign ecb_latest = ecb.rows | last %}
+<div class="wrap calc-page">
+<header class="page-head">
+<h1 class="page-title">ECB interest rates</h1>
+<p class="page-lede">At the end of {{ ecb_latest[0] | append: "-01" | date: "%B %Y" }}, the ECB’s deposit rate was {{ ecb_latest[4] | replace: "-", "−" }}% and its main refinancing rate {{ ecb_latest[3] | replace: "-", "−" }}%. Euro area inflation that month was {{ ecb_latest[1] | replace: "-", "−" }}%. The chart sets the two rates beneath inflation, month by month since {{ ecb.first_month | append: "-01" | date: "%B %Y" }}, and the table has every figure.</p>
+</header>
+{% include ecb-rates-chart.html id="ecb-rates" %}
+</div>

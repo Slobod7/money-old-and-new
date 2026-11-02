@@ -466,6 +466,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `articles/index.html` | The list of all articles |
 | `_posts/` | The articles themselves |
 | `euro-inflation-calculator.html`, `about.html`, `how-i-work.md`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
+| `data.html`, `ecb-interest-rates.html`, `brent-oil-price-history.html` | The data pages: a list, and a page for each chart. Their introductions read their figures from `_data/`, so they update with the charts. Keep typed figures out of them |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |

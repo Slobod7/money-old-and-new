@@ -1,0 +1,19 @@
+---
+layout: default
+title: Brent oil price history
+seo_title: "Brent oil price history since 1990: chart and data"
+description: "The Brent spot price since 1990 in US dollars a barrel, at the time and in today's dollars, with yearly averages and a calculator for buying oil from any month."
+permalink: /brent-oil-price-history/
+---
+{%- assign brent = site.data.brent_annual %}
+{%- assign brent_first = brent.rows | first %}
+<div class="wrap calc-page">
+<header class="page-head">
+<h1 class="page-title">Brent oil price history</h1>
+<p class="page-lede">Brent is the main benchmark for crude oil in Europe. Its spot price was ${{ brent.calculator_default.latest_price }} a barrel on {{ brent.brent_to | date: "%-d %B %Y" }}. The chart goes back to {{ brent_first[0] }}, in the prices of the time or in today’s dollars, and the calculator shows what buying oil from any month since then would have done.</p>
+</header>
+<h2 class="section-title">The chart</h2>
+{% include oil-chart.html id="brent-since-1990" %}
+<h2 class="section-title">The calculator</h2>
+{% include oil-calculator.html %}
+</div>
