@@ -163,6 +163,8 @@ The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it a
 
 Every article shows "Published" and its `date`. When you change one, add `last_modified_at: 2026-12-06` under `date`. The page then also shows "Updated 6 December 2026", and the sitemap, the feed and the structured data say it changed. jekyll-sitemap and jekyll-feed read only that field, so don't use another name. Leave `date` as it was.
 
+Any article whose text mentions Bitcoin, crypto or stablecoins, in either case, ends with "Disclosure: I write for Bitcoin.com and own some Bitcoin." `_layouts/post.html` prints it, unless the article already says "I write for Bitcoin.com". The layout doesn't reach the RSS feed or Substack, so an article relying on the automatic line goes out without it there: add the line to the Sunday letter yourself. It also looks for those three words only, so a piece that only says "Ethereum" or "blockchain" needs its own line.
+
 To correct an error, set `last_modified_at` and add `changed: "Corrected 6 December 2026: the deposit rate was 2.25%, not 2.50%."`. That line shows under the dateline. The "How I work" page promises readers that changes are noted on the article, so don't skip it for a correction.
 
 4. Commit. The article is live within a minute or two, appears first in the Latest articles list on the home page, and goes into the RSS feed. The list shows its title, date and `description`.

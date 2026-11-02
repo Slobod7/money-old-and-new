@@ -76,6 +76,18 @@ layout: default
 {%- endfor %}
 </div>
 {%- endif %}
+{%- comment -%}
+The disclosure, at the end of any article whose text mentions Bitcoin, crypto or stablecoins, in either case. It reads what a
+reader sees, not links or image files. "crypto" also catches "cryptocurrency" and "cryptography"; a true line in the wrong place does no harm.
+An article that already says "I write for Bitcoin.com", in whatever words after that, doesn't get a second one.
+{%- endcomment -%}
+{%- capture article_text %}{{ page.title }} {{ page.dek }} {{ page.description }} {{ page.review.name }} {{ page.review.summary | markdownify }} {{ page.review.disclosure }} {{ content }}{% for item in page.faq %} {{ item.question }} {{ item.answer | markdownify }}{% endfor %}{% endcapture -%}
+{%- assign article_text = article_text | strip_html | normalize_whitespace | downcase -%}
+{%- if article_text contains "bitcoin" or article_text contains "crypto" or article_text contains "stablecoin" %}
+{%- unless article_text contains "i write for bitcoin.com" %}
+<p class="disclaimer">Disclosure: I write for Bitcoin.com and own some Bitcoin.</p>
+{%- endunless %}
+{%- endif %}
 </div>
 
 <footer class="article-end">
