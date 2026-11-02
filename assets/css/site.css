@@ -82,6 +82,15 @@ a:hover { text-decoration-thickness: 2px; }
   .site-nav { gap: 0 4px; margin-right: -8px; }
   .site-nav a { padding-inline: 8px; }
 }
+/* Small phones: the four links close up, and on the narrowest screens they drop to a row of their own */
+@media (max-width: 420px) {
+  .masthead { flex-wrap: wrap; column-gap: 12px; }
+  .site-nav { gap: 0; margin-inline: -5px; }
+  .site-nav a { padding-inline: 5px; }
+}
+
+/* The calculator's own page: the heading and introduction, then the calculator across the full page width */
+.calc-page .oil-widget { margin: 0 0 72px; }
 
 /* Footer */
 .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px 48px; padding: 32px 0 48px; }
@@ -106,6 +115,7 @@ a:hover { text-decoration-thickness: 2px; }
 .home-tool-head p { margin: 0 0 18px; font: 400 clamp(18px, 0.25vw + 16px, 20px)/1.7 var(--serif); }
 .home-tool-head p.home-tool-try { margin: 0 0 20px; padding-top: 20px; border-top: 1px solid var(--rule); font: 500 15px/1.5 var(--sans); }
 .home-tool .oil-widget { margin: 0; }
+.home-tool-more { margin: 12px 0 0; }
 @media (max-width: 640px) {
   .home-tool { padding-bottom: 64px; }
 }
@@ -405,7 +415,7 @@ a:hover { text-decoration-thickness: 2px; }
 .oil-mini { position: relative; height: 200px; }
 .oil-widget .oil-honesty { margin: 0 0 16px; padding: 14px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 14.5px; line-height: 1.6; }
 .oil-honesty strong { font-weight: 600; }
-.prose .oil-rules-title { margin: 0 0 6px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.oil-widget .oil-rules-title { margin: 0 0 6px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .oil-widget .oil-rules ul { margin: 0; padding-left: 1.1em; font-size: 14px; line-height: 1.55; }
 .oil-widget .oil-rules li { margin: 0 0 4px; }
 
@@ -475,6 +485,9 @@ a:hover { text-decoration-thickness: 2px; }
   .oil-widget .onc-side .oil-worst { margin: 0; }
   .oil-widget .onc-foot .oil-honesty { margin: 0; }
   .oil-widget .onc-more { margin-top: 0; border-top: 1px solid var(--rule); }
+  /* With the rules showing, as on the calculator's own page, the sources sit right under the honesty note, beside them */
+  .onc-foot { grid-template-rows: auto 1fr; }
+  .onc-foot > .oil-rules { grid-row: span 2; }
 }
 .oil-widget .onc-hint { display: none; }
 @media (max-width: 600px) {

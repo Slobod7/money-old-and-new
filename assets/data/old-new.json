@@ -1,8 +1,8 @@
 {
-"updated":"2026-11-01",
+"updated":"2026-11-02",
 "to":"2026-09",
 "hicp_to":"2026-09",
-"deposit_filled":["2026-09"],
+"deposit_filled":[],
 "sources":{"deposit":"European Central Bank, MFI interest rates: deposits from euro area households with agreed maturity of up to one year, new business","bund":"European Central Bank, long-term interest rate for convergence purposes, Germany (10-year government bond yield, monthly average)","gold":"World Bank, Commodity Price Data (the Pink Sheet), gold, US dollars a troy ounce, monthly average","us":"Kenneth R. French Data Library, US market return (all NYSE, AMEX and NASDAQ stocks, from CRSP), in US dollars","europe":"Kenneth R. French Data Library, European market return (developed Europe, from Bloomberg), in US dollars","bitcoin":"Coin Metrics Community Data, Bitcoin reference rate in US dollars","hicp":"Eurostat via the ECB Data Portal, HICP overall index, euro area, changing composition (2025 = 100)","eurusd":"European Central Bank, euro reference exchange rate, US dollars per euro"},
 "assets":[{"id":"cash","name":"Cash at home","short":"cash","note":"Notes in a drawer, earning nothing","from":"1999-01"},{"id":"deposit","name":"Bank deposit","short":"deposit","note":"The euro area’s average rate on household deposits fixed for up to a year","from":"2000-01"},{"id":"bund","name":"German bonds","short":"bonds","note":"A 10-year Bund, swapped for a new one each month","from":"1999-01"},{"id":"gold","name":"Gold","short":"gold","note":"Bought at the month’s average price","from":"1999-01"},{"id":"us","name":"US stocks","short":"US stocks","note":"The whole US market, dividends reinvested","from":"1999-01"},{"id":"europe","name":"European stocks","short":"European stocks","note":"Developed European markets, dividends reinvested","from":"1999-01"},{"id":"bitcoin","name":"Bitcoin","short":"Bitcoin","note":"The new money","from":"2010-07"}],
 "cols":["month","hicp","cash","deposit","bund","gold","us","europe","bitcoin"],
@@ -339,6 +339,6 @@
 ["2026-06",103.02,1.0,165.7803,199.242,3670.776,1045.881,559.8252,51364.82],
 ["2026-07",103.24,1.0,166.0677,197.945,3567.338,1034.689,565.7753,54745.48],
 ["2026-08",103.69,1.0,166.3596,196.5342,3804.851,1053.991,568.3727,67724.98],
-["2026-09",104.31,1.0,166.652,192.367,3751.337,1068.181,553.2715,73606.05]
+["2026-09",104.31,1.0,166.6792,192.367,3751.337,1068.181,553.2715,73606.05]
 ]
 }

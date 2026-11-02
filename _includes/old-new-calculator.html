@@ -5,7 +5,7 @@ Bitcoin from a given month would be worth today, ranked, with a chart of whichev
 Optional: id (needed only for a second calculator on the same page), title (replaces the heading),
 labelledby (the id of a heading outside the include that names it: the include then drops its own heading),
 compact (true to fold the rules and sources into "How it works, and sources", as on the home page).
-Without JavaScript it shows the default case (€1,000 at the end of January 2016, in today's money), worked out ahead
+Without JavaScript it shows the default case (€1,000 at the end of January 2000, in today's money), worked out ahead
 of time by scripts/update-old-new-data.py, with the rules. assets/js/old-new-calculator.js, added once per page below,
 adds the form, the ranking and the chart.
 {%- endcomment -%}
@@ -32,6 +32,9 @@ adds the form, the ranking and the chart.
 </tbody>
 </table>
 </div>
+{%- for a in df.unavailable %}
+<p class="oil-note" data-fallback>{{ a.name }} isn’t included: its figures start in {{ a.from | append: "-01" | date: "%B %Y" }}.</p>
+{%- endfor %}
 
 <form class="oil-form" data-form hidden>
 <fieldset class="oil-field">

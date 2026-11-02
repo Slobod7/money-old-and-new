@@ -87,7 +87,7 @@ SOURCES = {
 }
 
 # The default case, as the form starts: a lump sum, the month and year below, adjusted for inflation
-DEFAULT = {'amount': 1000, 'start': '2016-01'}
+DEFAULT = {'amount': 1000, 'start': '2000-01'}
 
 
 # Downloads ----------------------------------------------------------------------------------------
@@ -344,6 +344,7 @@ def default_case(data):
         'hicp_to': data['hicp_to'],
         'deposit_filled': data['deposit_filled'],
         'from': {a['id']: a['from'] for a in data['assets']},
+        'unavailable': [{'name': a['name'], 'from': a['from']} for a in data['assets'] if rows[i0][2 + data['assets'].index(a)] is None],
         'since': since,
         'faq': faq,
         'start': start,

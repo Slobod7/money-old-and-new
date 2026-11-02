@@ -1,0 +1,14 @@
+---
+layout: default
+title: Euro inflation calculator
+description: "What would your euros be worth in cash, a bank deposit, German bonds, gold, stocks or Bitcoin? Compare them after inflation, from any month since 1999."
+permalink: /euro-inflation-calculator/
+---
+{%- assign since = site.data.old_new.since %}
+<div class="wrap calc-page">
+<header class="page-head">
+<h1 id="calc-title" class="page-title">Euro inflation calculator</h1>
+<p class="page-lede">Prices in the euro area have risen {{ since.prices_up }}% since {{ since.from | append: "-01" | date: "%B %Y" }}, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did. Put the same money into cash, deposits, bonds, gold, stocks or Bitcoin from any month since 1999, and see what it would be worth today.</p>
+</header>
+{% include old-new-calculator.html labelledby="calc-title" %}
+</div>

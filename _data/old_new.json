@@ -1,22 +1,22 @@
 {
-"updated":"2026-11-01",
+"updated":"2026-11-02",
 "to":"2026-09",
 "hicp_to":"2026-09",
-"deposit_filled":["2026-09"],
+"deposit_filled":[],
 "from":{"cash":"1999-01","deposit":"2000-01","bund":"1999-01","gold":"1999-01","us":"1999-01","europe":"1999-01","bitcoin":"2010-07"},
+"unavailable":[{"name":"Bitcoin","from":"2010-07"}],
 "since":{"from":"1999-01","prices_up":"82","drawer":"549"},
 "faq":{"to":"September 2026","prices_up":"82%","drawer":"€549","lost":"45%","europe_2000":"3.0%","europe_2003":"6.8%","europe_2009":"8.5%","deposit_2000":"−0.3%","gold_1999":"8.0%"},
-"start":"2016-01",
+"start":"2000-01",
 "amount":"1,000",
-"put_in_real":"1,363",
+"put_in_real":"1,788",
 "cols":["asset","value","annual","fall"],
 "rows":[
-["Bitcoin","219,407","61.0%","−74.5%"],
-["US stocks","4,505","11.9%","−22.1%"],
-["Gold","3,710","9.8%","−18.3%"],
-["European stocks","2,536","6.0%","−25.7%"],
-["Bank deposit","1,119","−1.8%","−17.9%"],
-["Cash at home","1,000","−2.9%","−26.6%"],
-["German bonds","837","−4.5%","−41.6%"]
+["Gold","13,390","7.8%","−35.1%"],
+["US stocks","7,961","5.8%","−65.0%"],
+["European stocks","4,258","3.3%","−54.8%"],
+["German bonds","2,127","0.7%","−41.6%"],
+["Bank deposit","1,667","−0.3%","−17.9%"],
+["Cash at home","1,000","−2.2%","−44.1%"]
 ]
 }

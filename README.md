@@ -88,7 +88,7 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 - **Type:** Besley regular for headings, articles and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Articles are set at 19px (18px on phones) with a 680px reading column.
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
 - **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
-- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
+- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, Calculator, About and Subscribe at the right. At 640px and below only the mark shows, with the same four links at the right; on the narrowest phones they drop to a row of their own.
 - **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles list (the three newest, hidden until the first article is published), the old-vs-new calculator, the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), the common questions, and a closing Subscribe block in forest. The header and footer have no divider lines on any page.
 
 ### Known limitation: the wordmark
@@ -368,6 +368,8 @@ What euros put into cash at home, a bank deposit, German bonds, gold, US stocks,
 
 The home page uses it between Latest articles and the Sunday letter block, under its own heading and introduction: `{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}`. The introduction's inflation figures (how far prices have risen since January 1999, and what €1,000 kept in a drawer since then buys now) come from `since` in `_data/old_new.json`, so they update with the data. The rest of its wording is fixed in `index.html`. The section and its introduction span the full page width.
 
+It also has its own page at `/euro-inflation-calculator/` (`euro-inflation-calculator.html`), with the rules and sources showing, linked from the nav, the footer and the home page.
+
 ### The home page's common questions
 
 Ten questions near the end of the home page, in two columns ("The numbers" and "Your money"), that open and close. They come from `faq` in `index.html`'s front matter, each with a `column`. The same list feeds the FAQPage markup, so the page and the markup always match.
@@ -378,7 +380,7 @@ Every other figure is typed in with its month: the ECB's deposit rate, euro area
 
 The calculator lays itself out by its own width, not the screen's (a CSS container query on `.onc`). In an article column it's one column. From 860px wide, as on the home page from about 960px, the form runs in one row with every control level, the chart sits beside the ranking and grows to the same height, and the honesty note sits beside the rules.
 
-It ranks the assets by what they'd be worth, each with a bar from €0, a tick for the money put in, its yearly return and its biggest fall. Choosing one shows its chart against the money put in, with a readout on hover, tap or drag, and with the keyboard (arrow keys, Page Up and Page Down for a year, Home and End). When the top asset is worth more than two and a half times the next, its bar is cut short with a notch, so the others stay readable. An asset with no figures for the chosen start (Bitcoin before July 2010, the bank deposit before January 2000) is listed beneath as not included. Without JavaScript, the include shows the default case (€1,000 at the end of January 2016, in today's money) as a table, worked out by the update script. `assets/js/old-new-calculator.js` is loaded only by pages with the calculator.
+It ranks the assets by what they'd be worth, each with a bar from €0, a tick for the money put in, its yearly return and its biggest fall. Choosing one shows its chart against the money put in, with a readout on hover, tap or drag, and with the keyboard (arrow keys, Page Up and Page Down for a year, Home and End). When the top asset is worth more than two and a half times the next, its bar is cut short with a notch, so the others stay readable. An asset with no figures for the chosen start (Bitcoin before July 2010, the bank deposit before January 2000) is listed beneath as not included. Without JavaScript, the include shows the default case (€1,000 at the end of January 2000, in today's money) as a table, worked out by the update script, with a line naming any asset whose figures start later (Bitcoin). `assets/js/old-new-calculator.js` is loaded only by pages with the calculator.
 
 The honesty note under it carries the Bitcoin disclosure. Keep it there.
 
@@ -443,7 +445,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `index.html` | Home page |
 | `articles/index.html` | The list of all articles |
 | `_posts/` | The articles themselves |
-| `about.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
+| `euro-inflation-calculator.html`, `about.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |
