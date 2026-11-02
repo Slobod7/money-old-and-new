@@ -89,7 +89,7 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
 - **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
 - **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
-- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles carousel (hidden until the first article is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
+- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles list (the three newest, hidden until the first article is published), the old-vs-new calculator, the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), the common questions, and a closing Subscribe block in forest. The header and footer have no divider lines on any page.
 
 ### Known limitation: the wordmark
 
@@ -124,7 +124,7 @@ faq:
 ---
 ```
 
-Give every article its own `image`: it's the picture on the home page card and when the article is shared. Without one, the card shows only the title and date, and shared links have no picture.
+Give every article its own `image`: it's the picture when the article is shared.
 
 `faq` is optional. Its questions appear at the end of the article under "Common questions" (change the heading with `faq_heading: "Your heading"`), with a link in the contents, and search engines get them as FAQ markup. Write questions people actually search for, and answer each one in its first sentence.
 
@@ -147,7 +147,7 @@ The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it a
 
 When you rebuild an article, add `updated: 2026-12-06` under `date`. The page shows "Updated 6 December 2026", and search engines are told the article changed. Leave `date` as it was.
 
-4. Commit. The article is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the article's `image` (cropped to 16:9 from the top left), its title and its updated date.
+4. Commit. The article is live within a minute or two, appears first in the Latest articles list on the home page, and goes into the RSS feed. The list shows its title, date and `description`.
 5. Write the Sunday letter on Substack and link to the article.
 
 To schedule a post, commit it with a future `date`. `future: false` in `_config.yml` keeps it off the site until a build after that date (GitHub Pages' own default is `future: true`, which would publish it straight away). `.github/workflows/sunday-rebuild.yml` asks Pages to rebuild every Sunday at 08:15 UTC, so date a Sunday post before then: 09:00 in Bucharest is 07:00 UTC in winter and 06:00 UTC in summer. GitHub can run scheduled workflows late, so check the post is up. For any other day, push something after the post's date or use **Actions → Sunday rebuild → Run workflow**. The file itself is public in the repository from the moment you push it, whatever its date.

@@ -88,25 +88,14 @@ faq:
 </section>
 
 {%- if site.posts.size > 0 %}
-<section class="latest" aria-labelledby="latest-title" data-carousel>
-<div class="latest-head">
+<section class="latest" aria-labelledby="latest-title">
 <h2 id="latest-title" class="section-title">Latest articles</h2>
-<div class="carousel-arrows" data-carousel-arrows hidden>
-<button type="button" class="carousel-arrow" data-carousel-prev aria-label="Previous articles"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-<button type="button" class="carousel-arrow" data-carousel-next aria-label="Next articles"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-</div>
-</div>
-<ul class="carousel" role="list" data-carousel-track>
-{%- for post in site.posts limit: 10 %}
-{%- assign updated = post.updated | default: post.date %}
-<li class="card">
-<a class="card-link" href="{{ post.url | relative_url }}">
-{%- if post.image %}
-<img class="card-image" src="{{ post.image | relative_url }}" alt="" width="640" height="360"{% if forloop.index > 3 %} loading="lazy"{% endif %}>
-{%- endif %}
-<h3 class="card-title">{{ post.title }}</h3>
-<p class="meta">Updated <time datetime="{{ updated | date: '%Y-%m-%d' }}">{{ updated | date: "%-d %B %Y" }}</time></p>
-</a>
+<ul class="guide-list" role="list">
+{%- for post in site.posts limit: 3 %}
+<li>
+<p class="meta"><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: "%-d %B %Y" }}</time></p>
+<h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+<p>{{ post.description }}</p>
 </li>
 {%- endfor %}
 </ul>
@@ -117,13 +106,7 @@ faq:
 <section class="home-tool" aria-labelledby="tool-title">
 <div class="home-tool-head">
 <h2 id="tool-title" class="section-title">What would your euros be worth today?</h2>
-<p>Money that sits still loses value. Since the euro began in {{ since.from | append: "-01" | date: "%B %Y" }}, prices in the euro area have risen {{ since.prices_up }}%, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did.</p>
-<p>Making your money work for you means beating that, without taking risks you can’t live with. Every option below has had its bad years: stocks that halved, German bonds that lost two-fifths of their value after inflation from 2019, and Bitcoin, which has fallen by three-quarters more than once. What matters is knowing why each one moves, and holding a mix you won’t panic out of.</p>
-<p>That’s what this site is for. In a series of articles and the Sunday letter, I’ll show you how to do that: how ECB decisions reach your savings, what really protects you from inflation, and where old money and new money each fit. I explain how things work; the choices stay yours.</p>
-<div class="home-tool-links">
-<a class="action" href="{{ '/subscribe/' | relative_url }}">Get the Sunday letter</a>
-<a class="action" href="{{ '/articles/' | relative_url }}">Read the articles</a>
-</div>
+<p>Money that sits still loses value: since the euro began in {{ since.from | append: "-01" | date: "%B %Y" }}, prices in the euro area have risen {{ since.prices_up }}%, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did. Beating that means taking some risk, and every option below has had its bad years.</p>
 <p class="home-tool-try">Try it: put the same money into each, from any month since 1999.</p>
 </div>
 {% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}

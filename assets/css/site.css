@@ -100,11 +100,10 @@ a:hover { text-decoration-thickness: 2px; }
 .signup-center .meta { max-width: 26em; text-wrap: balance; }
 
 /* The old-vs-new calculator, across the full page width: the heading, an introduction that runs the full width,
-   the links, then a rule, a short "Try it" line and the calculator, which arranges itself by its own width (see .onc). */
+   then a rule, a short "Try it" line and the calculator, which arranges itself by its own width (see .onc). */
 .home-tool { padding: 0 0 96px; }
 .home-tool-head .section-title { margin-bottom: 20px; font-size: clamp(30px, 1.4vw + 22px, 40px); line-height: 1.2; text-wrap: balance; }
 .home-tool-head p { margin: 0 0 18px; font: 400 clamp(18px, 0.25vw + 16px, 20px)/1.7 var(--serif); }
-.home-tool-links { display: flex; flex-wrap: wrap; gap: 0 28px; margin: 0 0 28px; }
 .home-tool-head p.home-tool-try { margin: 0 0 20px; padding-top: 20px; border-top: 1px solid var(--rule); font: 500 15px/1.5 var(--sans); }
 .home-tool .oil-widget { margin: 0; }
 @media (max-width: 640px) {
@@ -160,25 +159,8 @@ a:hover { text-decoration-thickness: 2px; }
 /* Burgundy doesn't show on forest, so focus rings there are warm white */
 .letter-block :focus-visible, .closing :focus-visible { outline-color: var(--on-forest); }
 
-/* Latest articles: a row of cards that scrolls sideways and snaps to each card.
-   Without JavaScript it's a swipeable row; site.js adds the arrows and autoplay.
-   The track's 8px padding keeps focus rings from being clipped. */
+/* Latest articles: a plain list (.guide-list), newest first, that reads the same with one article or three */
 .latest { padding: 0 0 96px; }
-.latest-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
-.latest-head .section-title { margin: 0; }
-.carousel-arrows { display: flex; gap: 8px; }
-.carousel-arrows[hidden] { display: none; }
-.carousel-arrow { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--edge); background: none; color: var(--forest); cursor: pointer; }
-.carousel-arrow:hover { border-color: var(--forest); background: var(--forest); color: var(--bg); }
-.carousel { --cards: 3; --gap: 28px; display: flex; gap: var(--gap); margin: -8px; padding: 8px; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; scrollbar-width: none; }
-.carousel::-webkit-scrollbar { display: none; }
-.card { flex: 0 0 calc((100% - (var(--cards) - 1) * var(--gap)) / var(--cards)); scroll-snap-align: start; }
-.card-link { display: block; color: var(--text); text-decoration: none; }
-.card-image { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: left top; border: 1px solid var(--rule); }
-.card-title { margin: 16px 0 6px; font: 400 clamp(20px, 0.4vw + 17px, 23px)/1.32 var(--serif); letter-spacing: -0.01em; }
-.card-link:hover .card-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
-@media (max-width: 960px) { .carousel { --cards: 2; } }
-@media (max-width: 640px) { .carousel { --cards: 1.15; --gap: 16px; } }
 
 .subscribe { padding: 36px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .subscribe-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 48px; }
