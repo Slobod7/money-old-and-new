@@ -96,7 +96,7 @@ Google stopped showing FAQ results on 7 May 2026, for every site, so the questio
 
 ## Design system
 
-Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. The only filled surfaces are the two forest blocks on the home page: the Sunday letter, with white cards, and the closing signup. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
+Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. The only filled surfaces are the forest blocks: on the home page, the Sunday letter, with white cards, and the closing signup; on the Data page, the same block as the Sunday letter. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
 
 - **Type:** Besley regular for headings, articles and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Articles are set at 19px (18px on phones) with a 680px reading column.
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
