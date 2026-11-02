@@ -163,6 +163,8 @@ The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it a
 
 Every article shows "Published" and its `date`. When you change one, add `last_modified_at: 2026-12-06` under `date`. The page then also shows "Updated 6 December 2026", and the sitemap, the feed and the structured data say it changed. jekyll-sitemap and jekyll-feed read only that field, so don't use another name. Leave `date` as it was.
 
+To correct an error, set `last_modified_at` and add `changed: "Corrected 6 December 2026: the deposit rate was 2.25%, not 2.50%."`. That line shows under the dateline. The "How I work" page promises readers that changes are noted on the article, so don't skip it for a correction.
+
 4. Commit. The article is live within a minute or two, appears first in the Latest articles list on the home page, and goes into the RSS feed. The list shows its title, date and `description`.
 5. Write the Sunday letter on Substack and link to the article.
 
@@ -461,7 +463,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `index.html` | Home page |
 | `articles/index.html` | The list of all articles |
 | `_posts/` | The articles themselves |
-| `euro-inflation-calculator.html`, `about.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
+| `euro-inflation-calculator.html`, `about.html`, `how-i-work.md`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |
