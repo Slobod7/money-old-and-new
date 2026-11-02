@@ -5,7 +5,7 @@ The site for the Sunday letter. It's plain HTML and CSS built with Jekyll, which
 **How the two fit together**
 
 - **The site (your domain)** holds the in-depth guides, so search traffic builds on your own address.
-- **Substack** sends the Sunday letter: your take, what changed this week, a few short items, and a link to the new guide.
+- **Substack** sends the Sunday letter: a macro deep dive, a review or an opinion piece in rotation, with a link to the new guide.
 
 ---
 
@@ -89,7 +89,7 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and a guide's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
 - **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
 - **Masthead:** the gateway mark and the site name (set in Besley) at the left, Guides, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
-- **Home page:** top to bottom, the slogan "Finance, explained" with the Subscribe button, the Latest articles carousel (hidden until the first guide is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
+- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles carousel (hidden until the first guide is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
 
 ### Known limitation: the wordmark
 

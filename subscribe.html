@@ -1,14 +1,14 @@
 ---
 layout: default
 title: Subscribe
-description: Get the Sunday letter. How money works, from bank deposits to blockchains. One letter a week, free.
+description: Get the Sunday letter, on what the ECB, inflation and markets mean for your money, old and new. Free, for people in Europe.
 permalink: /subscribe/
 ---
 <div class="wrap">
 <header class="page-head row">
 <div class="body">
 <h1 class="page-title">Get the Sunday letter</h1>
-<p class="page-lede">How money works, from bank deposits to blockchains. One letter a week, free.</p>
+<p class="page-lede">What the ECB, inflation and markets mean for your money, old and new. One letter a week, free, for people in Europe.</p>
 <div class="actions signup">
 {% include signup-button.html note="Substack sends the letter, and will email you a link to confirm. Your address is only used for this newsletter." %}
 </div>
@@ -19,9 +19,9 @@ permalink: /subscribe/
 <div class="body ruled">
 <h2 id="arrives-title" class="section-title">What arrives each Sunday</h2>
 <ul class="plain-list">
-<li>{% if site.posts.size > 0 %}A guide like <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>{% else %}One topic explained properly, in a guide{% endif %}, rebuilt whenever the facts change</li>
-<li>What changed this week, and what it costs you</li>
-<li>No price calls. Sponsored posts are always labelled.</li>
+<li>A macro deep dive, a review or an opinion piece, in rotation{% if site.posts.size > 0 %}. The latest: <a href="{{ site.posts.first.url | relative_url }}">{{ site.posts.first.title }}</a>{% endif %}</li>
+<li>No price calls, no tips on what to buy or sell</li>
+<li>Sponsored posts are always labelled</li>
 </ul>
 </div>
 </section>
