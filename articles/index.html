@@ -19,10 +19,9 @@ schema_type: CollectionPage
 {%- endif %}
 <ul class="guide-list">
 {%- for post in site.posts %}
-{%- assign updated = post.updated | default: post.date %}
 <li class="row">
 <div class="guide-meta">
-<p class="meta">{{ post.topic }}<br>Updated <time datetime="{{ updated | date: '%Y-%m-%d' }}">{{ updated | date: "%-d %B %Y" }}</time></p>
+<p class="meta">{{ post.topic }}<br>{% include post-dates.html post=post %}</p>
 </div>
 <div class="body">
 <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>

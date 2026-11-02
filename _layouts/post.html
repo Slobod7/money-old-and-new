@@ -1,7 +1,6 @@
 ---
 layout: default
 ---
-{%- assign updated = page.updated | default: page.date -%}
 {%- assign faq_heading = page.faq_heading | default: "Common questions" -%}
 {%- if page.review -%}
 {%- assign review_score = page.review.rating | default: site.review_scores[page.review.verdict] -%}
@@ -12,9 +11,9 @@ layout: default
 <header class="article-head body">
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{{ '/articles/' | relative_url }}">Articles</a><span class="sep" aria-hidden="true">/</span>{{ page.topic }}</nav>
 <h1 class="article-title">{{ page.title }}</h1>
-<p class="dek">{{ page.description }}</p>
+<p class="dek">{{ page.dek | default: page.description }}</p>
 <p class="byline">By <a href="{{ '/about/' | relative_url }}">{{ site.author.name }}</a></p>
-<p class="meta dateline">Updated <time datetime="{{ updated | date: '%Y-%m-%d' }}">{{ updated | date: "%-d %B %Y" }}</time>{% if page.first_published %}, first published {{ page.first_published }}{% endif %}.{% if page.read_time %} About {{ page.read_time }} minutes to read.{% endif %}</p>
+<p class="meta dateline">{% include post-dates.html post=page %}.{% if page.read_time %} About {{ page.read_time }} minutes to read.{% endif %}</p>
 {%- if page.changed %}
 <p class="changed">{{ page.changed }}</p>
 {%- endif %}

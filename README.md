@@ -106,7 +106,9 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 ```
 ---
 title: "What is Pump.fun and how does it work?"
-description: "One sentence that says what the reader gets."
+description: "One sentence that says what the reader gets, in 155 characters or fewer."
+dek: "Optional: the line under the headline, if it should say more than the description."
+seo_title: "Optional: the page's title in search results"
 date: 2026-11-07 09:00:00 +0200
 read_time: 8
 topic: The Long View
@@ -124,7 +126,9 @@ faq:
 ---
 ```
 
-Give every article its own `image`: it's the picture when the article is shared.
+Give every article its own `image`: it's the picture when the article is shared. Without one, it shares the default picture, `assets/img/og-default.png`, as a large card.
+
+`description` is what search results and the article lists show, so keep it to 155 characters or fewer. `dek` is optional: it replaces `description` under the headline only. `seo_title` is also optional: it's the page's whole `<title>`, with nothing added, so keep it to about 60 characters. Without one, the title is the article's `title`, then a bar and the site's name. Shared links always use `title`.
 
 `faq` is optional. Its questions appear at the end of the article under "Common questions" (change the heading with `faq_heading: "Your heading"`), with a link in the contents, and search engines get them as FAQ markup. Write questions people actually search for, and answer each one in its first sentence.
 
@@ -145,7 +149,7 @@ review:
 
 The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it and Try it 2, Skip it 1. The scores are under `review_scores` in `_config.yml`. To score one review differently, add `rating: 2` to its `review` block. Don't use `review` for a bank, broker or exchange as a company: Google ignores editorial ratings of organizations. Review a specific account or card as a `Product` instead.
 
-When you rebuild an article, add `updated: 2026-12-06` under `date`. The page shows "Updated 6 December 2026", and search engines are told the article changed. Leave `date` as it was.
+Every article shows "Published" and its `date`. When you change one, add `last_modified_at: 2026-12-06` under `date`. The page then also shows "Updated 6 December 2026", and the sitemap, the feed and the structured data say it changed. jekyll-sitemap and jekyll-feed read only that field, so don't use another name. Leave `date` as it was.
 
 4. Commit. The article is live within a minute or two, appears first in the Latest articles list on the home page, and goes into the RSS feed. The list shows its title, date and `description`.
 5. Write the Sunday letter on Substack and link to the article.
@@ -462,6 +466,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the articles |
+| `assets/img/og-default.png` | The picture shared links show for any page without its own `image` (1200×630) |
 
 ## Preview on your own computer (optional)
 

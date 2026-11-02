@@ -93,7 +93,7 @@ faq:
 <ul class="guide-list" role="list">
 {%- for post in site.posts limit: 3 %}
 <li>
-<p class="meta"><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: "%-d %B %Y" }}</time></p>
+<p class="meta">{% include post-dates.html post=post %}</p>
 <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
 <p>{{ post.description }}</p>
 </li>

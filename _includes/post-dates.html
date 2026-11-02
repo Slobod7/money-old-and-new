@@ -1,0 +1,6 @@
+{%- comment -%}
+An article's dates: when it was published and, once last_modified_at is set in its front matter, when it last changed.
+  {% include post-dates.html post=post %}
+{%- endcomment -%}
+Published <time datetime="{{ include.post.date | date: '%Y-%m-%d' }}">{{ include.post.date | date: "%-d %B %Y" }}</time>
+{%- if include.post.last_modified_at %}. Updated <time datetime="{{ include.post.last_modified_at | date: '%Y-%m-%d' }}">{{ include.post.last_modified_at | date: "%-d %B %Y" }}</time>{% endif -%}

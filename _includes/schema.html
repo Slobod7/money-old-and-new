@@ -25,9 +25,9 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 {%- if site.author.linkedin -%}{%- assign same_as = same_as | unshift: site.author.linkedin -%}{%- endif -%}
 {%- unless site.substack_url == nil or site.substack_url == '' or site.substack_url contains 'YOUR-NAME' -%}{%- assign same_as = same_as | push: site.substack_url -%}{%- endunless -%}
 {%- if is_article -%}
-{%- assign updated = page.updated | default: page.date -%}
+{%- assign modified = page.last_modified_at | default: page.date -%}
 {%- assign published_iso = page.date | date_to_xmlschema -%}
-{%- assign updated_iso = updated | date_to_xmlschema -%}
+{%- assign modified_iso = modified | date_to_xmlschema -%}
 {%- if page.review -%}
 {%- assign review_score = page.review.rating | default: site.review_scores[page.review.verdict] -%}
 {%- assign review_type = page.review.type | default: 'Book' -%}
@@ -83,7 +83,7 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 {%- endif %}
 {%- if is_article %},
 "datePublished": {{ published_iso | jsonify }},
-"dateModified": {{ updated_iso | jsonify }}
+"dateModified": {{ modified_iso | jsonify }}
 {%- endif %}
 {%- if page_type == 'ProfilePage' %},
 "mainEntity": { "@id": {{ person_id | jsonify }} }
@@ -107,7 +107,7 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 "description": {{ page.description | jsonify }},
 "inLanguage": {{ language | jsonify }},
 "datePublished": {{ published_iso | jsonify }},
-"dateModified": {{ updated_iso | jsonify }},
+"dateModified": {{ modified_iso | jsonify }},
 "author": { "@type": "Person", "@id": {{ person_id | jsonify }}, "name": {{ site.author.name | jsonify }}, "url": {{ about_url | jsonify }} },
 "publisher": { "@id": {{ person_id | jsonify }} },
 "mainEntityOfPage": { "@id": {{ webpage_id | jsonify }} },
@@ -128,7 +128,7 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 "name": {{ page.title | jsonify }},
 "inLanguage": {{ language | jsonify }},
 "datePublished": {{ published_iso | jsonify }},
-"dateModified": {{ updated_iso | jsonify }},
+"dateModified": {{ modified_iso | jsonify }},
 "author": { "@type": "Person", "@id": {{ person_id | jsonify }}, "name": {{ site.author.name | jsonify }}, "url": {{ about_url | jsonify }} },
 "publisher": { "@id": {{ person_id | jsonify }} },
 "isPartOf": { "@id": {{ page_url | append: '#article' | jsonify }} }
