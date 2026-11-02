@@ -86,6 +86,7 @@ Every page carries schema.org markup (JSON-LD) that tells search engines what th
 | Home | Its common questions (FAQPage), from `faq` in `index.html`'s front matter |
 | About | Your profile (ProfilePage) |
 | Articles | The list of articles (CollectionPage) |
+| A page under `/data/` | Its breadcrumb (Home › Data › the page) |
 
 To check a page once it's live, paste its address into Google's Rich Results Test (search.google.com/test/rich-results) or the Schema Markup Validator (validator.schema.org). Search Console's **Enhancements** section reports any errors it finds as Google crawls the site.
 
@@ -388,7 +389,7 @@ What euros put into cash at home, a bank deposit, German bonds, gold, US stocks,
 
 The home page uses it between Latest articles and the Sunday letter block, under its own heading and introduction: `{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}`. The introduction's inflation figures (how far prices have risen since January 1999, and what €1,000 kept in a drawer since then buys now) come from `since` in `_data/old_new.json`, so they update with the data. The rest of its wording is fixed in `index.html`. The section and its introduction span the full page width.
 
-It also has its own page at `/euro-inflation-calculator/` (`euro-inflation-calculator.html`), with the rules and sources showing, linked from the nav, the footer and the home page.
+It also has its own page at `/data/euro-inflation-calculator/` (`data/euro-inflation-calculator.html`), with the rules and sources showing, linked from the Data page, the footer and the home page.
 
 ### The home page's common questions
 
@@ -465,8 +466,8 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `index.html` | Home page |
 | `articles/index.html` | The list of all articles |
 | `_posts/` | The articles themselves |
-| `euro-inflation-calculator.html`, `about.html`, `how-i-work.md`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
-| `data.html`, `ecb-interest-rates.html`, `brent-oil-price-history.html` | The data pages: a list, and a page for each chart. Their introductions read their figures from `_data/`, so they update with the charts. Keep typed figures out of them |
+| `about.html`, `how-i-work.md`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
+| `data/` | The Data page (`index.html`) and a page for each chart and calculator, at `/data/…`. Their introductions read their figures from `_data/`, so they update with the charts. Keep typed figures out of them. Each moved page keeps its old address working with `redirect_from` in its front matter |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
 | `assets/css/site.css` | All the styling. Colours, widths and fonts are at the top under `:root` |

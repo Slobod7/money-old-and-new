@@ -59,6 +59,7 @@ kramdown:
 
 plugins:
   - jekyll-feed
+  - jekyll-redirect-from
   - jekyll-sitemap
   - jekyll-seo-tag
 
