@@ -132,9 +132,19 @@ a:hover { text-decoration-thickness: 2px; }
 .feature-cards { grid-area: cards; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; margin: 0; padding: 0; list-style: none; }
 /* Each card shares its parent's rows (label, title, description), so the descriptions start level even when one title is shorter */
 .feature-cards li { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; padding: 24px 24px 28px; background: var(--bg); color: var(--text); }
-.feature-label { display: block; margin-bottom: 20px; font: 500 13px/1 var(--sans); letter-spacing: 0.1em; color: var(--forest); }
+.feature-label { display: block; margin-bottom: 20px; font: 500 13px/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest); }
 .feature-cards :is(h2, h3) { margin: 0 0 10px; font: 400 21px/1.3 var(--serif); text-wrap: balance; }
 .feature-cards p { margin: 0; font: 400 15.5px/1.6 var(--sans); }
+/* Cards that each open a page: the link in the title stretches over the whole card, and its focus ring goes around the card */
+.link-cards li { position: relative; }
+.link-cards h2 a { color: inherit; text-decoration: none; }
+.link-cards h2 a::after { content: ""; position: absolute; inset: 0; }
+.link-cards h2 a:focus-visible { outline: none; }
+.link-cards h2 a:focus-visible::after { outline: 3px solid var(--on-forest); outline-offset: 3px; }
+@media (hover: hover) {
+  .link-cards li:hover { background: var(--sage); }
+  .link-cards li:hover h2 a { text-decoration: underline; text-decoration-thickness: 1px; }
+}
 .data-page { padding-top: 56px; }
 @media (max-width: 860px) {
   .feature-block { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "art" "cards"; }
