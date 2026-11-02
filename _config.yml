@@ -48,6 +48,10 @@ review_scores:
 # Guides live at short, permanent addresses like /what-is-pump-fun/
 permalink: /:title/
 
+# A post dated in the future stays off the site until a build after that date. GitHub Pages defaults to true, which
+# would publish it straight away. .github/workflows/sunday-rebuild.yml starts a build every Sunday at 08:15 UTC.
+future: false
+
 markdown: kramdown
 kramdown:
   input: GFM

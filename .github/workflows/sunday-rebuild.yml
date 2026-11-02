@@ -1,0 +1,22 @@
+# Asks GitHub Pages to rebuild the site every Sunday, so a post dated that morning goes live without a push.
+# future: false in _config.yml keeps a future-dated post off the site until a build after its date, so date Sunday's
+# post before 08:15 UTC. GitHub can run scheduled workflows late, so check the post is up.
+name: Sunday rebuild
+
+on:
+  schedule:
+    - cron: '15 8 * * 0'   # 08:15 UTC every Sunday
+  workflow_dispatch:       # to run it by hand: Actions → Sunday rebuild → Run workflow
+
+permissions:
+  pages: write      # to ask GitHub Pages to rebuild
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask GitHub Pages to rebuild the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"

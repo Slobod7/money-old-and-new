@@ -150,7 +150,7 @@ When you rebuild a guide, add `updated: 2026-12-06` under `date`. The page shows
 4. Commit. The guide is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the guide's `image` (cropped to 16:9 from the top left), its title and its updated date.
 5. Write the Sunday letter on Substack and link to the guide.
 
-A post dated in the future is skipped until GitHub rebuilds the site after that date, which only happens when you push something. To publish on a set day, commit on that day.
+To schedule a post, commit it with a future `date`. `future: false` in `_config.yml` keeps it off the site until a build after that date (GitHub Pages' own default is `future: true`, which would publish it straight away). `.github/workflows/sunday-rebuild.yml` asks Pages to rebuild every Sunday at 08:15 UTC, so date a Sunday post before then: 09:00 in Bucharest is 07:00 UTC in winter and 06:00 UTC in summer. GitHub can run scheduled workflows late, so check the post is up. For any other day, push something after the post's date or use **Actions → Sunday rebuild → Run workflow**. The file itself is public in the repository from the moment you push it, whatever its date.
 
 ### Building blocks you can paste into a guide
 
@@ -456,7 +456,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `assets/data/old-new.json`, `_data/old_new.json` | The old-vs-new calculator's data, written by `scripts/update-old-new-data.py`. Don't edit by hand |
 | `_data/variable_mortgages.json` | The variable-rate mortgage chart's data, fixed (see "Variable-rate mortgage chart") |
 | `scripts/`, `tests/` | The data update scripts and the oil calculator's maths test. Not published |
-| `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data |
+| `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data, and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the guides |
