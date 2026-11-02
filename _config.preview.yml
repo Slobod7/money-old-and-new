@@ -3,5 +3,5 @@
 # Clicking one goes to a Substack page that doesn't exist.
 substack_url: "https://example.substack.com"
 
-# Shows the sample guides in _drafts, so the Latest articles carousel has cards. Those files are never committed.
+# Shows the sample articles in _drafts, so the Latest articles section has entries. Those files are never committed.
 show_drafts: true

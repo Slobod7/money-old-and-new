@@ -12,7 +12,7 @@ Gemfile.lock
 # macOS
 .DS_Store
 
-# Sample guides for the local preview (shown only with _config.preview.yml)
+# Drafts and sample articles for the local preview (shown only with _config.preview.yml)
 _drafts/
 assets/img/samples/
 

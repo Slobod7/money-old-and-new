@@ -45,7 +45,7 @@ review_scores:
   Try it: 2
   Skip it: 1
 
-# Guides live at short, permanent addresses like /what-is-pump-fun/
+# Articles live at short, permanent addresses like /what-is-pump-fun/
 permalink: /:title/
 
 # A post dated in the future stays off the site until a build after that date. GitHub Pages defaults to true, which

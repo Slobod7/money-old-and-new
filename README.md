@@ -4,8 +4,8 @@ The site for the Sunday letter. It's plain HTML and CSS built with Jekyll, which
 
 **How the two fit together**
 
-- **The site (your domain)** holds the in-depth guides, so search traffic builds on your own address.
-- **Substack** sends the Sunday letter: a macro deep dive, a review or an opinion piece in rotation, with a link to the new guide.
+- **The site (your domain)** holds the in-depth articles, so search traffic builds on your own address.
+- **Substack** sends the Sunday letter: a macro deep dive, a review or an opinion piece in rotation, with a link to the new article.
 
 ---
 
@@ -70,14 +70,14 @@ Every page carries schema.org markup (JSON-LD) that tells search engines what th
 | Page | What it says |
 |---|---|
 | Every page | The site (WebSite) and you (Person: name, photo, job, employer, topics, LinkedIn and Substack) |
-| A guide | The article (BlogPosting: title, description, image, published and updated dates, author, word count), its breadcrumb (Home › Guides › the guide), and its questions (FAQPage) when it has `faq`, and the review (Review: what you reviewed, your verdict and its score) when it has `review` |
+| An article | The article (BlogPosting: title, description, image, published and updated dates, author, word count), its breadcrumb (Home › Articles › the article), and its questions (FAQPage) when it has `faq`, and the review (Review: what you reviewed, your verdict and its score) when it has `review` |
 | Home | Its common questions (FAQPage), from `faq` in `index.html`'s front matter |
 | About | Your profile (ProfilePage) |
-| Guides | The list of guides (CollectionPage) |
+| Articles | The list of articles (CollectionPage) |
 
 To check a page once it's live, paste its address into Google's Rich Results Test (search.google.com/test/rich-results) or the Schema Markup Validator (validator.schema.org). Search Console's **Enhancements** section reports any errors it finds as Google crawls the site.
 
-Google stopped showing FAQ results on 7 May 2026, for every site, so the questions won't add a dropdown under your result in Google. The markup is standard schema.org and does no harm. Whether other search engines or AI assistants use it isn't documented. Mark up each question once: if a guide repeats a question from the home page, leave it out of the guide's `faq`.
+Google stopped showing FAQ results on 7 May 2026, for every site, so the questions won't add a dropdown under your result in Google. The markup is standard schema.org and does no harm. Whether other search engines or AI assistants use it isn't documented. Mark up each question once: if an article repeats a question from the home page, leave it out of the article's `faq`.
 
 ---
 
@@ -85,11 +85,11 @@ Google stopped showing FAQ results on 7 May 2026, for every site, so the questio
 
 Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. The only filled surfaces are the two forest blocks on the home page: the Sunday letter, with white cards, and the closing signup. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
 
-- **Type:** Besley regular for headings, guides and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Guides are set at 19px (18px on phones) with a 680px reading column.
-- **Grid:** on wide screens a narrow left rail holds small labels, dates and a guide's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
+- **Type:** Besley regular for headings, articles and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Articles are set at 19px (18px on phones) with a 680px reading column.
+- **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
 - **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
-- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Guides, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
-- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles carousel (hidden until the first guide is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
+- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, About and Subscribe at the right. At 640px and below only the mark shows, with the same three links at the right.
+- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles carousel (hidden until the first article is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), and a closing Subscribe block in forest. No divider lines anywhere on the page; the header and footer have none on any page.
 
 ### Known limitation: the wordmark
 
@@ -97,7 +97,7 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 
 ---
 
-## Publish a new guide
+## Publish a new article
 
 1. In the repository, open the `_posts` folder and click **Add file → Create new file**.
 2. Name it `YYYY-MM-DD-short-address.html`, for example `2026-11-07-what-is-pump-fun.html`. The part after the date becomes the page address: `/what-is-pump-fun/`. Don't change it after publishing.
@@ -109,7 +109,7 @@ title: "What is Pump.fun and how does it work?"
 description: "One sentence that says what the reader gets."
 date: 2026-11-07 09:00:00 +0200
 read_time: 8
-topic: Crypto explained
+topic: The Long View
 image: /assets/img/guides/what-is-pump-fun/cover.jpg
 toc:
   - id: how-it-works
@@ -124,9 +124,9 @@ faq:
 ---
 ```
 
-Give every guide its own `image`: it's the picture on the home page card and when the guide is shared. Without one, the card shows only the title and date, and shared links have no picture.
+Give every article its own `image`: it's the picture on the home page card and when the article is shared. Without one, the card shows only the title and date, and shared links have no picture.
 
-`faq` is optional. Its questions appear at the end of the guide under "Common questions" (change the heading with `faq_heading: "Your heading"`), with a link in the contents, and search engines get them as FAQ markup. Write questions people actually search for, and answer each one in its first sentence.
+`faq` is optional. Its questions appear at the end of the article under "Common questions" (change the heading with `faq_heading: "Your heading"`), with a link in the contents, and search engines get them as FAQ markup. Write questions people actually search for, and answer each one in its first sentence.
 
 For a review, add a `review` block to the front matter. It puts a verdict box at the top of the piece (the verdict, its score, and what you reviewed) and gives search engines Review markup, which can show stars under your result:
 
@@ -145,14 +145,14 @@ review:
 
 The score comes from the verdict: Read it and Use it score 3 out of 3, Skim it and Try it 2, Skip it 1. The scores are under `review_scores` in `_config.yml`. To score one review differently, add `rating: 2` to its `review` block. Don't use `review` for a bank, broker or exchange as a company: Google ignores editorial ratings of organizations. Review a specific account or card as a `Product` instead.
 
-When you rebuild a guide, add `updated: 2026-12-06` under `date`. The page shows "Updated 6 December 2026", and search engines are told the guide changed. Leave `date` as it was.
+When you rebuild an article, add `updated: 2026-12-06` under `date`. The page shows "Updated 6 December 2026", and search engines are told the article changed. Leave `date` as it was.
 
-4. Commit. The guide is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the guide's `image` (cropped to 16:9 from the top left), its title and its updated date.
-5. Write the Sunday letter on Substack and link to the guide.
+4. Commit. The article is live within a minute or two, appears first in the Latest articles carousel on the home page, and goes into the RSS feed. The carousel card uses the article's `image` (cropped to 16:9 from the top left), its title and its updated date.
+5. Write the Sunday letter on Substack and link to the article.
 
 To schedule a post, commit it with a future `date`. `future: false` in `_config.yml` keeps it off the site until a build after that date (GitHub Pages' own default is `future: true`, which would publish it straight away). `.github/workflows/sunday-rebuild.yml` asks Pages to rebuild every Sunday at 08:15 UTC, so date a Sunday post before then: 09:00 in Bucharest is 07:00 UTC in winter and 06:00 UTC in summer. GitHub can run scheduled workflows late, so check the post is up. For any other day, push something after the post's date or use **Actions → Sunday rebuild → Run workflow**. The file itself is public in the repository from the moment you push it, whatever its date.
 
-### Building blocks you can paste into a guide
+### Building blocks you can paste into an article
 
 Section heading (the `id` must match an entry in `toc`):
 
@@ -203,7 +203,7 @@ A table that turns into labelled blocks on phones (give every cell except the fi
 </div>
 ```
 
-Every guide already ends with a subscription block, so avoid adding one early in the text. If you need one elsewhere, give it a unique `id`:
+Every article already ends with a subscription block, so avoid adding one early in the text. If you need one elsewhere, give it a unique `id`:
 
 ```liquid
 {% include subscribe.html id="mid-title" heading="Get the next update when it lands" %}
@@ -211,13 +211,13 @@ Every guide already ends with a subscription block, so avoid adding one early in
 
 For questions that open and close, use `faq` in the front matter (above) rather than writing the HTML by hand. Only the front matter version gets FAQ markup.
 
-You can also write a guide in Markdown (name the file `.md` instead of `.html`); the building blocks above still work inside it.
+You can also write an article in Markdown (name the file `.md` instead of `.html`); the building blocks above still work inside it.
 
 ---
 
 ## Oil widgets
 
-Two widgets for articles about oil: a chart of the Brent crude price, and a calculator that answers "if I had put money into oil from year X, what would I have today?". Paste either line into a guide where you want it. Only pages with a widget load its script (`assets/js/oil-widgets.js`), and it reads its data from this site alone: no outside requests, cookies or storage, so the privacy page stays true.
+Two widgets for articles about oil: a chart of the Brent crude price, and a calculator that answers "if I had put money into oil from year X, what would I have today?". Paste either line into an article where you want it. Only pages with a widget load its script (`assets/js/oil-widgets.js`), and it reads its data from this site alone: no outside requests, cookies or storage, so the privacy page stays true.
 
 ### The Brent chart
 
@@ -225,7 +225,7 @@ Two widgets for articles about oil: a chart of the Brent crude price, and a calc
 {% include oil-chart.html id="brent-since-1990" %}
 ```
 
-- `id`: a name for this chart, different for each chart on the page. You can put several charts in one guide.
+- `id`: a name for this chart, different for each chart on the page. You can put several charts in one article.
 - `title` (optional): a heading above the chart, for example `title="Brent since 1990"`.
 - `range` (optional): the view it opens on: `1y`, `5y`, `10y`, `20y` or `all` (since 1990, the default).
 
@@ -372,7 +372,7 @@ The home page uses it between Latest articles and the Sunday letter block, under
 
 Ten questions near the end of the home page, in two columns ("The numbers" and "Your money"), that open and close. They come from `faq` in `index.html`'s front matter, each with a `column`. The same list feeds the FAQPage markup, so the page and the markup always match.
 
-Some figures in the answers come from the calculator: each `[name]` in an answer, such as `[europe_2000]`, is replaced by `faq.name` in `_data/old_new.json`. The update script works those out with the calculator's data, so they move with it every month. To quote a new figure this way, add it to `faq` in `default_case()` in `scripts/update-old-new-data.py`. `_includes/faq-fill.html` does the replacing, for guides as well.
+Some figures in the answers come from the calculator: each `[name]` in an answer, such as `[europe_2000]`, is replaced by `faq.name` in `_data/old_new.json`. The update script works those out with the calculator's data, so they move with it every month. To quote a new figure this way, add it to `faq` in `default_case()` in `scripts/update-old-new-data.py`. `_includes/faq-fill.html` does the replacing, for articles as well.
 
 Every other figure is typed in with its month: the ECB's deposit rate, euro area, German and Romanian inflation, and the banks' deposit rates. Check them once a month, after the ECB's deposit-rate figures and the Eurostat inflation release, and change `faq_checked`, which the page shows as "Answers checked …".
 
@@ -439,10 +439,10 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | File or folder | What it controls |
 |---|---|
 | `_config.yml` | Site name, your details, Substack address |
-| `_config.preview.yml` | Local preview only: a stand-in Substack address so the Subscribe buttons show, and the sample guides in `_drafts/` (images in `assets/img/samples/`, both ignored by git). GitHub Pages ignores this file |
+| `_config.preview.yml` | Local preview only: a stand-in Substack address so the Subscribe buttons show, and the sample articles in `_drafts/` (images in `assets/img/samples/`, both ignored by git). GitHub Pages ignores this file |
 | `index.html` | Home page |
-| `guides/index.html` | The list of all guides |
-| `_posts/` | The guides themselves |
+| `articles/index.html` | The list of all articles |
+| `_posts/` | The articles themselves |
 | `about.html`, `subscribe.html`, `privacy.md`, `404.html` | The other pages |
 | `_layouts/` | The page frames (article layout, default layout, simple page) |
 | `_includes/` | Shared pieces: header, footer, the subscription block and the signup button |
@@ -459,7 +459,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data, and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
-| `assets/img/guides/` | Images that belong to the guides |
+| `assets/img/guides/` | Images that belong to the articles |
 
 ## Preview on your own computer (optional)
 

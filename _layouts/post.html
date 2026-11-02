@@ -10,7 +10,7 @@ layout: default
 <div class="wrap">
 <article class="article row">
 <header class="article-head body">
-<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{{ '/guides/' | relative_url }}">Guides</a><span class="sep" aria-hidden="true">/</span>{{ page.topic }}</nav>
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="{{ '/articles/' | relative_url }}">Articles</a><span class="sep" aria-hidden="true">/</span>{{ page.topic }}</nav>
 <h1 class="article-title">{{ page.title }}</h1>
 <p class="dek">{{ page.description }}</p>
 <p class="byline">By <a href="{{ '/about/' | relative_url }}">{{ site.author.name }}</a></p>
@@ -22,7 +22,7 @@ layout: default
 
 {%- if page.toc %}
 <nav class="toc" aria-labelledby="toc-title">
-<h2 id="toc-title" class="kicker">In this guide</h2>
+<h2 id="toc-title" class="kicker">In this article</h2>
 <ol role="list">
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
@@ -37,8 +37,8 @@ layout: default
 <div class="body">
 {%- if page.toc %}
 <details class="toc-mobile">
-<summary>In this guide</summary>
-<nav aria-label="In this guide">
+<summary>In this article</summary>
+<nav aria-label="In this article">
 <ol role="list">
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
@@ -81,7 +81,7 @@ layout: default
 
 <footer class="article-end">
 <div class="share">
-<p class="kicker">Share this guide</p>
+<p class="kicker">Share this article</p>
 <button type="button" class="link-button" data-copy-link hidden>Copy link</button>
 <a class="action" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}">Share on LinkedIn</a>
 <span role="status" data-copy-status></span>
@@ -95,7 +95,7 @@ layout: default
 
 <div class="row after-article">
 <div class="body">
-{% include subscribe.html id="end-title" heading="I rebuild guides like this as things change. Get the next one on Sunday." %}
+{% include subscribe.html id="end-title" heading="I update articles like this as things change. Get the next one on Sunday." %}
 </div>
 </div>
 
