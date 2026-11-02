@@ -33,7 +33,7 @@ author:
 
 # Your Substack newsletter. Every "Subscribe" button on the site points to its signup page.
 # While this still says YOUR-NAME, the buttons are replaced by "Signup isn't open yet".
-substack_url: "https://YOUR-NAME.substack.com"   # CHANGE ME: later your own subdomain, e.g. https://newsletter.slobodzean.com
+substack_url: "https://moneyoldandnew.substack.com"   # later your own subdomain, e.g. https://letter.moneyoldandnew.com
 
 # Cloudflare Web Analytics: the site token from its JS snippet (Cloudflare dashboard, Web Analytics, Manage site).
 # It's public by design: it shows in every page's source. Empty means no analytics script, and privacy.md says so.
