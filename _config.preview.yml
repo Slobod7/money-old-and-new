@@ -5,3 +5,6 @@ substack_url: "https://example.substack.com"
 
 # Shows the sample articles in _drafts, so the Latest articles section has entries. Those files are never committed.
 show_drafts: true
+
+# Shows the gold-only view on the euro calculator page. Not on the public site.
+gold_return_preview: true

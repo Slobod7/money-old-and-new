@@ -1,0 +1,3 @@
+# Local review only. Do not add this configuration to publishing workflows.
+gold_stocks_preview: true
+url: "http://127.0.0.1:4007"

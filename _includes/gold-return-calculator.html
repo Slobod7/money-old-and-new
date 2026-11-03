@@ -1,0 +1,72 @@
+{%- comment -%}
+Reusable gold-only view of old-new-calculator.js. No standalone route. Local preview only: see gold_return_preview.
+{% include gold-return-calculator.html id="gold-return" %}
+Use a unique id for each instance. Share links return to the existing calculator page.
+{%- endcomment -%}
+{%- assign gc = include.id | default: "gold-return" -%}
+{%- assign gd = site.data.old_new -%}
+<section class="oil-widget onc gold-return" id="{{ gc }}" data-gold-return data-src="{{ '/assets/data/old-new.json' | relative_url }}" data-share-url="{{ '/data/euro-inflation-calculator/' | relative_url }}" aria-labelledby="{{ gc }}-title">
+<h2 class="oil-title" id="{{ gc }}-title">Gold return calculator</h2>
+<p class="oil-note">A gold-only view of the historical comparison. Purchases and valuations use monthly-average prices, not exact month-end trading prices.</p>
+<p class="oil-error" role="status" data-gold-out="notice"></p>
+<p class="oil-note" data-gold-out="bounds"></p>
+<p class="oil-fallback" data-gold-fallback>Example: €{{ gd.amount }} bought at January 2000’s average gold price, valued at {{ gd.to | append: "-01" | date: "%B %Y" }}’s average price. The initial contribution is €{{ gd.put_in_real }} in valuation-month money.</p>
+<div class="table-wrap" data-gold-fallback role="region" aria-label="Dated gold example" tabindex="0">
+<table class="data"><caption>Gold, January 2000 to {{ gd.to | append: "-01" | date: "%B %Y" }}, after euro area inflation</caption>
+<thead><tr><th scope="col">Final value</th><th scope="col">Annualised return</th><th scope="col">Largest fall</th></tr></thead>
+<tbody>{% for row in gd.rows %}{% if row[0] == "Gold" %}<tr><td>€{{ row[1] }}</td><td>{{ row[2] }}</td><td>{{ row[3] }}</td></tr>{% endif %}{% endfor %}</tbody></table>
+</div>
+<form class="oil-form gold-form" data-gold-form hidden>
+<div class="oil-field"><label for="{{ gc }}-mode">How you buy</label><select id="{{ gc }}-mode" data-gold-field="mode"><option value="lump">One lump sum</option><option value="monthly">Every month</option></select></div>
+<div class="oil-field"><label for="{{ gc }}-amount"><span data-gold-out="amount-label">Amount</span><span class="visually-hidden" data-gold-out="amount-currency"> in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" data-gold-symbol aria-hidden="true">€</span><input id="{{ gc }}-amount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1000" data-gold-field="amount" aria-describedby="{{ gc }}-error"></div>
+<p class="oil-error" id="{{ gc }}-error" data-gold-out="error"></p></div>
+<div class="oil-field"><label for="{{ gc }}-start">Start month</label><select id="{{ gc }}-start" data-gold-field="start"></select></div>
+<div class="oil-field"><label for="{{ gc }}-end">Valuation month</label><select id="{{ gc }}-end" data-gold-field="end"></select></div>
+<div class="oil-field"><label for="{{ gc }}-currency">Reporting currency</label><select id="{{ gc }}-currency" data-gold-field="currency"><option value="EUR">EUR — euros</option><option value="USD">USD — US dollars</option></select></div>
+<div class="oil-field"><label for="{{ gc }}-basis">Display</label><select id="{{ gc }}-basis" data-gold-field="basis"><option value="real">Real — valuation-month money</option><option value="nominal">Nominal — no inflation adjustment</option></select></div>
+</form>
+<div data-gold-results hidden>
+<div class="onc-cols">
+<div>
+<p class="gold-value" data-gold-out="value"></p>
+<p class="oil-note" data-gold-out="basis"></p>
+<dl class="gold-metrics">
+<div><dt>Contributions</dt><dd data-gold-out="contributions"></dd></div>
+<div><dt>Total gain or loss / return</dt><dd data-gold-out="gain"></dd></div>
+<div><dt data-gold-out="annual-label">Annualised return</dt><dd data-gold-out="annual"></dd></div>
+</dl>
+<p class="oil-note" data-gold-out="annual-note"></p>
+<p data-gold-out="interpretation"></p>
+<p class="oil-worst" data-gold-out="fall"></p>
+<p class="oil-note">The fall and recovery describe gold’s price, independently of your purchases. Monthly averages can conceal larger falls within a month. Recovery is only checked through your valuation month.</p>
+<p><a data-gold-out="share">Link to this calculation</a></p>
+</div>
+<figure class="oil-mini-figure onc-figure">
+<figcaption class="oil-note" data-gold-out="chart-title"></figcaption>
+<ul class="oil-key" aria-hidden="true"><li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-line" x1="1" x2="23" y1="5" y2="5"/></svg>Gold value</li><li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Contributions</li></ul>
+<div class="oil-plot onc-plot" data-plot></div>
+<p class="oil-note onc-hint" aria-hidden="true">Tap or drag along the chart to read each month.</p>
+</figure>
+</div>
+<details class="oil-data"><summary>Show the monthly result table</summary>
+<div class="table-wrap" role="region" aria-label="Monthly gold results" tabindex="0"><table class="data"><caption data-gold-out="table-caption"></caption><thead><tr><th scope="col">Month</th><th scope="col" class="num">Gold value</th><th scope="col" class="num">Contributions</th></tr></thead><tbody data-gold-table></tbody></table></div>
+</details>
+<p class="visually-hidden" aria-live="polite" data-gold-out="live"></p>
+</div>
+<details class="oil-data"><summary>Gold pricing, costs and sources</summary>
+<div class="oil-rules"><ul>
+<li>The <a href="https://www.worldbank.org/en/research/commodity-markets">World Bank: Commodity Price Data (Pink Sheet)</a> quotes nominal US dollars per troy ounce. From June 2025 it uses a spot average of daily rates; earlier observations use the London afternoon fixing, 99.5% fine. See the workbook’s Description sheet for suppliers and historical definitions.</li>
+<li>Euro gold prices equal the dollar price divided by the <a href="https://data.ecb.europa.eu/data/datasets/EXR/EXR.M.USD.EUR.SP00.A">ECB’s monthly-average US dollars per euro</a>. The ratio of these two averages is used; it is not an average of daily euro gold prices. USD uses the original dollar series. The selected currency applies to every contribution as well as the result.</li>
+<li>A lump sum buys once in the start month. Monthly buying includes both selected months, with each payment buying at that month’s average price. The last payment earns no return before valuation. Month-end dates are used only for the holding-period maths (365-day CAGR/XIRR), not as exact trade dates.</li>
+<li>Real EUR figures use <a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.000000.4D0.INX">euro area HICP</a>; real USD figures use <a href="https://fred.stlouisfed.org/series/CPIAUCSL">US CPI-U, seasonally adjusted, via FRED</a>. Values and each contribution are restated in the selected valuation month’s money. {% for m in gd.gold_source.cpi_filled %}US CPI for {{ m | append: "-01" | date: "%B %Y" }} is an estimate using the geometric midpoint of adjacent months, following this site’s existing CPI convention.{% endfor %}</li>
+<li>No dividends, interest or other income are added. Storage, insurance, dealer spreads, transaction and currency-conversion charges, fund fees and taxes are excluded. This does not model the return on a particular coin, bar or fund.</li>
+</ul></div>
+</details>
+<p class="oil-source">Sources: World Bank Commodity Price Data (gold); European Central Bank (exchange rates, and euro area HICP from Eurostat){% if gd.gold_source %}; US Bureau of Labor Statistics via FRED (US CPI){% endif %}. Observations through {{ gd.to | append: "-01" | date: "%B %Y" }}. {% if gd.gold_source %}Pink Sheet vintage: {{ gd.gold_source.released | date: "%-d %B %Y" }}. {% endif %}Site data updated {{ gd.updated | date: "%-d %B %Y" }}. {% if gd.gold_source %}<a href="{{ gd.gold_source.url }}">Source workbook and supplier notes</a>; {% endif %}<a href="https://www.worldbank.org/ext/en/legal/terms-conditions/datasets">World Bank dataset terms, including third-party exceptions</a>.</p>
+<p class="oil-note"><a href="{{ '/data/euro-inflation-calculator/' | relative_url }}#old-new">Compare gold with cash, deposits, bonds and stocks</a>.</p>
+</section>
+{%- unless old_new_script %}
+{%- assign old_new_script = true %}
+<script src="{{ '/assets/js/old-new-calculator.js' | relative_url }}" defer></script>
+{%- endunless %}

@@ -1,0 +1,10 @@
+{%- comment -%}
+Local preview only: it emits nothing without gold_stocks_preview.
+Shares the old-new engine, data, controls, chart and link format; never insert a second calculator script.
+Usage: {% include gold-stocks-comparison.html id="article-gold-stocks" %}
+{%- endcomment -%}
+{%- if site.gold_stocks_preview %}
+{%- assign gs_id = include.id | default: "gold-stocks" -%}
+{%- assign gs_title = include.title | default: "Gold versus stocks, in euros" -%}
+{% include old-new-calculator.html id=gs_id title=gs_title preset="gold-stocks" compact=true %}
+{%- endif %}

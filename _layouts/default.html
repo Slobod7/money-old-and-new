@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
 <link rel="icon" href="{{ '/assets/brand/favicon.svg' | relative_url }}" type="image/svg+xml">
 <meta name="theme-color" content="#FAF9F6">
-<meta name="robots" content="max-image-preview:large">
+{% if site.gold_stocks_preview %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="max-image-preview:large">{% endif %}
 {%- comment -%}
 jekyll-seo-tag's meta tags, minus its JSON-LD: schema.html writes the structured data.
 A page's optional seo_title is its whole <title>, with nothing added. Social titles stay as page.title.
