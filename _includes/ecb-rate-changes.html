@@ -1,0 +1,46 @@
+{%- comment -%}
+Latest distinct change in each plotted policy rate, derived from the same effective-date steps as the SVG.
+Track each rate independently: a step in one series need not be a change in the other. The initial step is
+only a chart boundary, so do not label it as the original effective date or invent an earlier rate.
+{%- endcomment -%}
+{%- assign changes_data = site.data.ecb_rates_inflation -%}
+{%- assign changes_start = changes_data.steps | first -%}
+{%- assign change_names = "Deposit facility,Main refinancing" | split: "," -%}
+{%- assign change_cols = "3,2" | split: "," -%}
+<section class="ecb-changes" aria-labelledby="ecb-changes-title">
+<h2 class="section-title" id="ecb-changes-title">Last changes shown</h2>
+<p class="ecb-change-period">Through {{ changes_data.hicp_to | append: "-01" | date: "%B %Y" }} · Effective dates</p>
+<dl class="ecb-change-list">
+{%- for name in change_names -%}
+{%- assign change_col = change_cols[forloop.index0] | plus: 0 -%}
+{%- assign change_value = changes_start[change_col] -%}
+{%- assign change_date = changes_start[0] -%}
+{%- assign change_found = false -%}
+{%- assign change_at_start = true -%}
+{%- for step in changes_data.steps offset: 1 -%}
+{%- if step[change_col] != change_value -%}
+{%- assign change_previous = change_value -%}
+{%- assign change_previous_date = change_date -%}
+{%- assign change_previous_at_start = change_at_start -%}
+{%- assign change_value = step[change_col] -%}
+{%- assign change_date = step[0] -%}
+{%- assign change_found = true -%}
+{%- assign change_at_start = false -%}
+{%- endif -%}
+{%- endfor %}
+<div>
+<dt>{{ name }}</dt>
+{%- if change_found -%}
+{%- assign change_bp = change_value | minus: change_previous | times: 100 | round %}
+<dd><strong>{% assign rate_parts = change_previous | append: "" | split: "." %}{{ rate_parts[0] | replace: "-", "−" }}.{{ rate_parts[1] | append: "00" | slice: 0, 2 }}% → {% assign rate_parts = change_value | append: "" | split: "." %}{{ rate_parts[0] | replace: "-", "−" }}.{{ rate_parts[1] | append: "00" | slice: 0, 2 }}%</strong>
+<span class="ecb-change-detail">{% if change_bp > 0 %}Up{% else %}Down{% endif %} {{ change_bp | abs }} basis points, effective {{ change_date | date: "%-d %B %Y" }}.</span>
+<span class="ecb-change-detail">Previous level {% if change_previous_at_start %}in force at chart start, {{ change_previous_date | date: "%-d %B %Y" }}{% else %}effective {{ change_previous_date | date: "%-d %B %Y" }}{% endif %}.</span>
+{%- else %}
+<dd><strong>{% assign rate_parts = change_value | append: "" | split: "." %}{{ rate_parts[0] | replace: "-", "−" }}.{{ rate_parts[1] | append: "00" | slice: 0, 2 }}%</strong><span class="ecb-change-detail">In force throughout the displayed history; no preceding level is shown.</span>
+{%- endif %}
+<span class="ecb-rate-definition">{% if change_col == 3 %}The annual rate for banks’ overnight deposits with the Eurosystem.{% else %}The annual rate for banks’ weekly borrowing against collateral.{% endif %}</span></dd>
+</div>
+{%- endfor %}
+</dl>
+
+</section>

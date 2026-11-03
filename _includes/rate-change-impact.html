@@ -1,0 +1,49 @@
+{%- comment -%}
+What a change in your own bank's rate means, for savings or for a loan. The maths is in rate-scenarios.js, which also runs
+mortgage-rate-impact.html. Optional: id (unique for each copy on a page).
+{%- endcomment -%}
+{%- assign rc = include.id | default: 'rate-change' -%}
+<section class="rate-scenario rate-change" id="{{ rc }}" data-rate-scenario="rate-change" aria-labelledby="{{ rc }}-title">
+<h2 class="section-title" id="{{ rc }}-title">What a change in your bank’s rate means</h2>
+<p>Enter the rates your own bank quotes, not the ECB’s. Banks set their own customer rates, and an ECB move needn’t reach yours by the same amount or at the same time: see the ECB’s explanation of the <a href="https://www.ecb.europa.eu/mopo/intro/transmission/html/index.en.html">transmission mechanism</a>. These are scenarios from your figures, not a forecast of ECB decisions or a product recommendation. The opening figures are examples, and no live bank data is used.</p>
+<p data-scenario-fallback>Example: €10,000 at an effective 2% a year earns €200 in a year, and at 2.5% it earns €250. A €200,000 loan over 25 years costs €948 a month at a nominal 3% and €1,001 at 3.5%. Enable JavaScript to try your own figures.</p>
+<form data-scenario-form novalidate hidden>
+<fieldset class="oil-field">
+<legend>What are you comparing?</legend>
+<div class="oil-choices">
+<label><input type="radio" name="mode" value="savings" checked> Savings interest</label>
+<label><input type="radio" name="mode" value="loan"> A loan payment</label>
+</div>
+</fieldset>
+<fieldset class="scenario-fields" data-mode="savings">
+<legend class="visually-hidden">Savings figures</legend>
+<label for="{{ rc }}-balance">Balance (€)<input id="{{ rc }}-balance" name="balance" type="number" inputmode="decimal" min="0.01" max="100000000" step="any" value="10000" required data-limit="€0.01 to €100,000,000"></label>
+<label for="{{ rc }}-savings-before">Rate before: annual effective (%)<input id="{{ rc }}-savings-before" name="savings-before" type="number" inputmode="decimal" min="0" max="30" step="any" value="2" required data-limit="0% to 30%"></label>
+<label for="{{ rc }}-savings-after">Rate after: annual effective (%)<input id="{{ rc }}-savings-after" name="savings-after" type="number" inputmode="decimal" min="0" max="30" step="any" value="2.5" required data-limit="0% to 30%"></label>
+<label for="{{ rc }}-savings-tax">Tax on interest: your assumption (%), optional<input id="{{ rc }}-savings-tax" name="savings-tax" type="number" inputmode="decimal" min="0" max="100" step="any" data-limit="0% to 100%, or leave it blank"></label>
+</fieldset>
+<fieldset class="scenario-fields" data-mode="loan" hidden disabled>
+<legend class="visually-hidden">Loan figures</legend>
+<label for="{{ rc }}-principal">Remaining loan (€)<input id="{{ rc }}-principal" name="principal" type="number" inputmode="decimal" min="0.01" max="100000000" step="any" value="200000" required data-limit="€0.01 to €100,000,000"></label>
+<label for="{{ rc }}-years">Remaining term: years<input id="{{ rc }}-years" name="years" type="number" inputmode="numeric" min="0" max="50" step="1" value="25" required data-limit="a whole number from 0 to 50"></label>
+<label for="{{ rc }}-months">Remaining term: extra months<input id="{{ rc }}-months" name="months" type="number" inputmode="numeric" min="0" max="11" step="1" value="0" required data-limit="a whole number from 0 to 11"></label>
+<label for="{{ rc }}-loan-before">Rate before: nominal annual (%)<input id="{{ rc }}-loan-before" name="loan-before" type="number" inputmode="decimal" min="0" max="30" step="any" value="3" required data-limit="0% to 30%"></label>
+<label for="{{ rc }}-loan-after">Rate after: nominal annual (%)<input id="{{ rc }}-loan-after" name="loan-after" type="number" inputmode="decimal" min="0" max="30" step="any" value="3.5" required data-limit="0% to 30%"></label>
+</fieldset>
+<button type="submit" class="scenario-button">Compare</button>
+<p class="scenario-error" data-scenario-error role="status" hidden></p>
+<div data-scenario-result role="status" aria-live="polite" aria-atomic="true"></div>
+</form>
+<p class="scenario-note" data-mode="savings">Left out: payments in or out, account charges, notice or term conditions, and when your bank would apply the new rate.</p>
+<p class="scenario-note" data-mode="loan" hidden>Left out: lender charges, early-repayment terms, future rate resets, insurance and any tax relief.</p>
+<details class="scenario-method"><summary>Assumptions and calculation</summary>
+<p><strong>Savings.</strong> Rates are annual effective rates: what the balance earns over a full year, with any compounding within the year already counted, so nothing is converted. Interest = balance × rate, for one year on an unchanged balance. Tax is your own assumption, applied once to the interest; the rules depend on your country and circumstances.</p>
+<p><strong>Loan.</strong> Rates are nominal annual rates divided by 12. Each payment is worked out for the same principal and remaining term, as if that rate were fixed until the loan is repaid: payment = P × m ÷ [1 − (1 + m)<sup>−n</sup>], where P is the principal, m the monthly rate and n the number of months. At zero interest, payment = P ÷ n.</p>
+<p>The two kinds of rate aren’t the same, so don’t compare the savings and loan figures directly: a nominal 4% with monthly payments is an effective 4.07% a year.</p>
+</details>
+</section>
+{%- unless rate_change_assets %}
+{%- assign rate_change_assets = true %}
+<link rel="stylesheet" href="{{ '/assets/css/rate-scenarios.css' | relative_url }}">
+<script src="{{ '/assets/js/rate-scenarios.js' | relative_url }}" defer></script>
+{%- endunless %}

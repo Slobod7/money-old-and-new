@@ -5,13 +5,81 @@ seo_title: "ECB interest rates since 2007: chart and data"
 description: "The ECB's main refinancing rate and deposit rate against euro area inflation, month by month since January 2007, with every figure in a table."
 permalink: /data/ecb-interest-rates/
 redirect_from: /ecb-interest-rates/
+content_updated: "2026-11-03"
+source_checked: "2026-11-02"
+verified_daily_date: "2026-11-02"
+verified_hicp_month: "2026-09"
 ---
 {%- assign ecb = site.data.ecb_rates_inflation %}
-{%- assign ecb_latest = ecb.rows | last %}
-<div class="wrap calc-page">
+<div class="wrap calc-page ecb-page">
 <header class="page-head">
 <h1 class="page-title">ECB interest rates</h1>
-<p class="page-lede">At the end of {{ ecb_latest[0] | append: "-01" | date: "%B %Y" }}, the ECB’s deposit rate was {{ ecb_latest[4] | replace: "-", "−" }}% and its main refinancing rate {{ ecb_latest[3] | replace: "-", "−" }}%. Euro area inflation that month was {{ ecb_latest[1] | replace: "-", "−" }}%. The chart sets the two rates beneath inflation, month by month since {{ ecb.first_month | append: "-01" | date: "%B %Y" }}, and the table has every figure.</p>
+<p class="page-lede">The ECB’s deposit and main refinancing rates alongside euro area inflation, from {{ ecb.first_month | append: "-01" | date: "%B %Y" }} to {{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}. Explore monthly values and see when rate changes took effect.</p>
 </header>
-{% include ecb-rates-chart.html id="ecb-rates" %}
+<p class="ecb-reading-note">Hover or tap to read a month. With a keyboard, focus the chart and use the arrow keys.</p>
+{% include ecb-rates-chart.html id="ecb-rates" source_in_method=true %}
+{% include ecb-rate-changes.html %}
+{% include rate-change-impact.html %}
+<section class="ecb-faq" aria-labelledby="ecb-faq-title">
+<h2 class="section-title" id="ecb-faq-title">Frequently asked questions</h2>
+<div class="faq">
+<details>
+<summary>Are the chart dates the dates of ECB meetings?</summary>
+<p>The rate lines move on effective dates; the table and monthly readout show the rates in force at month-end. Announcements come separately, and a flat line can include meetings at which rates were held. The effective-date series alone cannot identify meeting dates.</p>
+<p>For example, the ECB’s <a href="https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260910~314e508016.en.html">10 September 2026 decision</a> took effect on 16 September; its <a href="https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp261029~9a493adf17.en.html">29 October decision</a> left rates unchanged.</p>
+</details>
+<details>
+<summary>Why doesn’t my bank pay the ECB deposit rate?</summary>
+<p>The deposit facility is for banks’ overnight deposits with the Eurosystem. Banks set their own customer deposit and loan rates. Pass-through need not be one-for-one, immediate or equal across products: funding needs, competition and contractual repricing matter. The ECB explains the <a href="https://www.ecb.europa.eu/mopo/intro/transmission/html/index.en.html">transmission mechanism</a> and documents these differences in its <a href="https://www.ecb.europa.eu/press/key/date/2024/html/ecb.sp240502~4066265c78.en.html">analysis of the tightening cycle</a>.</p>
+<p>The ECB’s <a href="https://data.ecb.europa.eu/key-figures/money-credit-and-banking/bank-interest-rates">retail-bank statistics</a> are averages, not a bank’s current offer to you. Their <a href="https://www.ecb.europa.eu/stats/financial_markets_and_interest_rates/bank_interest_rates/mfi_interest_rates/html/index.en.html">methodology</a> distinguishes new agreements from outstanding contracts. This chart contains neither retail-bank averages nor product offers; for your own account or loan, check the agreed rate and when it can reset. To test a change in your own bank’s rate, use the <a href="#rate-change">savings and loan comparison</a> above.</p>
+</details>
+<details>
+<summary>What is the difference between headline and core inflation?</summary>
+<p>Headline HICP measures the annual change in consumer prices. Core HICP leaves out energy, food, alcohol and tobacco. Both plotted series use the euro area in its changing composition; the <a href="#ecb-source-series">source series</a> identify the measures.</p>
+</details>
+<details>
+<summary>How should I compare rates across different periods?</summary>
+<p>Compare the same policy rate in both periods, and distinguish a month-end value from an effective-date step. The main refinancing rate and deposit facility rate are different instruments; the ECB’s third policy rate, the marginal lending facility, is not plotted. See the ECB’s <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html">rate definitions and history</a>.</p>
+<p>One percentage point equals 100 basis points. If comparing a rate with inflation, use the same month and the same inflation measure. Subtracting inflation from an ECB policy rate does not give your deposit’s realised return: the chart does not contain your bank’s rate or your account’s history.</p>
+</details>
+<details>
+<summary>Can the chart tell me what the ECB or markets will do next?</summary>
+<p>No. Use it to compare historical levels and timing. The shading marks selected episodes, not a signal for the next decision or market returns, and it cannot establish that a rate change caused the inflation that followed. The ECB describes <a href="https://www.ecb.europa.eu/mopo/intro/transmission/html/index.en.html">long and uncertain transmission lags</a>. The chart also uses subsequently published inflation, not the information available at each meeting.</p>
+</details>
+</div>
+</section>
+
+<section class="ecb-method" aria-labelledby="ecb-source-series">
+<h2 class="section-title" id="ecb-source-series">Sources and method</h2>
+<p class="ecb-source-dates">Chart data updated <time datetime="{{ ecb.updated }}">{{ ecb.updated | date: "%-d %B %Y" }}</time>. Content reviewed <time datetime="{{ page.content_updated }}">{{ page.content_updated | date: "%-d %B %Y" }}</time>.</p>
+<div class="ecb-method-grid">
+<div class="ecb-source-list">
+<h3>Data series</h3>
+<p>European Central Bank policy rates:</p>
+<ul>
+<li><a href="https://data.ecb.europa.eu/data/datasets/FM/FM.B.U2.EUR.4F.KR.DFR.LEV">Deposit facility</a></li>
+<li><a href="https://data.ecb.europa.eu/data/datasets/FM/FM.B.U2.EUR.4F.KR.MRR_MBR.LEV">Main refinancing: minimum bid rate</a></li>
+<li><a href="https://data.ecb.europa.eu/data/datasets/FM/FM.B.U2.EUR.4F.KR.MRR_FR.LEV">Main refinancing: fixed rate</a></li>
+</ul>
+<p>Eurostat inflation via the ECB Data Portal:</p>
+<ul>
+<li><a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.000000.4D0.ANR">Headline HICP</a></li>
+<li><a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.XEF000.4D0.ANR">Core HICP</a></li>
+</ul>
+<h3>Observation dates</h3>
+<p>At the {{ page.source_checked | date: "%-d %B %Y" }} source check, the latest available HICP observation was {{ page.verified_hicp_month | append: "-01" | date: "%B %Y" }}. <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.DFR.LEV">Daily deposit</a> and <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.MRR_FR.LEV">daily main-rate</a> observations were checked through {{ page.verified_daily_date | date: "%-d %B %Y" }}.</p>
+</div>
+<div>
+<h3>Timing and historical conventions</h3>
+<p>Rate steps use effective dates; the table and monthly readout use month-end rates. The opening step is the rate already in force at the start of the chart. The change cards compare each rate’s last plotted level with its preceding distinct level; they stay fixed when you select a month.</p>
+<p>The main-rate line joins the minimum bid rate of variable-rate tenders to the fixed tender rate from 15 October 2008. The minimum bid rate was a floor for bids, not an average allotted rate. The ECB’s <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html">historical notes</a> explain the switch and the narrower gap between the main and deposit rates from 18 September 2024. The two lines need not move by equal amounts.</p>
+<details class="ecb-episode-sources">
+<summary>Shaded-episode references</summary>
+<p>Shading uses separately recorded ECB announcements for the first hike in each selected episode: <a href="https://www.ecb.europa.eu/press/pr/date/2008/html/pr080703.en.html">2008</a>, <a href="https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2011/html/is110407.en.html">2011</a>, <a href="https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2022/html/ecb.is220721~51ef267c68.en.html">2022–24</a> and <a href="https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/shared/pdf/ecb.ds260611~5b4603b5aa.en.pdf">2026</a>. Closed episodes end at the <a href="https://www.ecb.europa.eu/press/pr/date/2008/html/pr081008.en.html">2008</a>, <a href="https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2011/html/is111103.en.html">2011</a> and <a href="https://www.ecb.europa.eu/press/pr/date/2024/html/ecb.mp240606~2148ecdb3c.en.html">2024</a> first-cut announcements. An open band ends at the chart boundary, not a forecast cut date.</p>
+</details>
+<h3>Updates</h3>
+<p>The saved data is refreshed by a scheduled monthly download on the 18th, with manual updates possible between runs. Rate histories are checked against daily observations; failed checks retain the previous data. The chart ends with the latest inflation month in the saved dataset, even when policy-rate observations are more recent. It is periodically updated history, not a live market feed.</p>
+</div>
+</div>
+</section>
 </div>

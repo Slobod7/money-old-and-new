@@ -1,0 +1,23 @@
+{%- assign mi = include.id | default: 'mortgage-impact' -%}
+<section class="rate-scenario" data-rate-scenario="mortgage" aria-labelledby="{{ mi }}-title">
+<p class="kicker">Try the argument</p>
+<h3 id="{{ mi }}-title">A cheaper home, a bigger payment?</h3>
+<p>Change the loan size, rates and fall in the amount borrowed. These are illustrative bank rates, not a forecast of ECB decisions.</p>
+<p data-scenario-fallback>A €200,000 loan over 25 years costs €800 a month at 1.5%. At 4%, even a 15% smaller loan costs €897: about 12% more each month.</p>
+<form data-scenario-form hidden>
+<div class="scenario-fields">
+<label for="{{ mi }}-principal">Original loan (€)<input id="{{ mi }}-principal" name="principal" type="number" min="1" max="100000000" step="any" value="200000" required></label>
+<label for="{{ mi }}-years">Term (years)<input id="{{ mi }}-years" name="years" type="number" min="1" max="50" step="1" value="25" required></label>
+<label for="{{ mi }}-before">Original annual rate (%)<input id="{{ mi }}-before" name="before" type="number" min="0" max="30" step="any" value="1.5" required></label>
+<label for="{{ mi }}-after">New annual rate (%)<input id="{{ mi }}-after" name="after" type="number" min="0" max="30" step="any" value="4" required></label>
+<label for="{{ mi }}-fall">Fall in amount borrowed (%)<input id="{{ mi }}-fall" name="fall" type="number" min="0" max="100" step="any" value="15" required></label>
+</div>
+<button type="submit" class="scenario-button">Compare payments</button>
+<p class="scenario-error" data-scenario-error role="status" hidden></p>
+<div data-scenario-result role="status" aria-live="polite" aria-atomic="true"></div>
+</form>
+<details class="scenario-method"><summary>Assumptions and calculation</summary>
+<p>Both loans are fully repaid with equal monthly payments over the same term. Annual rates are nominal loan rates divided by 12. Payment = P × m ÷ [1 − (1 + m)<sup>−n</sup>], where P is the principal, m the monthly rate and n the number of months. At zero interest, payment = P ÷ n.</p>
+<p>The smaller loan is a scenario, not evidence of an observed house-price fall. A fall in the house price only reduces the loan by the same percentage if the loan-to-value ratio stays the same. Deposits, income, fees, insurance, taxes and future rate resets are outside this comparison.</p>
+</details>
+</section>
