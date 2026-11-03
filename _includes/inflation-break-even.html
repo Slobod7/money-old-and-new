@@ -1,0 +1,57 @@
+{%- comment -%}
+One-year deposit scenario, independent of the historical calculator and its data.
+  {% include inflation-break-even.html %}
+Optional: id (unique when embedding more than once), title (replaces the h2).
+The script loads once per page; each instance keeps its own inputs and results.
+{%- endcomment -%}
+{%- assign ibe = include.id | default: "inflation-break-even" -%}
+<section class="oil-widget ibe" id="{{ ibe }}" data-inflation-break-even aria-labelledby="{{ ibe }}-title">
+<h2 class="section-title" id="{{ ibe }}-title">{{ include.title | default: "What deposit rate would keep up with inflation?" }}</h2>
+<p class="ibe-intro">Try a simplified one-year scenario, with interest credited once at year end. Use your assumed future inflation rate, rather than an observed historical rate. This is not a comparison of actual bank offers.</p>
+<p data-ibe-fallback>Example only: with 2.5% assumed inflation, no tax and no fee, a 2.5% gross annual rate preserves purchasing power. Enable JavaScript to enter your own assumptions.</p>
+<form class="oil-form ibe-form" data-ibe-form hidden novalidate>
+<div class="oil-field">
+<label for="{{ ibe }}-inflation">Assumed annual inflation (%)</label>
+<div class="oil-amount"><input id="{{ ibe }}-inflation" data-ibe-input="inflation" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="2.5" aria-describedby="{{ ibe }}-inflation-hint {{ ibe }}-inflation-error"></div>
+<p class="oil-hint" id="{{ ibe }}-inflation-hint">An assumption, not a forecast. Negative values are allowed, above −100%.</p>
+<p class="oil-error" id="{{ ibe }}-inflation-error" data-ibe-error="inflation"></p>
+</div>
+<div class="oil-field">
+<label for="{{ ibe }}-tax">Tax on positive interest (%)</label>
+<div class="oil-amount"><input id="{{ ibe }}-tax" data-ibe-input="tax" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0" aria-describedby="{{ ibe }}-tax-hint {{ ibe }}-tax-error"></div>
+<p class="oil-hint" id="{{ ibe }}-tax-hint">Your custom assumption, from 0% to 100%. No country’s tax rate is selected for you.</p>
+<p class="oil-error" id="{{ ibe }}-tax-error" data-ibe-error="tax"></p>
+</div>
+<div class="oil-field">
+<label for="{{ ibe }}-fee">Annual balance fee (%) <span class="ibe-optional">Optional</span></label>
+<div class="oil-amount"><input id="{{ ibe }}-fee" data-ibe-input="fee" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0" aria-describedby="{{ ibe }}-fee-hint {{ ibe }}-fee-error"></div>
+<p class="oil-hint" id="{{ ibe }}-fee-hint">0% if blank. Applied to the whole balance after interest and tax.</p>
+<p class="oil-error" id="{{ ibe }}-fee-error" data-ibe-error="fee"></p>
+</div>
+<button class="link-button ibe-submit" type="submit">Calculate rate</button>
+</form>
+<div data-ibe-results hidden aria-live="polite" aria-atomic="true">
+<p class="oil-error" data-ibe-message hidden></p>
+<div data-ibe-success>
+<dl class="oil-figures ibe-figures">
+<div><dt>Gross annual rate needed</dt><dd data-ibe-out="gross"></dd></div>
+<div><dt>Balance change after tax and fee</dt><dd data-ibe-out="net"></dd></div>
+<div><dt>Purchasing power change</dt><dd data-ibe-out="real"></dd></div>
+</dl>
+<p data-ibe-out="explanation"></p>
+<p class="oil-note">The gross threshold is rounded up to four decimal places; the other results use that displayed rate. No payments in or withdrawals during the year.</p>
+</div>
+</div>
+<details class="oil-data ibe-rules">
+<summary>How this scenario works</summary>
+<p>Tax is charged only on positive interest. The balance fee is then taken from the principal plus after-tax interest. We find the lowest non-negative gross rate that leaves at least the starting purchasing power after your assumed inflation. No tax refund or negative interest is modelled.</p>
+<p>The one-year balance factor is (1 + gross rate × (1 − tax rate)) × (1 − fee rate). Dividing it by (1 + inflation) gives its purchasing power relative to the starting balance. All rates in this formula are decimals.</p>
+</details>
+{%- unless include.sources_elsewhere %}
+<p class="oil-source">Background: <a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me/html/nominal_and_real_interest_rates.en.html">ECB on nominal interest and purchasing power</a> (25 May 2016). The tax and fee calculation follows the scenario stated here. Model checked <time datetime="2026-11-02">2 November 2026</time>; no live rates are used.</p>
+{%- endunless %}
+</section>
+{%- unless inflation_break_even_script %}
+{%- assign inflation_break_even_script = true %}
+<script src="{{ '/assets/js/inflation-break-even.js' | relative_url }}" defer></script>
+{%- endunless %}

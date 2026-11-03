@@ -1,15 +1,29 @@
 ---
 layout: default
 title: Euro inflation calculator
-description: "What would your euros be worth in cash, a bank deposit, German bonds, gold, stocks or Bitcoin? Compare them after inflation, from any month since 1999."
+description: "Convert past euros into equivalent purchasing power, then compare cash, deposits and asset returns using euro-area inflation since 1999."
+last_modified_at: 2026-11-03
 permalink: /data/euro-inflation-calculator/
 redirect_from: /euro-inflation-calculator/
 ---
-{%- assign since = site.data.old_new.since %}
-<div class="wrap calc-page">
+<div class="wrap calc-page euro-page">
 <header class="page-head">
+<p class="kicker euro-eyebrow">The purchasing-power ledger</p>
 <h1 id="calc-title" class="page-title">Euro inflation calculator</h1>
-<p class="page-lede">Prices in the euro area have risen {{ since.prices_up }}% since {{ since.from | append: "-01" | date: "%B %Y" }}, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did. Put the same money into cash, deposits, bonds, gold, stocks or Bitcoin from any month since 1999, and see what it would be worth today.</p>
+<p class="page-lede">Same euros. Different buying power. See what it takes to match an earlier amount, then follow what cash, deposits and assets became.</p>
+<p class="meta euro-vintage">Observations through <strong>{{ site.data.old_new.to | append: "-01" | date: "%B %Y" }}</strong><span aria-hidden="true"> · </span>Data updated {{ site.data.old_new.updated | date: "%-d %B %Y" }}</p>
+{% if site.gold_return_preview %}<p class="oil-note"><a href="#gold-return">Use the gold-only return calculator</a></p>{% endif %}
 </header>
-{% include old-new-calculator.html labelledby="calc-title" %}
+<nav class="euro-jumps" aria-label="On this page">
+<a href="#old-new"><span aria-hidden="true">01</span> Calculate</a>
+<a href="#old-new-explore"><span aria-hidden="true">02</span> Explore the history</a>
+<a href="#old-new-costs"><span aria-hidden="true">03</span> Costs &amp; tax</a>
+<a href="#old-new-questions"><span aria-hidden="true">04</span> Questions</a>
+<a href="#euro-sources">Sources &amp; method <span aria-hidden="true">↗</span></a>
+</nav>
+{% include old-new-calculator.html labelledby="calc-title" interpretation=true %}
+{% if site.gold_return_preview %}{% include gold-return-calculator.html %}{% endif %}
+<p class="investment-related">Looking ahead instead? Use the <a href="{{ '/data/investment-calculator-with-inflation/' | relative_url }}">investment calculator with inflation</a> to model monthly savings using your own return, inflation and fee assumptions.</p>
+{% include inflation-break-even.html sources_elsewhere=true %}
+{% include euro-inflation-sources.html %}
 </div>

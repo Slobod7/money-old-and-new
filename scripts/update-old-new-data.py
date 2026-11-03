@@ -201,6 +201,20 @@ def month_end_rates(daily):
     return out
 
 
+def bitcoin_month_ends(daily, first, last):
+    """PriceUSD 1d labels a UTC day's close, not the start of its timestamped day.
+    Require the actual final calendar day; do not turn a partial month into a close.
+    """
+    out = {}
+    for key in months(first, last):
+        year, month = map(int, key.split('-'))
+        next_month = dt.date(year + (month == 12), month % 12 + 1, 1)
+        day = (next_month - dt.timedelta(days=1)).isoformat()
+        check(day in daily and daily[day] > 0, 'Bitcoin is missing its UTC day-end observation for {}'.format(day))
+        out[key] = daily[day]
+    return out
+
+
 def sig(v, digits=7):
     return float('{:.{}g}'.format(v, digits))
 
@@ -244,10 +258,8 @@ def build(today):
     deposit_filled = [k for k in months(deposit_from, to) if k not in deposit]
     check(len(deposit_filled) <= DEPOSIT_CARRY and all(k > max(deposit) for k in deposit_filled),
           'The deposit rate is missing {}'.format(', '.join(deposit_filled)))
-    btc_end = {}
-    for day in sorted(btc):
-        btc_end[day[:7]] = btc[day]
-    btc_from = min(k for k in btc_end if k >= '2010-07')
+    btc_from = '2010-07'
+    btc_end = bitcoin_month_ends(btc, btc_from, to)
 
     # Each asset's value in euros at the end of each month. Stocks, bonds and deposits are indices, 100 in their first month.
     level = {'us': 100.0, 'europe': 100.0, 'bund': 100.0, 'deposit': 100.0}

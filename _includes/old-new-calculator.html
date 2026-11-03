@@ -4,11 +4,16 @@ Bitcoin from a given month would be worth today, ranked, with a chart of whichev
   {% include old-new-calculator.html %}
 Optional: id (needed only for a second calculator on the same page), title (replaces the heading),
 labelledby (the id of a heading outside the include that names it: the include then drops its own heading),
+interpretation (true for the standalone page’s inflation answer, tables, extended method, end month and share link),
 compact (true to fold the rules and sources into "How it works, and sources", as on the home page).
 Without JavaScript it shows the default case (€1,000 at the end of January 2000, in today's money), worked out ahead
 of time by scripts/update-old-new-data.py, with the rules. assets/js/old-new-calculator.js, added once per page below,
 adds the form, the ranking and the chart.
 {%- endcomment -%}
+{%- assign cc_dates = false -%}
+{%- if include.interpretation or site.gold_stocks_preview %}{% assign cc_dates = true %}{% endif -%}
+{%- assign cc_pair = false -%}
+{%- if include.preset == "gold-stocks" %}{% assign cc_pair = true %}{% endif -%}
 {%- assign cc = include.id | default: "old-new" -%}
 {%- assign df = site.data.old_new -%}
 {%- assign cc_to = df.to | append: "-01" | date: "%B %Y" -%}
@@ -17,26 +22,49 @@ adds the form, the ranking and the chart.
 {%- assign cc_start_year = df.start | slice: 0, 4 | plus: 0 -%}
 {%- capture cc_label %}{% if include.labelledby %}{{ include.labelledby }}{% else %}{{ cc }}-title{% endif %}{% endcapture -%}
 {%- assign cc_months = "January,February,March,April,May,June,July,August,September,October,November,December" | split: "," -%}
-<section class="oil-widget onc" id="{{ cc }}" data-old-new data-src="{{ '/assets/data/old-new.json' | relative_url }}" aria-labelledby="{{ cc_label }}">
+<section class="oil-widget onc{% if include.interpretation %} onc-detailed{% endif %}" id="{{ cc }}" data-old-new{% if cc_dates %} data-share-route="{{ '/data/euro-inflation-calculator/' | relative_url }}"{% endif %}{% if site.gold_stocks_preview and cc_pair %} data-preset="gold-stocks"{% endif %} data-src="{{ '/assets/data/old-new.json' | relative_url }}" aria-labelledby="{{ cc_label }}">
 {%- unless include.labelledby %}
 <h3 class="oil-title" id="{{ cc }}-title">{{ include.title | default: "Old money or new: what would your euros be worth?" }}</h3>
 {%- endunless %}
-<p class="oil-fallback" data-fallback>€{{ df.amount }} put into each of these at the end of {{ cc_start }} would be worth this at the end of {{ cc_to }}, in today’s money. Prices rose in that time, so the €{{ df.amount }} itself is now worth €{{ df.put_in_real }}. With JavaScript on, you can try your own amount and dates here.</p>
+<p class="oil-fallback" data-fallback>€{{ df.amount }} put into each of these at the end of {{ cc_start }} would be worth this at the end of {{ cc_to }}, in today’s money. Matching the original purchasing power now needs €{{ df.put_in_real }}; unchanged cash still has a balance of €{{ df.amount }}. With JavaScript on, you can try your own amount and dates here.</p>
 <div class="table-wrap" data-fallback role="region" aria-label="What €{{ df.amount }} from {{ cc_start }} would be worth" tabindex="0">
 <table class="data">
 <thead><tr><th scope="col">Put into</th><th scope="col" class="num">Worth now</th><th scope="col" class="num">A year</th><th scope="col" class="num">Biggest fall</th></tr></thead>
 <tbody>
 {%- for r in df.rows %}
-<tr><th scope="row">{{ r[0] }}</th><td class="num">€{{ r[1] }}</td><td class="num">{{ r[2] }}</td><td class="num">{{ r[3] }}</td></tr>
+{%- if cc_pair == false or r[0] == "Gold" or r[0] == "US stocks" %}
+<tr><th scope="row">{% if r[0] == "US stocks" %}US broad-market stocks{% elsif r[0] == "European stocks" %}Developed-Europe stocks{% else %}{{ r[0] }}{% endif %}</th><td class="num">€{{ r[1] }}</td><td class="num">{{ r[2] }}</td><td class="num">{{ r[3] }}</td></tr>
+{%- endif %}
 {%- endfor %}
 </tbody>
 </table>
 </div>
+{%- unless cc_pair %}
 {%- for a in df.unavailable %}
 <p class="oil-note" data-fallback>{{ a.name }} isn’t included: its figures start in {{ a.from | append: "-01" | date: "%B %Y" }}.</p>
 {%- endfor %}
+{%- endunless %}
 
+{% if site.gold_stocks_preview %}
+<p class="oil-note" data-pair-note{% unless cc_pair %} hidden{% endunless %}>Compare gold with a stock benchmark over the same months, in euros. Gold uses monthly average prices and pays no dividend. Stock returns include dividends and EUR/USD movements. The dates stay the same when you switch views.</p>
+{% endif %}
 <form class="oil-form" data-form hidden>
+{% if site.gold_stocks_preview %}
+<div class="oil-field"{% if cc_pair %} hidden{% endif %}>
+<label for="{{ cc }}-view">Comparison</label>
+<select id="{{ cc }}-view" data-view>
+<option value="all">Full comparison</option>
+<option value="gold-stocks"{% if cc_pair %} selected{% endif %}>Gold versus stocks</option>
+</select>
+</div>
+<div class="oil-field" data-benchmark-field{% unless cc_pair %} hidden{% endunless %}>
+<label for="{{ cc }}-benchmark">Stock benchmark</label>
+<select id="{{ cc }}-benchmark" data-benchmark>
+<option value="us">US broad market (French/CRSP)</option>
+<option value="europe">Developed Europe (French)</option>
+</select>
+</div>
+{% endif %}
 <fieldset class="oil-field">
 <legend>How you buy</legend>
 <div class="oil-choices">
@@ -64,17 +92,54 @@ adds the form, the ranking and the chart.
 </select></div>
 </div>
 </fieldset>
+{% if cc_dates %}
+<fieldset class="oil-field">
+<legend>Ending at the end of</legend>
+<div class="oil-pair">
+<div><label for="{{ cc }}-end-month">Month</label><select id="{{ cc }}-end-month" data-end-month>
+{%- for name in cc_months %}
+<option value="{{ forloop.index }}">{{ name }}</option>
+{%- endfor %}
+</select></div>
+<div><label for="{{ cc }}-end-year">Year</label><select id="{{ cc }}-end-year" data-end-year>
+{%- for y in (1999..cc_last_year) %}
+<option value="{{ y }}">{{ y }}</option>
+{%- endfor %}
+</select></div>
+</div>
+</fieldset>
+{% endif %}
 <fieldset class="oil-field">
 <legend>Inflation</legend>
 <div class="oil-choices">
-<label><input type="radio" name="real" value="yes" checked> In today’s money</label>
-<label><input type="radio" name="real" value="no"> Don’t adjust</label>
+<label><input type="radio" name="real" value="yes" checked> {% if cc_dates %}In end-month euros{% else %}In today’s money{% endif %}</label>
+<label><input type="radio" name="real" value="no"> Don’t adjust (nominal)</label>
 </div>
 </fieldset>
 </form>
+{% if cc_dates %}<p class="oil-error" data-out="input-error" role="alert"></p>
+<p class="oil-note" data-out="link-note" role="status"></p>{% endif %}
 
 <div class="onc-results" data-results hidden>
+{%- if include.interpretation %}
+<section data-full-rules class="onc-explain onc-inflation" aria-labelledby="{{ cc }}-inflation-title">
+<div class="onc-answer-head"><p class="kicker">The short answer</p><h2 id="{{ cc }}-inflation-title">One amount. Three ways to read it.</h2></div>
+<p class="onc-answer-period" data-out="inflation-period"></p>
+<dl class="oil-figures onc-answer-cards">
+<div><dt>Equivalent purchasing power</dt><dd data-out="equivalent"></dd><dd class="onc-answer-meaning">The euros needed at the endpoint to match the starting basket.</dd></div>
+<div><dt>Cumulative price change</dt><dd data-out="price-rise"></dd><dd class="onc-answer-meaning">How much the basket’s price changed between those months.</dd></div>
+<div><dt>Loss of buying power</dt><dd data-out="buying-loss"></dd><dd class="onc-answer-meaning">How much less the unchanged cash amount can buy.</dd></div>
+</dl>
+<p class="onc-answer-reading" data-out="inflation-explanation"></p>
+<details class="onc-answer-maths"><summary>Why are the two percentages different?</summary>
+<p>They use different denominators. With starting index H₀ and ending index H₁:</p>
+<ul><li>Equivalent amount = amount × H₁/H₀</li><li>Cumulative price change = H₁/H₀ − 1</li><li>Buying-power loss = 1 − H₀/H₁</li></ul>
+<p>A negative buying-power loss means a gain. These are changes over the whole period, not annual rates.</p>
+</details>
+</section>
+{%- endif %}
 <p class="onc-putin" data-out="putin"></p>
+{%- if include.interpretation %}<p data-full-rules class="oil-note">Gold uses each month’s average price and exchange rate, rather than a month-end close. German bonds use a synthetic path from monthly-average yields.</p>{% endif %}
 <div class="onc-cols">
 <div class="onc-rank">
 <div class="onc-head">
@@ -97,22 +162,44 @@ adds the form, the ranking and the chart.
 <p class="oil-note onc-hint" aria-hidden="true">Tap or drag along the chart to read each month.</p>
 </figure>
 <p class="oil-worst" data-out="worst"></p>
+{%- if include.interpretation %}<p data-full-rules class="oil-note" data-out="drawdown"></p>{% endif %}
 </div>
 </div>
+{% if site.gold_stocks_preview %}
+<div data-comparison-tables hidden>
+<div class="table-wrap onc-comparison" role="region" aria-label="Gold and stock returns and recovery" tabindex="0">
+<table class="data">
+<caption data-out="table-caption"></caption>
+<thead><tr><th scope="col">Asset</th><th scope="col">End balance</th><th scope="col">Gain / money put in</th><th scope="col">Annual return</th><th scope="col">Largest fall</th><th scope="col">Regained that high</th></tr></thead>
+<tbody data-out="comparison-body"></tbody>
+</table>
+</div>
+<p class="oil-note">For monthly purchases, gain / money put in is a balance comparison, not a time-weighted return. Annual return is money-weighted (XIRR). Falls and recovery refer to the asset’s euro value without contributions, in the selected inflation mode. Recovery is the first observed month after the trough at or above that earlier high, within your window. No recovery by the end does not mean it never recovered later.</p>
+<details class="oil-data">
+<summary>Read the monthly balances as a table</summary>
+<div class="table-wrap onc-history" role="region" aria-label="Monthly comparison balances in euros" tabindex="0">
+<table class="data"><caption>Euro balances, in the inflation mode selected above. Values rounded to the nearest euro.</caption>
+<thead><tr data-out="history-head"></tr></thead><tbody data-out="history-body"></tbody></table>
+</div>
+</details>
+</div>
+{% endif %}
+{% if cc_dates %}<p class="oil-note"><a data-out="share">Link to this calculation</a>. It keeps your amount, dates, purchase timing, inflation setting{% if site.gold_stocks_preview %}, comparison, benchmark{% endif %} and chosen chart. It saves your inputs, not the results: opening it later recalculates from the data then on this site, so figures can change if a source revises its history.</p>{% endif %}
+{%- if include.interpretation %}<div data-full-rules>{% include euro-inflation-tables.html %}</div>{% endif %}
 <p class="visually-hidden" aria-live="polite" data-out="live"></p>
 </div>
 
 <div class="onc-foot">
 
-<p class="oil-honesty"><strong>Before you read too much into this:</strong> it’s history, not a forecast or advice. The month you start in changes everything: try December 2017 for Bitcoin, or 2000 and 2007 for stocks. Index returns leave out the fees any real fund or broker charges. Disclosure: I write for Bitcoin.com and own some Bitcoin.</p>
+<p class="oil-honesty"{% if site.gold_stocks_preview %} data-full-rules{% endif %}>{% if include.interpretation %}<strong>Read as history.</strong> These results are not a forecast, and exclude fees and taxes. Disclosure: I write for Bitcoin.com and own some Bitcoin.{% else %}<strong>Before you read too much into this:</strong> it’s history, not a forecast or advice. The month you start in changes everything: try December 2017 for Bitcoin, or 2000 and 2007 for stocks. Index returns leave out the fees any real fund or broker charges. Disclosure: I write for Bitcoin.com and own some Bitcoin.{% endif %}</p>
 {%- capture cc_rules %}
 <ul>
-<li>Each purchase is made at the end of a month, at that month’s closing value, and today’s value is at the end of {{ cc_to }}. Dollar prices convert to euros at the ECB’s last rate of the month. Gold is the exception: it uses the month’s average price and average rate, because that’s the only free monthly gold price.</li>
+<li>Each purchase is made at the end of a month, at that month’s closing value, {% if cc_dates %}and the balance is valued at the end of your selected end month.{% else %}and today’s value is at the end of {{ cc_to }}.{% endif %} Dollar prices convert to euros at the ECB’s last rate of the month. Gold is the exception: it uses the month’s average price and average rate, as supplied by the World Bank Pink Sheet.</li>
 <li>Bank deposit: the average rate euro area banks paid households on new deposits fixed for up to a year, as if the money were put in again every month. Figures start in {{ df.from.deposit | append: "-01" | date: "%B %Y" }}, and the ECB marks those for 2000 to 2002 as estimates.{% for m in df.deposit_filled %} The rate for {{ m | append: "-01" | date: "%B %Y" }} isn’t out yet, so the month before’s is used.{% endfor %}</li>
 <li>German bonds: worked out from the 10-year Bund’s monthly average yield. Each month the bond is valued at the new yield, then swapped for a new 10-year bond.</li>
-<li>Stocks: the whole market, with dividends reinvested. US stocks are every company listed in the US, which move almost exactly with the S&amp;P 500. European stocks are the developed markets of Europe, including the UK and Switzerland.</li>
+<li>Stocks: the whole market, with dividends reinvested. US stocks use the French library’s value-weighted US broad-market series from CRSP. European stocks use its developed-Europe market portfolio.</li>
 <li>Bitcoin: prices start in {{ df.from.bitcoin | append: "-01" | date: "%B %Y" }}.</li>
-<li>In today’s money, every figure is adjusted with euro area consumer prices (HICP, to {{ df.hicp_to | append: "-01" | date: "%B %Y" }}).</li>
+<li>{% if cc_dates %}Real figures use euro area HICP and are expressed in the selected end month’s euros.{% else %}In today’s money, every figure is adjusted with euro area consumer prices (HICP, to {{ df.hicp_to | append: "-01" | date: "%B %Y" }}).{% endif %}</li>
 <li>The biggest fall is the largest drop from a high to a later low in the asset itself, after you start. It’s checked at the end of each month, so falls within a month were deeper.</li>
 <li>Fees, taxes and the cost of keeping gold safe aren’t included.</li>
 </ul>
@@ -120,6 +207,13 @@ adds the form, the ranking and the chart.
 {%- capture cc_source %}
 <p class="oil-source">Sources: European Central Bank (deposit rates, German bond yields, euro reference rates, and euro area HICP from Eurostat); World Bank Commodity Price Data (gold); Kenneth R. French Data Library (US stocks from CRSP, European stocks from Bloomberg); Coin Metrics (Bitcoin). Figures to the end of {{ cc_to }}. Updated {{ df.updated | date: "%-d %B %Y" }}.</p>
 {%- endcapture %}
+{% if site.gold_stocks_preview %}
+<div data-pair-rules{% unless cc_pair %} hidden{% endunless %}>
+{% include gold-stocks-rules.html %}
+</div>
+<div data-full-rules{% if cc_pair %} hidden{% endif %}>
+{% endif %}
+{%- unless include.interpretation %}
 {%- if include.compact %}
 <details class="oil-data onc-more">
 <summary>How it works, and sources</summary>
@@ -132,7 +226,12 @@ adds the form, the ranking and the chart.
 </div>
 {{ cc_source }}
 {%- endif %}
+{%- else %}
+{{ cc_source }}
+{%- endunless %}
+{% if site.gold_stocks_preview %}</div>{% endif %}
 </div>
+{%- if include.interpretation %}<div data-full-rules>{% include euro-inflation-method.html %}</div>{% endif %}
 </section>
 {%- unless old_new_script %}
 {%- assign old_new_script = true %}

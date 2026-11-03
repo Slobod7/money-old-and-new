@@ -1,0 +1,41 @@
+<section class="onc-explain onc-costs" aria-labelledby="{{ cc }}-costs">
+<div class="onc-section-intro"><p class="kicker">The part the chart leaves out</p><h2 id="{{ cc }}-costs">Small costs. A different ending.</h2><p>Two worked illustrations. Every rate below is hypothetical; neither example changes the historical results above.</p></div>
+<div class="onc-cost-cards">
+<article class="onc-cost-card" aria-labelledby="{{ cc }}-fee-title">
+<p class="onc-card-label">01 / Annual costs</p><h3 id="{{ cc }}-fee-title">The cost keeps compounding, too.</h3>
+<p class="onc-card-value">€2,531</p><p class="onc-card-caption">Less at the end, including foregone growth</p>
+<p>Start with €10,000 for 20 years. Assume 5% gross annual growth and a 0.5% annual balance charge, taken after each year’s growth.</p>
+<dl class="onc-cost-ledger"><div><dt>Without the annual charge</dt><dd>€26,533</dd></div><div><dt>With the annual charge</dt><dd>€24,002</dd></div></dl>
+<details class="onc-card-detail"><summary>See the arithmetic &amp; assumptions</summary><p>Without the charge: €10,000 × 1.05²⁰. With it: €10,000 × [1.05 × (1 − 0.005)]²⁰. Figures are rounded to the nearest euro. No top-ups, dealing, currency-conversion or custody costs, tax or inflation adjustment.</p></details>
+</article>
+<article class="onc-cost-card" aria-labelledby="{{ cc }}-tax-title">
+<p class="onc-card-label">02 / Tax on a gain</p><h3 id="{{ cc }}-tax-title">A gain isn’t always yours to keep.</h3>
+<p class="onc-card-value">€1,500</p><p class="onc-card-caption">Tax in this hypothetical disposal example</p>
+<p>Buy for €10,000 and sell for €16,000. Assume a 25% tax charged once on the €6,000 nominal gain.</p>
+<dl class="onc-cost-ledger"><div><dt>Sale proceeds before tax</dt><dd>€16,000</dd></div><div><dt>Left after the assumed tax</dt><dd>€14,500</dd></div></dl>
+<details class="onc-card-detail"><summary>See the arithmetic &amp; assumptions</summary><p>€6,000 × 25% = €1,500 tax. There is no allowance, loss offset, other cost or tax before sale. This describes no country’s system. Actual treatment depends on residence, account, asset and the rules when income or gains arise; no present-day rate is applied across historic returns.</p></details>
+</article>
+</div>
+</section>
+<section class="onc-explain onc-yardstick" aria-labelledby="{{ cc }}-measure">
+<div class="onc-section-intro"><p class="kicker">Know your yardstick</p><h2 id="{{ cc }}-measure">A common basket. Not every household.</h2><p>The inflation answer uses Eurostat’s all-items euro-area HICP. Here is what that means for the result.</p></div>
+<div class="onc-yardstick-cards">
+<article><span class="onc-card-label">The geography</span><h3>A changing euro area</h3><p>New members enter the aggregate as they join. This is the euro area in its changing composition, not a fixed list of today’s members.</p></article>
+<article><span class="onc-card-label">The weighting</span><h3>Countries can differ</h3><p>The headline figure is a weighted aggregate. National price changes differ, so the euro-area figure is not a country-specific inflation result.</p></article>
+<article><span class="onc-card-label">The housing gap</span><h3>Some costs are included</h3><p>Actual rents, energy and routine maintenance and repairs are included. Home purchases and imputed rent are outside HICP; owner-occupied housing is not fully represented.</p></article>
+</div>
+<a class="onc-yardstick-link" href="#euro-sources">Read the coverage &amp; calculation notes <span aria-hidden="true">↗</span></a>
+</section>
+
+<section class="onc-explain" aria-labelledby="{{ cc }}-questions">
+<h2 id="{{ cc }}-questions">Reading the results</h2>
+<div class="faq">
+<details><summary>Why does the endpoint euro amount stay the same when I change inflation adjustment?</summary><p>The endpoint is already in that month’s euros, so its conversion factor is 1. The toggle converts earlier balances and payments into endpoint-price euros; it changes the comparison base and the return, while leaving the final balance unchanged.</p></details>
+<details><summary>Does an ETF trading in euros remove foreign-currency exposure?</summary><p>No. A euro trading price is a dealing currency, not a currency hedge. The stock series here are converted from dollars without hedging. A currency-hedged fund would have a different return path and costs; no hedged series is shown.</p></details>
+<details><summary>Why does inflation adjustment change the total for monthly contributions?</summary><p>Each payment comes from a different month. The calculator converts it using that month’s HICP and then adds the converted amounts. Multiplying the whole nominal contribution total by the starting month’s inflation factor would treat later payments as if they had been made at the start.</p></details>
+<details><summary>Why can the update month be later than the final observation month?</summary><p>The update date records the data file’s refresh, not the month all sources describe. Providers release on different schedules. By default the calculator ends at the latest common month, even if one provider already has a newer observation; you can choose an earlier end month.</p></details>
+<details><summary>Why can “European stocks” include the UK and Switzerland?</summary><p>The source portfolio covers developed Europe, a wider investment universe than the EU or euro area. Its <a href="https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/f-f_3developed.html">country list</a> includes both markets. Reporting the result in euros does not change the companies included.</p></details>
+<details><summary>When did an asset regain its previous nominal or real high?</summary><p>The recovery table gives the first sampled month back at the peak preceding its biggest fall within your selected window. Switch the inflation setting to read the nominal or real path. “Not recovered” means no such observation by your end month, not a forecast about what happens next.</p></details>
+<details><summary>Why can a top-up-funded balance rise while the asset remains in a drawdown?</summary><p>New contributions add money even when the asset price has not recovered. The biggest-fall figures follow the asset without those contributions. The chart follows your funded balance, and its “worst moment” compares that balance with payments made so far; those are different measures.</p></details>
+</div>
+</section>
