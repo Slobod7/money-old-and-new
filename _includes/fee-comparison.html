@@ -1,0 +1,119 @@
+{%- comment -%}
+One savings scenario run twice, changing only the annual balance fee. No page of its own: it sits under the investment
+calculator and can be embedded in an article. The maths is InvestmentMath.compareFees in investment-math.js.
+  {% include fee-comparison.html %}
+Optional: id (unique for each copy on a page), title (replaces the heading).
+{%- endcomment -%}
+{%- assign fc = include.id | default: 'fee-comparison' -%}
+<section class="oil-widget investment fee-comparison" id="{{ fc }}" data-fee-comparison aria-labelledby="{{ fc }}-title">
+<h2 class="section-title" id="{{ fc }}-title">{{ include.title | default: "Compare two annual fees" }}</h2>
+<p>Run one savings scenario twice and change only the annual fee on the balance. The return, payments and dates stay the same.</p>
+<p class="oil-note">Every rate is your assumption. The opening fee levels are example inputs, not typical charges for any fund or product, and this doesn’t predict how any fund would perform.</p>
+<noscript><p class="oil-honesty">Enable JavaScript to compare two fees. The notes below explain the calculation; no market data is used.</p></noscript>
+<form class="oil-form investment-form" data-form novalidate hidden>
+<div class="oil-field">
+<label for="{{ fc }}-starting">Starting amount <span class="visually-hidden">in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" aria-hidden="true">€</span><input id="{{ fc }}-starting" name="startingAmount" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="10000" required aria-describedby="{{ fc }}-starting-error"></div>
+<p class="oil-error" id="{{ fc }}-starting-error" data-error="startingAmount"></p>
+</div>
+<div class="oil-field">
+<label for="{{ fc }}-monthly">Monthly contribution <span class="visually-hidden">in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" aria-hidden="true">€</span><input id="{{ fc }}-monthly" name="monthlyContribution" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="200" required aria-describedby="{{ fc }}-monthly-error"></div>
+<p class="oil-error" id="{{ fc }}-monthly-error" data-error="monthlyContribution"></p>
+</div>
+<fieldset class="oil-field">
+<legend>Horizon from today</legend>
+<div class="oil-pair">
+<div><label for="{{ fc }}-years">Years</label><input id="{{ fc }}-years" name="years" type="number" inputmode="numeric" min="0" max="100" step="1" value="20" required aria-describedby="{{ fc }}-horizon-error"></div>
+<div><label for="{{ fc }}-months">Extra months</label><input id="{{ fc }}-months" name="extraMonths" type="number" inputmode="numeric" min="0" max="11" step="1" value="0" required aria-describedby="{{ fc }}-horizon-error"></div>
+</div>
+<p class="oil-error" id="{{ fc }}-horizon-error" data-error="months"></p>
+</fieldset>
+<div class="oil-field">
+<label for="{{ fc }}-return">Assumed annual gross return (%)</label>
+<input id="{{ fc }}-return" name="annualReturn" type="number" inputmode="decimal" min="-99.999999" max="1000" step="any" value="5" required aria-describedby="{{ fc }}-return-hint {{ fc }}-return-error">
+<p class="oil-note" id="{{ fc }}-return-hint">Annual effective return, before either fee.</p>
+<p class="oil-error" id="{{ fc }}-return-error" data-error="annualReturn"></p>
+</div>
+<div class="oil-field">
+<label for="{{ fc }}-fee-a">Fee A: annual balance fee (%)</label>
+<input id="{{ fc }}-fee-a" name="feeA" type="number" inputmode="decimal" min="0" max="99.999999" step="any" value="0.5" aria-describedby="{{ fc }}-fee-a-hint {{ fc }}-fee-a-error">
+<p class="oil-note" id="{{ fc }}-fee-a-hint">Your input. Blank means 0%.</p>
+<p class="oil-error" id="{{ fc }}-fee-a-error" data-error="feeA"></p>
+</div>
+<div class="oil-field">
+<label for="{{ fc }}-fee-b">Fee B: annual balance fee (%)</label>
+<input id="{{ fc }}-fee-b" name="feeB" type="number" inputmode="decimal" min="0" max="99.999999" step="any" value="1.5" aria-describedby="{{ fc }}-fee-b-hint {{ fc }}-fee-b-error">
+<p class="oil-note" id="{{ fc }}-fee-b-hint">Your input. Blank means 0%.</p>
+<p class="oil-error" id="{{ fc }}-fee-b-error" data-error="feeB"></p>
+</div>
+<div class="oil-field">
+<label for="{{ fc }}-inflation">Assumed annual inflation (%)</label>
+<input id="{{ fc }}-inflation" name="annualInflation" type="number" inputmode="decimal" min="-99.999999" max="1000" step="any" value="2" aria-describedby="{{ fc }}-inflation-hint {{ fc }}-inflation-error">
+<p class="oil-note" id="{{ fc }}-inflation-hint">Optional: leave blank to skip today’s-money figures. A constant assumption, not today’s official rate.</p>
+<p class="oil-error" id="{{ fc }}-inflation-error" data-error="annualInflation"></p>
+</div>
+<div class="investment-submit"><button class="button" type="submit">Compare fees</button></div>
+</form>
+<p class="oil-note" role="status" aria-live="polite" data-status></p>
+<div data-results hidden>
+<h3 class="oil-title" id="{{ fc }}-result-title" tabindex="-1" data-result-title>The comparison</h3>
+<p class="oil-note" data-out="assumptions"></p>
+<dl class="oil-figures investment-figures">
+<div><dt>Total paid in, nominal</dt><dd data-out="contributions"></dd></div>
+<div><dt data-out="label-a">Final balance, fee A</dt><dd data-out="balance-a"></dd></div>
+<div><dt data-out="label-b">Final balance, fee B</dt><dd data-out="balance-b"></dd></div>
+<div><dt>Difference, nominal</dt><dd data-out="difference"></dd></div>
+</dl>
+<dl class="oil-figures investment-figures" data-real-figures>
+<div><dt>Paid in, today’s money</dt><dd data-out="real-contributions"></dd></div>
+<div><dt data-out="real-label-a">Fee A, today’s money</dt><dd data-out="real-a"></dd></div>
+<div><dt data-out="real-label-b">Fee B, today’s money</dt><dd data-out="real-b"></dd></div>
+<div><dt>Difference, today’s money</dt><dd data-out="real-difference"></dd></div>
+</dl>
+<p data-out="gap"></p>
+<p>A fee takes a share of the whole balance, including past growth, and what it takes stops growing. So the gap widens over time and includes that lost growth as well as the charges themselves.</p>
+<figure class="oil-mini-figure investment-figure">
+<figcaption>Both balances and the money paid in, nominal euros</figcaption>
+<ul class="oil-key" aria-hidden="true">
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-line" x1="0" x2="24" y1="5" y2="5"/></svg>Fee A</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="investment-fee-free" x1="0" x2="24" y1="5" y2="5"/></svg>Fee B</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Paid in</li>
+</ul>
+<div data-chart></div>
+<p class="oil-note">Source: your assumptions, not market data. Method dated 3 November 2026. Figures are rounded to cents; the calculation is not.</p>
+</figure>
+<details class="oil-data">
+<summary>Show yearly figures and the final month</summary>
+<div class="table-wrap" role="region" aria-label="Fee comparison figures; scroll horizontally for all columns" tabindex="0">
+<table class="data investment-table">
+<caption data-out="table-caption"></caption>
+<thead><tr data-head></tr></thead>
+<tbody data-rows></tbody>
+</table>
+</div>
+</details>
+</div>
+<details class="oil-data">
+<summary>How the fees are charged</summary>
+<div class="oil-rules">
+<p class="investment-formula">Monthly balance = previous balance × [(1 + return) × (1 − fee)]<sup>1/12</sup> + monthly payment.</p>
+<ul>
+<li>This spreads each year’s fee across its months. It’s an approximation: real funds charge in their own ways, and a published ongoing charge or TER isn’t automatically the whole cost of investing.</li>
+<li>The starting amount is invested at once. Each monthly payment arrives after that month’s growth and fee, so it bears a fee only from the month it goes in, never for earlier years.</li>
+<li>Both scenarios use the same gross return. In practice, funds with different fees can also earn different returns before fees.</li>
+<li>Today’s money means prices at the start of the scenario. Balances are divided by the inflation factor at the end, and each payment by the factor at the month it goes in, so both are on the same price basis.</li>
+<li>Tax, dealing costs, fixed platform fees and market ups and downs aren’t included. It’s an illustration, not advice.</li>
+</ul>
+</div>
+</details>
+</section>
+{%- unless investment_scripts %}
+{%- assign investment_scripts = true %}
+<script src="{{ '/assets/js/investment-math.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/investment-calculator.js' | relative_url }}" defer></script>
+{%- endunless %}
+{%- unless fee_comparison_script %}
+{%- assign fee_comparison_script = true %}
+<script src="{{ '/assets/js/fee-comparison.js' | relative_url }}" defer></script>
+{%- endunless %}

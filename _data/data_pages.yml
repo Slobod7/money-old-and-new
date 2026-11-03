@@ -3,6 +3,10 @@
   title: Euro inflation calculator
   description: "What your euros would be worth today, across seven kinds of savings and investment."
   url: /data/euro-inflation-calculator/
+- label: Scenario calculator
+  title: Investment calculator with inflation
+  description: "Model monthly savings with your own return, inflation and fee assumptions."
+  url: /data/investment-calculator-with-inflation/
 - label: Chart
   title: ECB interest rates
   description: "The ECB’s main rates against euro area inflation, by month."

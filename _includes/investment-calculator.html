@@ -1,0 +1,92 @@
+{%- comment -%}
+Reusable scenario UI. Optional id (unique for each copy) and labelledby (external heading).
+The DOM-free engine in investment-math.js can also be reused independently.
+{%- endcomment -%}
+{%- assign ic = include.id | default: 'investment' -%}
+{%- capture ic_label %}{% if include.labelledby %}{{ include.labelledby }}{% else %}{{ ic }}-title{% endif %}{% endcapture -%}
+<section class="oil-widget investment" id="{{ ic }}" data-investment aria-labelledby="{{ ic_label }}">
+{%- unless include.labelledby %}
+<h2 class="section-title" id="{{ ic }}-title">Your savings scenario</h2>
+{%- endunless %}
+<p>All amounts are in euros (€); no currency conversion is made. Payments go in at the <strong>end of each month</strong> and stay fixed in nominal euros.</p>
+<p class="oil-note">The starting figures are illustrations. Every future rate is your assumption, not a forecast or a recommended return.</p>
+<noscript><p class="oil-honesty">Enable JavaScript to calculate a scenario. The method below explains the calculation; no live market data is used.</p></noscript>
+<form class="oil-form investment-form" data-form novalidate hidden>
+<div class="oil-field">
+<label for="{{ ic }}-starting">Starting amount <span class="visually-hidden">in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" aria-hidden="true">€</span><input id="{{ ic }}-starting" name="startingAmount" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="10000" required aria-describedby="{{ ic }}-starting-error"></div>
+<p class="oil-error" id="{{ ic }}-starting-error" data-error="startingAmount"></p>
+</div>
+<div class="oil-field">
+<label for="{{ ic }}-monthly">Monthly contribution <span class="visually-hidden">in euros</span></label>
+<div class="oil-amount"><span class="oil-symbol" aria-hidden="true">€</span><input id="{{ ic }}-monthly" name="monthlyContribution" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="200" required aria-describedby="{{ ic }}-monthly-error"></div>
+<p class="oil-error" id="{{ ic }}-monthly-error" data-error="monthlyContribution"></p>
+</div>
+<fieldset class="oil-field">
+<legend>Horizon from today</legend>
+<div class="oil-pair">
+<div><label for="{{ ic }}-years">Years</label><input id="{{ ic }}-years" name="years" type="number" inputmode="numeric" min="0" max="100" step="1" value="20" required aria-describedby="{{ ic }}-horizon-error"></div>
+<div><label for="{{ ic }}-months">Extra months</label><input id="{{ ic }}-months" name="extraMonths" type="number" inputmode="numeric" min="0" max="11" step="1" value="0" required aria-describedby="{{ ic }}-horizon-error"></div>
+</div>
+<p class="oil-error" id="{{ ic }}-horizon-error" data-error="months"></p>
+</fieldset>
+<div class="oil-field">
+<label for="{{ ic }}-return">Assumed annual gross return (%)</label>
+<input id="{{ ic }}-return" name="annualReturn" type="number" inputmode="decimal" min="-99.999999" max="1000" step="any" value="5" required aria-describedby="{{ ic }}-return-hint {{ ic }}-return-error">
+<p class="oil-note" id="{{ ic }}-return-hint">Annual effective return, before the balance fee.</p>
+<p class="oil-error" id="{{ ic }}-return-error" data-error="annualReturn"></p>
+</div>
+<div class="oil-field">
+<label for="{{ ic }}-inflation">Assumed annual inflation (%)</label>
+<input id="{{ ic }}-inflation" name="annualInflation" type="number" inputmode="decimal" min="-99.999999" max="1000" step="any" value="2" required aria-describedby="{{ ic }}-inflation-hint {{ ic }}-inflation-error">
+<p class="oil-note" id="{{ ic }}-inflation-hint">A constant future assumption, not today’s official rate.</p>
+<p class="oil-error" id="{{ ic }}-inflation-error" data-error="annualInflation"></p>
+</div>
+<div class="oil-field">
+<label for="{{ ic }}-fee">Assumed annual balance fee (%)</label>
+<input id="{{ ic }}-fee" name="annualFee" type="number" inputmode="decimal" min="0" max="99.999999" step="any" value="0.5" aria-describedby="{{ ic }}-fee-hint {{ ic }}-fee-error">
+<p class="oil-note" id="{{ ic }}-fee-hint">Optional: blank means 0%. Effect spread monthly; see method.</p>
+<p class="oil-error" id="{{ ic }}-fee-error" data-error="annualFee"></p>
+</div>
+<div class="investment-submit"><button class="button" type="submit">Calculate scenario</button></div>
+</form>
+<p class="oil-note" role="status" aria-live="polite" data-status></p>
+<div data-results hidden>
+<h2 class="section-title" id="{{ ic }}-result-title" tabindex="-1" data-result-title>Your scenario</h2>
+<p class="oil-note" data-out="assumptions"></p>
+<dl class="oil-figures investment-figures">
+<div><dt>Total paid in, nominal</dt><dd data-out="contributions"></dd></div>
+<div><dt>Final nominal balance, after fee</dt><dd data-out="nominalBalance"></dd></div>
+<div><dt>Final balance in today’s money, after fee</dt><dd data-out="realBalance"></dd></div>
+<div><dt>Fee drag, nominal</dt><dd data-out="feeDrag"></dd></div>
+</dl>
+<p data-out="payments"></p>
+<p data-out="interpretation"></p>
+<p class="oil-note" data-out="fees"></p>
+<figure class="oil-mini-figure investment-figure">
+<figcaption id="{{ ic }}-chart-caption">The nominal path: balances and money paid in</figcaption>
+<ul class="oil-key" aria-hidden="true">
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-line" x1="0" x2="24" y1="5" y2="5"/></svg>After fee</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="investment-fee-free" x1="0" x2="24" y1="5" y2="5"/></svg>No fee</li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Paid in</li>
+</ul>
+<div data-chart></div>
+<p class="oil-note">All three lines use nominal euros. For today’s purchasing power, read the separate columns below. Figures are rounded to cents; the calculation is not.</p>
+</figure>
+<details class="oil-data">
+<summary>Show yearly figures and the final month</summary>
+<div class="table-wrap" role="region" aria-label="Scenario figures; scroll horizontally for all columns" tabindex="0">
+<table class="data investment-table">
+<caption>Start, each full year and the endpoint. “Today’s money” means prices at the start of this scenario.</caption>
+<thead><tr><th scope="col">Elapsed</th><th scope="col" class="num">Paid in<br>nominal</th><th scope="col" class="num">Balance<br>after fee, nominal</th><th scope="col" class="num">Balance<br>no fee, nominal</th><th scope="col" class="num">Balance<br>after fee, today’s money</th><th scope="col" class="num">Paid in<br>today’s money</th></tr></thead>
+<tbody data-rows></tbody>
+</table>
+</div>
+</details>
+</div>
+</section>
+{%- unless investment_scripts %}
+{%- assign investment_scripts = true %}
+<script src="{{ '/assets/js/investment-math.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/investment-calculator.js' | relative_url }}" defer></script>
+{%- endunless %}
