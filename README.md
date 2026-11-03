@@ -346,6 +346,10 @@ It has two panels on one time scale: inflation (headline and core) on top, the E
 
 Both rates are there because the ECB article quotes the main rate for 2008 and 2011 (4.25% and 1.50% at the peaks) and the deposit rate for 2022–26 (4.00% and 2.50%): the ECB steered with the first then and steers with the second now.
 
+The existing `/data/ecb-interest-rates/` page adds a reading guide, linked primary sources and `_includes/ecb-rate-changes.html`. Its “Last changes shown” summary uses the chart's `steps` and compares each rate with its preceding distinct level, independently of the other rate. It shows effective dates, never inferred announcement dates; the opening step is labelled as a chart boundary when needed. This summary stays on the last changes in the saved history while the existing chart readout selects months. Both the summary and the guide render without JavaScript.
+
+On that page, `content_updated` records the editorial review. `source_checked`, `verified_daily_date` and `verified_hicp_month` record a separate manual source check; change them only after checking those observations. The chart's `updated` date still comes from the data updater, and the plotted range still ends at `hicp_to`. A newer page/source check must not imply a newer plotted observation. The 2 November 2026 check matched all stored monthly observations and effective-date steps against the five source series, and checked the two daily rate series through 2 November. No chart values were changed.
+
 ### Where the data comes from
 
 | Data | ECB Data Portal series |
@@ -385,11 +389,28 @@ What euros put into cash at home, a bank deposit, German bonds, gold, US stocks,
 - `id` (optional): needed only for a second calculator on the same page.
 - `title` (optional): replaces the heading.
 - `labelledby` (optional): the id of a heading outside the include that names the calculator. The include then drops its own heading.
+- `interpretation` (optional): `true` adds the standalone euro page’s inflation answer, year/start tables, loss/recovery dates and extended source notes. Leave it unset for the homepage.
 - `compact` (optional): `true` folds the rules and sources into a "How it works, and sources" panel under the honesty note.
 
 The home page uses it between Latest articles and the Sunday letter block, under its own heading and introduction: `{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}`. The introduction's inflation figures (how far prices have risen since January 1999, and what €1,000 kept in a drawer since then buys now) come from `since` in `_data/old_new.json`, so they update with the data. The rest of its wording is fixed in `index.html`. The section and its introduction span the full page width.
 
 It also has its own page at `/data/euro-inflation-calculator/` (`data/euro-inflation-calculator.html`), with the rules and sources showing, linked from the Data page, the footer and the home page.
+
+### End month and share link
+
+On `/data/euro-inflation-calculator/` the reader picks an end month as well as a start, and every result follows that window: the inflation answer, balances, returns, payment counts, falls, recoveries and all three tables. Real figures are in the end month's euros. The compact calculator on the home page keeps its fixed end at the latest month and its "today's money" wording. The switch is `include.interpretation` (`cc_dates` in the include), not a config setting.
+
+**Link to this calculation** points back to the same page with a fragment: `view`, `amount`, `mode`, `start`, `end`, `real`, `asset`, `data`, plus `benchmark` for a gold-versus-stocks link. It saves inputs, never results, and its dates are explicit, so a later data release can't extend a saved window. `data` is the data file's update date: if it differs when the link is opened, a note says the figures can differ from what was first shown. `readPreset` treats every value as untrusted and refuses the whole link if any one doesn't match; months outside the stored history show an error, and dates are never moved to the nearest available month. Links made in the local gold-versus-stocks preview still open: without that view they show every asset for the same dates, with a note saying so.
+
+There's no chart-image download. Tests: `node tests/euro-lookup-controls.cjs`.
+
+### Standalone euro page interpretation
+
+`data/euro-inflation-calculator.html` enables `interpretation=true`. The two `euro-inflation-*.html` includes hold its tables and explanatory content. All changing figures use the existing `assets/data/old-new.json`; no extra data refresh or new external browser requests are needed. January HICP observations (not annual averages) populate the €100 year table. The start comparison samples five-year starts, the selected start year and latest January. It uses a €100 lump sum and the common endpoint, marks unavailable assets, and labels unequal holding periods. Its final endpoint-price balances stay the same with the inflation toggle; its cumulative returns change.
+
+Recovery means the first sampled month at or above the peak preceding the largest drawdown inside the selected window. It follows the underlying asset, excludes top-ups, and responds to the existing nominal/real toggle. No fixed-period best/worst-start claim is made.
+
+Run `node tests/euro-inflation-content.cjs` for the new arithmetic, year conventions, availability and recovery cases. An optional second argument points to a pre-change calculator script for exact result regression checks. Build with `bundle exec jekyll build`; preview and check the existing `/data/euro-inflation-calculator/` route. The source-check date in the method include is editorial; the observation endpoint and data-update date continue to come from the usual updater. Costs and tax examples are hypothetical and do not alter the historical calculations.
 
 ### The home page's common questions
 
@@ -430,6 +451,52 @@ python3 scripts/update-old-new-data.py
 
 Then commit `assets/data/old-new.json` and `_data/old_new.json`.
 
+## Inflation break-even interest widget
+
+Mounted beneath the historical calculator at `/data/euro-inflation-calculator/`. This is an independent, simplified one-year scenario using assumed future inflation, a custom tax on positive interest, and an optional balance fee (zero if blank). It does not read historical data, select a country’s tax rate, compare bank offers or make external requests. Defaults (2.5% inflation, 0% tax and 0% fee) are illustrative assumptions, not observed rates.
+
+Embedding example, using the existing site stylesheet:
+
+```liquid
+{% include inflation-break-even.html id="article-break-even" title="What gross interest rate would keep up?" %}
+```
+
+Both parameters are optional. Use a unique `id` for each instance on the same page. The include loads `assets/js/inflation-break-even.js` once; each instance updates independently. Without JavaScript, it shows a labelled worked example and the model assumptions.
+
+For decimal inflation `i > -1`, fee `0 <= f < 1` and tax `0 <= t < 1`, the exact non-negative threshold is `max(0, (((1+i)/(1-f))-1)/(1-t))`. Interest is credited once; tax reduces positive interest, then the fee applies to the whole remaining balance. At 100% tax, zero interest is sufficient only if deflation offsets the fee (`i + f <= 0`); otherwise no finite rate works. A 100% fee is always impossible within this model. Inflation at or below −100%, tax or fees outside 0–100%, non-finite values and malformed numbers are rejected. Dot and comma decimal separators are accepted; a blank fee means zero. There are no negative gross rates or tax refunds.
+
+The UI rounds the threshold **up** to four decimal places and works out the after-tax/fee balance change and exact inflation-adjusted change from that displayed rate. The mathematical API also returns the unrounded threshold: 2.5% inflation, 33% assumed tax and no fee requires 3.7313432835820897%; the displayed sufficient rate is 3.7314%. This 33% test is a custom assumption, not a public Irish DIRT preset. The optional country-specific example is not implemented.
+
+Run `node tests/inflation-break-even.js`, or open `tests/inflation-break-even.html` directly in a browser. Checks cover the acceptance example, independent end-balance calculations, deflation, fee ordering, tax/fee boundaries, invalid inputs and rounding. `tests/` stays excluded from Jekyll output.
+
+Editorial check: 2 November 2026. The public source link supports the purchasing-power concept; the calculation follows the explicitly stated model. No historical observation date or live-rate badge applies to these user assumptions.
+
+## Investment calculator with inflation
+
+The formula-only scenario at `/data/investment-calculator-with-inflation/` models a starting amount, fixed nominal monthly payments, horizon, annual effective gross return, annual inflation and optional balance fee. These are assumptions, not market data; there is no feed or monthly update to run. The Data card is in `_data/data_pages.yml`. Canonical metadata, the Data breadcrumb and the sitemap use the existing Jekyll plugins and front matter.
+
+Reuse the interface with `{% include investment-calculator.html %}`; pass a unique `id` for multiple copies and optional `labelledby` for an external heading. The include loads two scripts only on pages that use it. No requests, cookies or storage are added.
+
+`assets/js/investment-math.js` is the reusable, DOM-free engine: `InvestmentMath.calculate({ startingAmount, monthlyContribution, months, annualReturn, annualInflation, annualFee })`. Amounts are numeric euros; months is a whole number; rates are annual effective decimals (0.05 means 5%). Pass `annualFee: 0` for no fee. `validate()` returns field errors, and `calculate()` rejects invalid inputs or unsupported result magnitudes. It returns monthly `points`, `final`, and the factors. A separate fee-comparison widget can call this engine with different fees without using this interface.
+
+Each month's existing balance is multiplied by `((1 + annualReturn) * (1 - annualFee)) ** (1/12)`, then the payment is added. The no-fee path uses `(1 + annualReturn) ** (1/12)` on the same schedule. Real balances divide by `(1 + annualInflation) ** (month/12)`; real contributions sum each payment discounted from its own month. Real gains always use that contribution basis. Fee drag is the difference between the fee-free and fee-adjusted balance, including compounding, not a sum of bills.
+
+`assets/js/investment-calculator.js` handles validation, the nominal chart and the yearly table. Editing inputs hides stale results until Calculate is selected; errors link to fields, and successful submissions focus the results heading. With JavaScript off, the method remains readable and the page explains that calculation needs JavaScript.
+
+Check the engine with `node tests/investment-calculator.cjs` (no packages needed). Cases include zero rates/amounts/payments, zero/one/long horizons, negative rates, invalid values, effective-factor conversion, fee-free comparisons, payment timing and independent per-payment nominal/real accounting. The source/method date is in the new page's front matter and visible copy; update both when the method changes.
+
+### Fee comparison
+
+`_includes/fee-comparison.html` runs one scenario twice, changing only the annual balance fee, and shows both final balances, the difference, optional values in today's money, a chart and a yearly table. It sits on the investment calculator's page, under the calculator, with no page or data card of its own. To embed it in an article: `{% include fee-comparison.html id="article-fees" title="Your heading" %}` (give it a unique `id`). Its styles are in `site.css`.
+
+The maths is `InvestmentMath.compareFees()` in `assets/js/investment-math.js`, which calls the calculator's own `calculate()` once per fee, so there's no second calculator. `assets/js/fee-comparison.js` only reads the form and draws, using the chart in `assets/js/investment-calculator.js`. The opening fee levels are example inputs, not typical fund charges, so don't describe them as typical. Tests: `node tests/fee-comparison.cjs`.
+
+## Rate-change widget
+
+`_includes/rate-change-impact.html`, on the ECB page, has two modes. **Savings** takes a balance, two annual effective rates and an optional tax assumption, and shows the interest over one year. **Loan** takes a remaining principal, remaining term and two nominal annual rates, and compares fixed-rate monthly payments. The reader enters their own bank's rates: nothing here assumes an ECB move reaches them. It can go in an article with `{% include rate-change-impact.html id="article-rates" %}`.
+
+The maths is `savings()` and `loan()` in `assets/js/rate-scenarios.js`, which also runs the draft's mortgage widget (`_includes/mortgage-rate-impact.html`); `loan()` uses that widget's `payment()`. The opening figures are example inputs, not current rates. Tests: `node tests/rate-change.cjs` and `node tests/rate-scenarios.cjs`.
+
 ## Variable-rate mortgage chart
 
 Horizontal bars: the share of new mortgages on a variable rate in each euro area country, most variable first, with the euro area beneath. Plain HTML and CSS, no script.
@@ -467,7 +534,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026
 | File or folder | What it controls |
 |---|---|
 | `_config.yml` | Site name, your details, Substack address |
-| `_config.preview.yml` | Local preview only: a stand-in Substack address so the Subscribe buttons show, and the sample articles in `_drafts/` (images in `assets/img/samples/`, both ignored by git). GitHub Pages ignores this file |
+| `_config.preview.yml` | Local preview only: a stand-in Substack address so the Subscribe buttons show, the sample articles in `_drafts/` (images in `assets/img/samples/`, both ignored by git), and the gold-only view. GitHub Pages ignores this file |
 | `index.html` | Home page |
 | `articles/index.html` | The list of all articles |
 | `_posts/` | The articles themselves |
@@ -520,3 +587,55 @@ and open `http://localhost:4000`. The built pages go to `~/Library/Caches`, so n
 
 - **Commercial use:** GitHub's rules say Pages isn't meant for sites whose main purpose is commercial transactions. A newsletter and portfolio are fine. If you ever sell something, keep the checkout on Substack, Gumroad or Lemon Squeezy, not on this site. If you'd rather avoid the question entirely, Cloudflare Pages or Netlify can host this same repository.
 - **No tracking cookies:** the site sets no cookies. The only analytics option is Cloudflare Web Analytics (see "Analytics"), off until you add its token.
+
+## Gold versus stocks: private local preview
+
+The full calculator at `/data/euro-inflation-calculator/` can now show a two-asset
+preset with the same engine and chart. It is gated behind `gold_stocks_preview`,
+which is enabled only by `_config.gold-stocks-preview.yml`, not the production
+configuration. Do not publish the preview build. No new indexed asset-pair page,
+export endpoint or updater was added.
+
+Build locally with the existing Ruby/Bundler setup:
+
+```sh
+bundle _2.4.22_ exec jekyll serve --host 127.0.0.1 --port 4007 --config _config.yml,_config.gold-stocks-preview.yml --destination /tmp/money-gold-stocks-preview
+```
+
+Choose **Gold versus stocks** in the Comparison control. Start/end months,
+amount, lump sum/monthly purchases, real/nominal mode and stock benchmark are
+preserved when switching views. Real figures are in the selected end month's
+euros, including each contribution. Monthly buying includes both endpoint
+months; the last purchase earns no return. A gap anywhere in either series
+blocks the pair rather than changing dates or comparing unequal windows.
+The full view still opens by default, and its original production behaviour is
+unchanged when the preview setting is absent.
+
+The share link is the public one described under "End month and share link". On
+a public page a gold-versus-stocks link shows every asset for the same dates, with a note.
+
+For an article, use the compact wrapper (it emits nothing in production):
+
+```liquid
+{% include gold-stocks-comparison.html id="article-gold-stocks" %}
+```
+
+It reuses `old-new-calculator.html` with the pair preset and folded source notes.
+Use a distinct id for each instance. The chart retains arrow/Page Up/Page Down/
+Home/End support. The comparison table includes balances, gain relative to
+contributions, annualised returns, largest falls and first within-window
+recovery of the prior high; the expandable monthly table is a chart alternative.
+No JavaScript retains the stored default table, explicitly described as the
+default case rather than a reconstructed share link.
+
+Run `node tests/gold-stocks.cjs` for synthetic hand-worked endpoint, contribution,
+real/nominal, drawdown/recovery, missing-data, annual-return and link cases, plus
+independent unit-sum checks on the stored history. Synthetic data lives only in
+`tests/`, which Jekyll excludes. Use normal production and preview builds to
+verify the release gate.
+
+## Gold-only view: local preview
+
+`_includes/gold-return-calculator.html` is a gold-only view of the calculator, with its own form, chart and monthly table. It isn't on the public site: `data/euro-inflation-calculator.html` mounts it only when `gold_return_preview: true`, which only `_config.preview.yml` sets. It works in euros, because `assets/data/old-new.json` holds gold in euros only.
+
+It reuses `calculate()` and the chart in `assets/js/old-new-calculator.js`. Leaving out the engine's optional `end` and `assets` gives the full comparison. Purchases and valuations use monthly-average gold prices, never month-end trades. Tests: `node tests/gold-return.cjs`.
