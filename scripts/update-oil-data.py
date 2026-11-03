@@ -482,6 +482,7 @@ def build(today):
         'latest_price': '{:,.2f}'.format(last_price),
     }
     annual_file = {
+        'eia_release': release.isoformat() if release else None,
         'brent_to': last_day.isoformat(),
         'cpi_to': cpi_to,
         'hicp_to': hicp_to,

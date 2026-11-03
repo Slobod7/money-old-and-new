@@ -4,6 +4,7 @@ The oil calculator: if you had put money into oil from a given month, what would
 Optional: id (needed only for a second calculator on the same page), title (replaces the heading).
 Without JavaScript it shows the default case, worked out ahead of time by scripts/update-oil-data.py, with the rules
 and the note on what the spot price means. assets/js/oil-widgets.js, added once per page below, adds the form and results.
+Optional: hide_source=true when the page has a separate sources section.
 {%- endcomment -%}
 {%- assign cc = include.id | default: "oil-calc" -%}
 {%- assign ba = site.data.brent_annual -%}
@@ -81,7 +82,7 @@ and the note on what the spot price means. assets/js/oil-widgets.js, added once 
 <p class="visually-hidden" aria-live="polite" data-out="live"></p>
 </div>
 
-<p class="oil-honesty"><strong>Before you read too much into this:</strong> it uses the spot price, for whole cargoes of physical oil, which no ordinary investor could buy and keep. Funds that track oil futures earned far less than the spot price, because rolling from one contract to the next usually costs money. USO, a US fund that holds oil futures, shows the gap. From its launch on 10 April 2006 to the end of 2025, its value per share fell 87%. The spot price of WTI, the US crude it tracks, fell 16%. This is history, not a forecast or advice.</p>
+<p class="oil-honesty"><strong>Before you read too much into this:</strong> this is a hypothetical holding of physical barrels valued at Brent spot prices. It does not model an oil fund or a futures strategy, including the effect of replacing expiring contracts. Fees, taxes and storage costs are excluded. The result is a historical comparison, not a forecast or investment recommendation.</p>
 <div class="oil-rules">
 <h4 class="oil-rules-title">How it works</h4>
 <ul>
@@ -89,11 +90,13 @@ and the note on what the spot price means. assets/js/oil-widgets.js, added once 
 <li>Fractions of a barrel are allowed.</li>
 <li>Today’s value uses the latest daily price: ${{ ex.latest_price }} on {{ cc_to }}.</li>
 <li>In euros, each purchase converts at the ECB’s rate for that day (or its last rate before, on days it published none), and the value converts back at its rate for {{ cc_to }}.</li>
-<li>Adjusting for inflation uses US consumer prices (CPI, to {{ ba.cpi_to | append: "-01" | date: "%B %Y" }}) for dollars and euro area consumer prices (HICP, to {{ ba.hicp_to | append: "-01" | date: "%B %Y" }}) for euros. Later months count as today’s money.{% for m in ba.cpi_filled %} US CPI for {{ m | append: "-01" | date: "%B %Y" }} was never published, so it’s taken as halfway between the months either side.{% endfor %}{% for m in ba.hicp_filled %} HICP for {{ m | append: "-01" | date: "%B %Y" }} is taken as halfway between the months either side.{% endfor %}</li>
+<li>Adjusting for inflation uses US consumer prices (CPI, to {{ ba.cpi_to | append: "-01" | date: "%B %Y" }}) for dollars and euro area consumer prices (HICP, to {{ ba.hicp_to | append: "-01" | date: "%B %Y" }}) for euros. Later months count as today’s money.{% for m in ba.cpi_filled %} Missing US CPI for {{ m | append: "-01" | date: "%B %Y" }} is filled with the geometric mean of the months either side.{% endfor %}{% for m in ba.hicp_filled %} Missing HICP for {{ m | append: "-01" | date: "%B %Y" }} is filled with the geometric mean of the months either side.{% endfor %}</li>
 <li>Fees, taxes and storage aren’t included.</li>
 </ul>
 </div>
+{%- unless include.hide_source %}
 <p class="oil-source">Sources: U.S. Energy Information Administration (Brent spot price); European Central Bank (euro reference rates, and euro area HICP from Eurostat); U.S. Bureau of Labor Statistics consumer prices, via FRED. Prices to {{ cc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.</p>
+{%- endunless %}
 </section>
 {%- unless oil_widgets_script %}
 {%- assign oil_widgets_script = true %}

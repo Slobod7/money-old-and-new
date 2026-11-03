@@ -2,19 +2,154 @@
 layout: default
 title: Brent oil price history
 seo_title: "Brent oil price history since 1990: chart and data"
-description: "The Brent spot price since 1990 in US dollars a barrel, at the time and in today's dollars, with yearly averages and a calculator for buying oil from any month."
+description: "Brent spot prices in US dollars per barrel since 1990: daily and monthly views, inflation adjustment, euro conversion and sources."
 permalink: /data/brent-oil-price-history/
 redirect_from: /brent-oil-price-history/
+last_modified_at: 2026-11-03
+content_checked: 2026-11-02
+faq:
+  - question: "Why does the last point change when I switch from 1Y to 5Y?"
+    answer: "1Y ends with the latest daily closing spot observation. 5Y and the other longer views end with a monthly average, which may cover only part of the month. They measure different periods, so they need not match."
+  - question: "Why does the annual table differ from a point on the chart?"
+    answer: "The table contains yearly averages. The interactive chart contains daily observations in 1Y and monthly averages otherwise. The latest year can be incomplete; ‘so far’ identifies it."
+  - question: "Does ‘In today’s dollars’ turn the chart into euros?"
+    answer: "No. It adjusts dollar prices using US consumer prices, to the latest CPI month in the dataset. Only the calculator offers euros, using ECB reference exchange rates. Inflation adjustment and currency conversion are separate operations."
+  - question: "Can I reproduce an oil fund’s return with this calculator?"
+    answer: "No. It values hypothetical barrels at Brent spot prices. It does not model futures contracts, contract rolls, a fund’s fees or the costs of storing physical oil. Read the calculator’s purchase-date and currency rules before comparing its result with an investment."
 ---
 {%- assign brent = site.data.brent_annual %}
 {%- assign brent_first = brent.rows | first %}
-<div class="wrap calc-page">
+<div class="wrap calc-page brent-page">
 <header class="page-head">
+<p class="kicker">The price of a barrel</p>
 <h1 class="page-title">Brent oil price history</h1>
-<p class="page-lede">Brent is the main benchmark for crude oil in Europe. Its spot price was ${{ brent.calculator_default.latest_price }} a barrel on {{ brent.brent_to | date: "%-d %B %Y" }}. The chart goes back to {{ brent_first[0] }}, in the prices of the time or in today’s dollars, and the calculator shows what buying oil from any month since then would have done.</p>
+<p class="page-lede">Follow EIA’s Europe Brent spot price since {{ brent_first[0] }}, in US dollars per barrel. Explore the history, adjust for inflation or try the calculator in euros.</p>
+<p class="brent-latest">Latest daily observation: <strong>${{ brent.calculator_default.latest_price }}</strong> per barrel · {{ brent.brent_to | date: "%-d %B %Y" }}</p>
+<p class="meta">Historical data, not a live quote. Dataset updated {{ brent.updated | date: "%-d %B %Y" }}.</p>
+<nav class="brent-nav" aria-label="On this page">
+<span class="kicker">On this page</span>
+<a href="#brent-chart-title">Chart</a>
+<a href="#brent-calculator">Calculator</a>
+<a href="#household-prices">Household prices</a>
+<a href="#sources-method">Sources &amp; method</a>
+</nav>
 </header>
-<h2 class="section-title">The chart</h2>
-{% include oil-chart.html id="brent-since-1990" %}
-<h2 class="section-title">The calculator</h2>
-{% include oil-calculator.html %}
+
+<section aria-labelledby="brent-chart-title">
+<h2 class="section-title" id="brent-chart-title">The chart</h2>
+<p class="brent-chart-key">Daily in 1Y <span aria-hidden="true">·</span> Monthly in longer views <span aria-hidden="true">·</span> USD per barrel</p>
+{% include oil-chart.html id="brent-since-1990" hide_source=true labelledby="brent-chart-title" %}
+<div class="faq brent-reading">
+<details>
+<summary>How to read this chart</summary>
+<div class="brent-reading-body">
+<p>The series is <a href="https://www.eia.gov/dnav/pet/hist/RBRTED.htm">EIA’s Europe Brent Spot Price FOB</a> (free on board), a crude-oil benchmark, rather than a futures contract. EIA describes its observations as <a href="https://www.eia.gov/dnav/pet/TblDefs/pet_pri_spt_tbldef2.asp">daily closing spot prices</a>.</p>
+<ul class="plain-list">
+<li><strong>Compare the same periods.</strong> 1Y uses daily observations; longer views use monthly averages. The “Since 1990” summary compares annual averages. An endpoint change is not the average price over the whole range.</li>
+<li><strong>Read the frequency of a high or low.</strong> A monthly extreme is an extreme among averages, not an intraday price. Event notes quote daily prices, so they can differ from the monthly point carrying the marker.</li>
+<li><strong>Check incomplete periods.</strong> “So far” or an average “to” a date marks a partial month or year.</li>
+<li><strong>Today’s dollars are still dollars.</strong> Prices are scaled by US CPI to {{ brent.cpi_to | append: "-01" | date: "%B %Y" }}. This is inflation adjustment, not euro conversion.</li>
+</ul>
+<p>Hover, tap or drag to read a point. With the chart focused, use the arrow keys, Page Up/Down, Home or End. “Show the data” contains annual averages; without JavaScript, the line also uses annual figures. Historical closes and averages are not executable quotes.</p>
+</div>
+</details>
+</div>
+</section>
+
+<section aria-labelledby="brent-calculator">
+<h2 class="section-title" id="brent-calculator">Try your own dates and currency</h2>
+<p class="section-intro">Compare a hypothetical purchase of barrels in dollars or euros. The assumptions and costs excluded are set out below the result.</p>
+{% include oil-calculator.html hide_source=true %}
+</section>
+
+<section class="brent-section" aria-labelledby="oil-currency">
+<h2 class="section-title" id="oil-currency">Why the euro move can differ</h2>
+<div class="brent-fx-grid">
+<div class="brent-fx-rule">
+<p class="kicker">The conversion</p>
+<p class="brent-formula"><span>USD per barrel</span><span class="brent-formula-divider">÷ dollars per euro</span><span>= EUR per barrel</span></p>
+<p class="meta">The chart stays in dollars. The calculator offers euros.</p>
+</div>
+<div class="brent-fx-copy">
+<p>Oil and the exchange rate both matter to the euro cost of a barrel.</p>
+<dl class="brent-fx-directions">
+<div><dt>A weaker euro</dt><dd>Raises the euro cost if the dollar oil price is unchanged.</dd></div>
+<div><dt>A stronger euro</dt><dd>Lowers the euro cost if the dollar oil price is unchanged.</dd></div>
+</dl>
+<div class="faq brent-fx-details">
+<details><summary>How the dates and rates are matched</summary>
+<p>Each purchase uses the first available EIA daily price of its month and that date’s <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html">ECB reference rate</a>, or the latest preceding rate within seven calendar days. The final valuation pairs the latest daily oil observation with the rate on or before that date. Euro calculations begin in January 1999.</p>
+<p>These are purchase-date and valuation-date conversions, not monthly averages. ECB rates, quoted in dollars per euro, are normally published around 16:00 CET after a procedure around 14:10 CET. They are information rates, not transaction prices; pairing them with EIA closes does not create a simultaneous tradable oil/FX quote.</p>
+</details>
+</div>
+</div>
+</div>
+</section>
+
+<section class="feature-block brent-household" id="household-prices" aria-labelledby="household-prices-title">
+<div class="feature-head">
+<p class="kicker">Beyond the barrel</p>
+<h2 id="household-prices-title">From crude oil to household prices</h2>
+<p>An oil-price move reaches different household costs at different speeds.</p>
+</div>
+<ul class="feature-cards">
+<li>
+<span class="feature-label">Petrol &amp; diesel</span>
+<h3>More than the oil price</h3>
+<p>Pump prices also include refining, distribution and retail costs and margins, excise duties and VAT. There is no fixed percentage pass-through from crude oil.</p>
+<p class="brent-card-source"><a href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">Compare EU fuel prices →</a></p>
+</li>
+<li>
+<span class="feature-label">Household energy</span>
+<h3>Bills move at their own pace</h3>
+<p>Gas prices, the generation mix, network charges, taxes, contracts and national regulation all matter. Retail prices can respond with a delay.</p>
+<p class="brent-card-source"><a href="https://www.ecb.europa.eu/press/economic-bulletin/articles/2022/html/ecb.ebart202204_01~7b32d31b29.en.html">Read the ECB’s explanation →</a></p>
+</li>
+<li>
+<span class="feature-label">Inflation</span>
+<h3>One part of a wider basket</h3>
+<p>HICP measures a weighted basket of goods and services. Oil affects fuel and production and transport costs, but this chart cannot measure its total inflation effect.</p>
+<p class="brent-card-source"><a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.en.html">How the basket works →</a></p>
+</li>
+</ul>
+</section>
+
+<section class="brent-section" aria-labelledby="historical-moves">
+<h2 class="section-title" id="historical-moves">A few historical moves in context</h2>
+<p class="section-intro">Three episodes to help orient the chart. Each has several drivers; a marker does not explain an entire move.</p>
+<ol class="brent-timeline">
+<li><h3>2014–16</h3><p>EIA links the <a href="https://www.eia.gov/todayinenergy/detail.php?id=19451">late-2014 fall to production exceeding demand</a>, and describes <a href="https://www.eia.gov/todayinenergy/detail.php?id=29412">high production and inventories weighing on prices in 2016</a>.</p></li>
+<li><h3>2020</h3><p>Pandemic responses sharply reduced petroleum demand. The <a href="https://www.eia.gov/todayinenergy/detail.php?id=46336">negative-price episode was in WTI futures</a>; it should not be read as a negative Brent spot observation.</p></li>
+<li><h3>2022</h3><p>EIA identifies <a href="https://www.eia.gov/todayinenergy/detail.php?id=55079">Russia’s invasion of Ukraine and low global inventories</a> as contributors to the first-half rise, followed by demand concerns and increased supply in the second half.</p></li>
+</ol>
+</section>
+
+<section class="brent-section brent-method" aria-labelledby="sources-method">
+<h2 class="section-title" id="sources-method">Sources &amp; method</h2>
+<p class="meta">Observations through {{ brent.brent_to | date: "%-d %B %Y" }}{% if brent.eia_release %} · EIA release {{ brent.eia_release | date: "%-d %B %Y" }}{% endif %}. Explanatory notes checked {{ page.content_checked | date: "%-d %B %Y" }}.</p>
+<dl class="brent-source-list">
+<div><dt>Oil prices</dt><dd><a href="https://www.eia.gov/dnav/pet/hist/RBRTED.htm">U.S. Energy Information Administration</a>, Europe Brent Spot Price FOB (RBRTE), in US dollars per barrel. Daily closing spot prices and published monthly and annual averages. EIA names Refinitiv, an LSEG business, as its underlying source.</dd></div>
+<div><dt>Inflation</dt><dd><a href="https://fred.stlouisfed.org/series/CPIAUCSL">US Bureau of Labor Statistics CPI via FRED</a>, seasonally adjusted (CPIAUCSL), to {{ brent.cpi_to | append: "-01" | date: "%B %Y" }}. Euro calculations use Eurostat’s euro area HICP, changing composition, via the ECB (HICP.M.U2.N.000000.4D0.INX), to {{ brent.hicp_to | append: "-01" | date: "%B %Y" }}.</dd></div>
+<div><dt>Exchange rates</dt><dd><a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html">European Central Bank reference rates</a>, US dollars per euro (EXR.D.USD.EUR.SP00.A). Currency conversion and inflation adjustment are this site’s calculations, not provider quotes.</dd></div>
+</dl>
+<div class="faq brent-method-details">
+<details><summary>Averages and missing observations</summary>
+<p>EIA’s published monthly and annual averages are unweighted means of daily closing spot prices. Until publication, the latest month or year uses the mean of available daily observations and is labelled as partial. Missing oil observations are omitted, not filled with zero; the line connects available points.</p>
+<p>Inflation adjustment multiplies a price by the latest index divided by its month’s index; the annual table uses the year’s mean CPI. Months after the latest index use that latest value.{% for m in brent.cpi_filled %} Missing US CPI for {{ m | append: "-01" | date: "%B %Y" }} is filled with the geometric mean of the adjacent months.{% endfor %}{% for m in brent.hicp_filled %} Missing HICP for {{ m | append: "-01" | date: "%B %Y" }} is filled with the geometric mean of the adjacent months.{% endfor %}</p>
+</details>
+<details><summary>Update schedule and reuse</summary>
+<p>The site’s scheduled refresh is monthly, on the 18th at 06:30 UTC, with manual updates possible. The update date changes when the dataset changes. Failed downloads or validation leave the previous dataset in place; provider revisions can change history at a later refresh. This is not a live feed.</p>
+<p><a href="https://www.eia.gov/about/copyrights_reuse.php">EIA permits reuse of its data with dated acknowledgement</a>; third-party protected material has separate terms. See also the <a href="https://www.bls.gov/bls/linksite.htm">BLS reuse policy</a> and <a href="https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html">ECB attribution and reuse terms</a>.</p>
+</details>
+</div>
+</section>
+
+<section class="brent-section brent-questions" aria-labelledby="chart-questions">
+<h2 class="section-title" id="chart-questions">Questions about this chart</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</section>
 </div>
