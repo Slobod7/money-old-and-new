@@ -1,7 +1,7 @@
 {
-"updated":"2026-11-02",
+"updated":"2026-11-10",
 "to":"2026-09",
-"hicp_to":"2026-09",
+"hicp_to":"2026-10",
 "deposit_filled":[],
 "from":{"cash":"1999-01","deposit":"2000-01","bund":"1999-01","gold":"1999-01","us":"1999-01","europe":"1999-01","bitcoin":"2010-07"},
 "unavailable":[{"name":"Bitcoin","from":"2010-07"}],
