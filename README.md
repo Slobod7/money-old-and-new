@@ -113,7 +113,7 @@ Quiet and well made: warm white pages, one forest green for the identity, links 
 ## Publish a new article
 
 1. In the repository, open the `_posts` folder and click **Add file → Create new file**.
-2. Name it `YYYY-MM-DD-short-address.html`, for example `2026-11-07-what-is-pump-fun.html`. The part after the date becomes the page address: `/what-is-pump-fun/`. Don't change it after publishing.
+2. Name it `YYYY-MM-DD-short-address.html`, for example `2026-11-07-what-is-pump-fun.html`. The part after the date becomes the page address: `/articles/what-is-pump-fun/`. Don't change it after publishing.
 3. Start the file with this block, then write the article below it:
 
 ```
