@@ -514,13 +514,13 @@ The countries listed under `marked` in the data file (Finland and France, the tw
 
 ECB Data Portal series `RAI.M.{country}.SVLHPHH.EUR.MIR.Z`, one of the ECB's risk assessment indicators: new loans to households for house purchase with a floating rate or a rate fixed for up to one year, as a share of all new loans for house purchase. The ECB builds it from its MFI interest rate statistics (MIR); for the euro area it equals `MIR.M.U2.B.A2C.F.B.A.2250.EUR.N` divided by `MIR.M.U2.B.A2C.A.B.A.2250.EUR.N`. MIR publishes the split by rate fixation only for the euro area as a whole, which is why the country figures come from this indicator.
 
-Each figure is the average of the monthly shares from September 2025 to August 2026. The ECB doesn't publish every month for Luxembourg (6 of the 12), Malta (9) and Greece (11), so those are averaged over the months it has, and Bulgaria's covers January to August 2026, since it joined the euro. The chart marks all four with an asterisk.
+Each figure is the average of the monthly shares from October 2025 to September 2026. The ECB doesn't publish every month for Luxembourg (7 of the 12), Malta (9) and Greece (11), so those are averaged over the months it has, and Bulgaria's covers January to September 2026, since it joined the euro. The chart marks all four with an asterisk.
 
 Averaged over 2021–24 in the same way, the series gives the European Parliament study's figures (ECTI, 2025): Finland and Lithuania 97%, Estonia 94%, the Netherlands 16%, Germany 12%, Belgium 7% and France 3%.
 
 ### Updating it
 
-The data is fixed: `_data/variable_mortgages.json`, retrieved on 30 October 2026, and nothing updates it. To redo it, download every country at once from `https://data-api.ecb.europa.eu/service/data/RAI/M..SVLHPHH.EUR.MIR.Z?format=csvdata`, average each country's latest 12 months, and replace `rows` (most variable first), `euro_area`, `from`, `to` and `retrieved`.
+The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 2026, and nothing updates it. To redo it, download every country at once from `https://data-api.ecb.europa.eu/service/data/RAI/M..SVLHPHH.EUR.MIR.Z?format=csvdata` (add `&startPeriod=` with a recent month if the full download times out), average each country's latest 12 months, and replace `rows` (most variable first), `euro_area`, `from`, `to` and `retrieved`. Round `share_rounded` from the unrounded average, but show a share below 100 as 99, not 100. The ECB revises past months, so a redo can move earlier figures by a few tenths.
 
 ---
 
