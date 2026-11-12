@@ -96,13 +96,14 @@ Google stopped showing FAQ results on 7 May 2026, for every site, so the questio
 
 ## Design system
 
-Quiet and well made: warm white pages, one forest green for the identity, links and buttons, and burgundy only for the keyboard focus ring and the occasional small label. The only filled surfaces are the forest blocks: on the home page, the Sunday letter, with white cards, and the closing signup; on the Data page, the same block as the Sunday letter. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
+Quiet and well made: warm white pages, one forest green for the identity (the mark, the headline, the buttons, the signup blocks, the data in charts), and a deep cordial red as the third colour, the accent. The accent is the editor's red pen: the line across the top of every page, the small label that names a list (Latest articles, Common questions, an article's contents), the series name beside an article, the underline of a link, the underline of the current page and tab, the first letter of an article, and the editor's notes on a chart (marked events, shaded episodes, the money put in). It never colours running text, a button, a large surface or a data series, and a screen should show only a little of it. The filled surfaces are the forest blocks (on the home page, the Sunday letter, with white cards, and the closing signup; on the Data page, the same block as the Sunday letter) and the pale sage block that opens the home page, with a coin drawn at its left and blocks at its right (`_includes/hero-art.html`); on phones the block's bottom edge cuts the drawings off, so the first headline stays near the top. Article covers use the same pale sage ground. No gradients, shadows or textures. The full rules sit at the top of `assets/css/site.css`.
 
 - **Type:** Besley regular for headings, articles and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Articles are set at 19px (18px on phones) with a 680px reading column.
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
-- **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, burgundy `#6B2938`, background `#FAF9F6`, dividers `#DEDFD7`. Dividers are decorative only; never put forest text on burgundy or the reverse.
-- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, Calculator, About and Subscribe at the right. At 640px and below only the mark shows, with the same four links at the right; on the narrowest phones they drop to a row of their own.
-- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button, the Latest articles list (the three newest, hidden until the first article is published), the old-vs-new calculator, the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), who writes it (your photo, or your initials until `author.photo` is set), the common questions, and a closing Subscribe block in forest. The header and footer have no divider lines on any page.
+- **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, the accent `#8A2022` (a leathery cherry red, deliberately not a pinkish burgundy), background `#FAF9F6`, dividers `#DEDFD7`, pale sage `#E6EDE8` (the opening block and the ground of every drawing). On forest, the accent is too dark to see, so its light sibling `#F0A8A6` stands in, for the section label and one small mark per block. The strip behind the home calculator's inputs is `#F0F0EA`. Dividers are decorative only; never put forest text on the accent or the reverse. To try a different accent, change `--accent` (and `--accent-soft`) at the top of `assets/css/site.css`: everything follows.
+- **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, Data, About and Subscribe at the right. At 640px and below the mark and the name get a little smaller and stay together, and the four links drop to a row of their own once they no longer fit beside them.
+- **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button and the writer's name, on the pale sage block; the Latest articles list (the three newest, each with its cover, hidden until the first article is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), the old-vs-new calculator in compartments (inputs on a tinted strip, the answer as one sentence with the amount the red marks stand for picked out and repeated in both keys, the ranking and the chart as two framed cards, the rules, the yearly-rate note and the start-month suggestions folded into "How it works" under the chart), who writes it (your photo, or your initials until `author.photo` is set), the common questions, and a closing Subscribe block in forest. The footer then opens with "Sources and notes": the calculator's disclaimer and sources, and the date the questions were checked. The header has no divider line on any page.
+- **Headings and small print:** a heading stands alone, with no small label above it; the small accent label is kept only where it is the heading itself. A chart or calculator carries no disclaimer or source line of its own: those print in the page footer under "Sources and notes" (see "Small print in the footer" below).
 
 ### Known limitation: the wordmark
 
@@ -126,6 +127,7 @@ date: 2026-11-07 09:00:00 +0200
 read_time: 8
 topic: The Long View
 image: /assets/img/guides/what-is-pump-fun/cover.jpg
+cover: what-is-pump-fun
 toc:
   - id: how-it-works
     label: How it works
@@ -140,6 +142,8 @@ faq:
 ```
 
 Give every article its own `image`: it's the picture when the article is shared. Without one, it shares the default picture, `assets/img/og-default.png`, as a large card.
+
+`cover` is the article's drawing on the site itself: beside its headline, and wherever the article is listed (the home page, Articles, "Read next"). It names a file in `_includes/covers/`, without the `.svg`. Leave it out and the article gets `covers/default.svg` (a coin, the gateway and blocks). To add one, copy an existing cover and redraw it inside the same `480 × 300` frame, using only the classes listed under "Drawings" in `assets/css/site.css` (`ink`, `solid`, `paper`, `t1` to `t3`, `mark` and so on), so it follows the palette, with the accent used for one mark. Keep it to the few things that tell the story, in the middle of the frame: in a phone's lists it is shown 120px wide, beside the summary and after the headline. Covers are decorative and hidden from screen readers; they're not the shared picture, which is still `image`.
 
 `description` is what search results and the article lists show, so keep it to 155 characters or fewer. `dek` is optional: it replaces `description` under the headline only. `seo_title` is also optional: it's the page's whole `<title>`, with nothing added, so keep it to about 60 characters. Without one, the title is the article's `title`, then a bar and the site's name. Shared links always use `title`.
 
@@ -182,7 +186,7 @@ Section heading (the `id` must match an entry in `toc`):
 <p>Your paragraph.</p>
 ```
 
-The short-version box:
+The short-version box. Keep `id="short"`: the page then lists "The short version" first in the article's contents, and adds one line after the box that offers the Sunday letter (a link, not a button; it shows only while signup is open):
 
 ```html
 <section id="short" class="short-version" aria-labelledby="short-title">
@@ -287,7 +291,7 @@ The script checks everything it downloads (the right series, dates in order, pri
 - "First trading day" is the first day of the month with an EIA price. In 14 months since 1990, all before 2006, EIA’s daily series has no price until after the 4th (for example 11 May 1998), and the purchase happens on that first priced day.
 - Euro purchases use the ECB rate for that day, or the ECB’s last rate before it on days it published none (mostly 1 May). The value today converts back at the rate for the date of the latest Brent price.
 - "Today’s dollars" multiplies a price by the latest CPI over the CPI of its month; a yearly average uses the average CPI of the year’s months. Months after the latest CPI count as today’s money. US CPI for October 2025 was never published (the federal shutdown), so it’s taken as the geometric midpoint of September and November 2025 (324.654). The script fills only a single missing month like that one and stops on any longer gap.
-- The calculator values your oil on the first trading day of each month and on the latest price’s date. Those points give the chart and the worst moment. A yearly return is shown only after a year or more.
+- The calculator values your oil on the first trading day of each month and on the latest price’s date. Those points give the chart and the "Furthest behind" note under it. A yearly return is shown only after a year or more.
 
 ### How the data stays up to date
 
@@ -390,11 +394,11 @@ What euros put into cash at home, a bank deposit, German bonds, gold, US stocks,
 - `title` (optional): replaces the heading.
 - `labelledby` (optional): the id of a heading outside the include that names the calculator. The include then drops its own heading.
 - `interpretation` (optional): `true` adds the standalone euro page’s inflation answer, year/start tables, loss/recovery dates and extended source notes. Leave it unset for the homepage.
-- `compact` (optional): `true` folds the rules and sources into a "How it works, and sources" panel under the honesty note.
+- `compact` (optional): `true` folds the rules into a "How it works" panel under the chart.
 
-The home page uses it between Latest articles and the Sunday letter block, under its own heading and introduction: `{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}`. The introduction's inflation figures (how far prices have risen since January 1999, and what €1,000 kept in a drawer since then buys now) come from `since` in `_data/old_new.json`, so they update with the data. The rest of its wording is fixed in `index.html`. The section and its introduction span the full page width.
+The home page uses it after the Sunday letter block, under its own heading and introduction: `{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}`. The introduction's inflation figures (how far prices have risen since January 1999, and what €1,000 kept in a drawer since then buys now) come from `since` in `_data/old_new.json`, so they update with the data. The rest of its wording is fixed in `index.html`. The section and its introduction span the full page width.
 
-It also has its own page at `/data/euro-inflation-calculator/` (`data/euro-inflation-calculator.html`), with the rules and sources showing, linked from the Data page, the footer and the home page.
+It also has its own page at `/data/euro-inflation-calculator/` (`data/euro-inflation-calculator.html`), with the fuller method and sources, linked from the Data page, the footer and the home page.
 
 ### End month and share link
 
@@ -420,11 +424,15 @@ Some figures in the answers come from the calculator: each `[name]` in an answer
 
 Every other figure is typed in with its month: the ECB's deposit rate, euro area, German and Romanian inflation, and the banks' deposit rates. Check them once a month, after the ECB's deposit-rate figures and the Eurostat inflation release, and change `faq_checked`, which the page shows as "Answers checked …".
 
-The calculator lays itself out by its own width, not the screen's (a CSS container query on `.onc`). In an article column it's one column. From 860px wide, as on the home page from about 960px, the form runs in one row with every control level, the chart sits beside the ranking and grows to the same height, and the honesty note sits beside the rules.
+The calculator lays itself out by its own width, not the screen's (a CSS container query on `.onc`). In an article column it's one column. From 860px wide, as on the home page from about 960px, the form runs in one row with every control level, and the chart sits beside the ranking and grows to the same height (on the home page it keeps its own height, with the folded rules under it).
 
 It ranks the assets by what they'd be worth, each with a bar from €0, a tick for the money put in, its yearly return and its biggest fall. Choosing one shows its chart against the money put in, with a readout on hover, tap or drag, and with the keyboard (arrow keys, Page Up and Page Down for a year, Home and End). When the top asset is worth more than two and a half times the next, its bar is cut short with a notch, so the others stay readable. An asset with no figures for the chosen start (Bitcoin before July 2010, the bank deposit before January 2000) is listed beneath as not included. Without JavaScript, the include shows the default case (€1,000 at the end of January 2000, in today's money) as a table, worked out by the update script, with a line naming any asset whose figures start later (Bitcoin). `assets/js/old-new-calculator.js` is loaded only by pages with the calculator.
 
-The honesty note under it carries the Bitcoin disclosure. Keep it there.
+Its disclaimer carries the Bitcoin disclosure. Since 11 November 2026 the disclaimer and the source line print in the page footer, under "Sources and notes", not under the calculator (the author asked for the small print to move there). Keep the disclosure in that note.
+
+**Small print in the footer.** Anything a page or include wraps in a pair of `<!--footnote-->` comments is lifted out of the page by `_layouts/default.html` and printed by `_includes/footer.html` under "Sources and notes", in the order it appeared. The calculators mark their disclaimers and source lines this way. Input hints, results and a chart's own caption stay where they are; so do the source lines under an article's charts. Write a footer note so it names its tool: it is read away from it.
+
+**No small label above a heading.** A section, card or page title stands alone. The small accent label is kept only where it is the heading itself (Latest articles, Common questions, In this article, Read next).
 
 ### Where the data comes from
 
@@ -527,7 +535,7 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 202
 ## Add a data page
 
 1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
-2. Add one entry to `_data/data_pages.yml`, with `label`, `title`, `description` and `url`. The Data page shows the cards in that order, and needs no HTML or CSS changes.
+2. Add one entry to `_data/data_pages.yml`, with `title`, `description` and `url` (`label` is no longer shown). The Data page shows the cards in that order, and needs no HTML or CSS changes.
 
 ## Where things are
 

@@ -21,7 +21,6 @@ faq:
 {%- assign brent_first = brent.rows | first %}
 <div class="wrap calc-page brent-page">
 <header class="page-head">
-<p class="kicker">The price of a barrel</p>
 <h1 class="page-title">Brent oil price history</h1>
 <p class="page-lede">Follow EIA’s Europe Brent spot price since {{ brent_first[0] }}, in US dollars per barrel. Explore the history, adjust for inflation or try the calculator in euros.</p>
 <p class="brent-latest">Latest daily observation: <strong>${{ brent.calculator_default.latest_price }}</strong> per barrel · {{ brent.brent_to | date: "%-d %B %Y" }}</p>
@@ -66,7 +65,6 @@ faq:
 <h2 class="section-title" id="oil-currency">Why the euro move can differ</h2>
 <div class="brent-fx-grid">
 <div class="brent-fx-rule">
-<p class="kicker">The conversion</p>
 <p class="brent-formula"><span>USD per barrel</span><span class="brent-formula-divider">÷ dollars per euro</span><span>= EUR per barrel</span></p>
 <p class="meta">The chart stays in dollars. The calculator offers euros.</p>
 </div>
@@ -88,25 +86,21 @@ faq:
 
 <section class="feature-block brent-household" id="household-prices" aria-labelledby="household-prices-title">
 <div class="feature-head">
-<p class="kicker">Beyond the barrel</p>
 <h2 id="household-prices-title">From crude oil to household prices</h2>
 <p>An oil-price move reaches different household costs at different speeds.</p>
 </div>
 <ul class="feature-cards">
 <li>
-<span class="feature-label">Petrol &amp; diesel</span>
 <h3>More than the oil price</h3>
 <p>Pump prices also include refining, distribution and retail costs and margins, excise duties and VAT. There is no fixed percentage pass-through from crude oil.</p>
 <p class="brent-card-source"><a href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">Compare EU fuel prices →</a></p>
 </li>
 <li>
-<span class="feature-label">Household energy</span>
 <h3>Bills move at their own pace</h3>
 <p>Gas prices, the generation mix, network charges, taxes, contracts and national regulation all matter. Retail prices can respond with a delay.</p>
 <p class="brent-card-source"><a href="https://www.ecb.europa.eu/press/economic-bulletin/articles/2022/html/ecb.ebart202204_01~7b32d31b29.en.html">Read the ECB’s explanation →</a></p>
 </li>
 <li>
-<span class="feature-label">Inflation</span>
 <h3>One part of a wider basket</h3>
 <p>HICP measures a weighted basket of goods and services. Oil affects fuel and production and transport costs, but this chart cannot measure its total inflation effect.</p>
 <p class="brent-card-source"><a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.en.html">How the basket works →</a></p>

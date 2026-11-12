@@ -8,7 +8,9 @@ Optional: id (unique for each copy on a page), title (replaces the heading).
 <section class="oil-widget investment fee-comparison" id="{{ fc }}" data-fee-comparison aria-labelledby="{{ fc }}-title">
 <h2 class="section-title" id="{{ fc }}-title">{{ include.title | default: "Compare two annual fees" }}</h2>
 <p>Run one savings scenario twice and change only the annual fee on the balance. The return, payments and dates stay the same.</p>
-<p class="oil-note">Every rate is your assumption. The opening fee levels are example inputs, not typical charges for any fund or product, and this doesn’t predict how any fund would perform.</p>
+<!--footnote-->
+<p class="oil-note"><strong>In the fee comparison, every rate is your assumption.</strong> The opening fee levels are example inputs, not typical charges for any fund or product, and this doesn’t predict how any fund would perform.</p>
+<!--footnote-->
 <noscript><p class="oil-honesty">Enable JavaScript to compare two fees. The notes below explain the calculation; no market data is used.</p></noscript>
 <form class="oil-form investment-form" data-form novalidate hidden>
 <div class="oil-field">
@@ -81,7 +83,9 @@ Optional: id (unique for each copy on a page), title (replaces the heading).
 <li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="oil-put" x1="0" x2="24" y1="5" y2="5"/></svg>Paid in</li>
 </ul>
 <div data-chart></div>
+<!--footnote-->
 <p class="oil-note">Source: your assumptions, not market data. Method dated 3 November 2026. Figures are rounded to cents; the calculation is not.</p>
+<!--footnote-->
 </figure>
 <details class="oil-data">
 <summary>Show yearly figures and the final month</summary>

@@ -1,5 +1,18 @@
 <footer class="site-footer">
 <div class="wrap">
+{%- comment -%}
+A page's small print: the source credits, disclaimers and notes on method that its charts and calculators would
+otherwise carry. _layouts/default.html collects them and passes them in.
+{%- endcomment -%}
+{%- assign notes = include.notes | strip %}
+{%- if notes != "" %}
+<section class="page-notes" id="notes" aria-labelledby="notes-title">
+<h2 id="notes-title">Sources and notes</h2>
+<div class="page-notes-body">
+{{ notes }}
+</div>
+</section>
+{%- endif %}
 <div class="footer-inner">
 <p class="footer-note"><span class="footer-title">{{ site.title }}</span> is written by {{ site.author.name }}. Nothing here is financial advice, and sponsored posts are always labelled.</p>
 <nav class="footer-nav" aria-label="Footer">

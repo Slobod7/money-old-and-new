@@ -39,16 +39,18 @@ The script loads once per page; each instance keeps its own inputs and results.
 <div><dt>Purchasing power change</dt><dd data-ibe-out="real"></dd></div>
 </dl>
 <p data-ibe-out="explanation"></p>
-<p class="oil-note">The gross threshold is rounded up to four decimal places; the other results use that displayed rate. No payments in or withdrawals during the year.</p>
 </div>
 </div>
 <details class="oil-data ibe-rules">
 <summary>How this scenario works</summary>
 <p>Tax is charged only on positive interest. The balance fee is then taken from the principal plus after-tax interest. We find the lowest non-negative gross rate that leaves at least the starting purchasing power after your assumed inflation. No tax refund or negative interest is modelled.</p>
 <p>The one-year balance factor is (1 + gross rate × (1 − tax rate)) × (1 − fee rate). Dividing it by (1 + inflation) gives its purchasing power relative to the starting balance. All rates in this formula are decimals.</p>
+<p>The gross threshold is rounded up to four decimal places; the other results use that displayed rate. No payments in or withdrawals during the year.</p>
 </details>
 {%- unless include.sources_elsewhere %}
+<!--footnote-->
 <p class="oil-source">Background: <a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me/html/nominal_and_real_interest_rates.en.html">ECB on nominal interest and purchasing power</a> (25 May 2016). The tax and fee calculation follows the scenario stated here. Model checked <time datetime="2026-11-02">2 November 2026</time>; no live rates are used.</p>
+<!--footnote-->
 {%- endunless %}
 </section>
 {%- unless inflation_break_even_script %}

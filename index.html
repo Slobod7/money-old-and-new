@@ -80,42 +80,36 @@ faq:
 <div class="wrap home">
 
 <section class="intro" aria-labelledby="intro-title">
+{% include hero-art.html %}
 <h1 id="intro-title">Macro, through your wallet</h1>
 <p class="intro-lede">A free Sunday letter for people in Europe on what the ECB, inflation and markets mean for your money, old and new.</p>
 <div class="signup-center">
 {% include signup-button.html label="Get the Sunday letter" no_note=true %}
+<p class="meta">Written by <a href="{{ '/about/' | relative_url }}">{{ site.author.name }}</a></p>
 </div>
 </section>
 
 {%- if site.posts.size > 0 %}
 <section class="latest" aria-labelledby="latest-title">
-<h2 id="latest-title" class="section-title">Latest articles</h2>
+<h2 id="latest-title" class="kicker">Latest articles</h2>
 <ul class="guide-list" role="list">
 {%- for post in site.posts limit: 3 %}
-<li>
-<p class="meta">{% include post-dates.html post=post %}</p>
+{%- assign cover = post.cover | default: "default" %}
+<li class="with-cover">
+<div>
+<p class="meta">{% if post.topic %}<span class="topic is-inline">{{ post.topic }}</span>{% endif %}{% include post-dates.html post=post %}</p>
 <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
 <p>{{ post.description }}</p>
+</div>
+<a class="cover" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">{% include covers/{{ cover }}.svg %}</a>
 </li>
 {%- endfor %}
 </ul>
 </section>
 {%- endif %}
 
-{%- assign since = site.data.old_new.since %}
-<section class="home-tool" aria-labelledby="tool-title">
-<div class="home-tool-head">
-<h2 id="tool-title" class="section-title">What would your euros be worth today?</h2>
-<p>Money that sits still loses value: since the euro began in {{ since.from | append: "-01" | date: "%B %Y" }}, prices in the euro area have risen {{ since.prices_up }}%, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did. Beating that means taking some risk, and every option below has had its bad years.</p>
-<p class="home-tool-try">Try it: put the same money into each, from any month since 1999.</p>
-</div>
-{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}
-<p class="home-tool-more"><a class="action" href="{{ '/data/euro-inflation-calculator/' | relative_url }}">Open the euro inflation calculator on its own page</a></p>
-</section>
-
 <section class="feature-block" aria-labelledby="letter-title">
 <div class="feature-head">
-<p class="kicker">The Sunday letter</p>
 <h2 id="letter-title">What arrives each Sunday</h2>
 <p>One letter, free, every Sunday. Weeks rotate between these three. No price calls, no tips on what to buy or sell.</p>
 </div>
@@ -139,6 +133,16 @@ faq:
 </ul>
 </section>
 
+{%- assign since = site.data.old_new.since %}
+<section class="home-tool" aria-labelledby="tool-title">
+<div class="home-tool-head">
+<h2 id="tool-title" class="section-title">What would your euros be worth today?</h2>
+<p>Money that sits still loses value: since the euro began in {{ since.from | append: "-01" | date: "%B %Y" }}, prices in the euro area have risen {{ since.prices_up }}%, so €1,000 kept in a drawer since then buys what €{{ since.drawer }} did.</p>
+</div>
+{% include old-new-calculator.html id="home-old-new" labelledby="tool-title" compact=true %}
+<p class="home-tool-more"><a class="action" href="{{ '/data/euro-inflation-calculator/' | relative_url }}">Open the euro inflation calculator on its own page</a></p>
+</section>
+
 <section class="writer" aria-labelledby="writer-title">
 {%- assign avatar = site.author.avatar | default: site.author.photo %}
 {%- if avatar and avatar != "" %}
@@ -147,7 +151,6 @@ faq:
 <span class="writer-photo writer-initials" aria-hidden="true">{{ site.author.initials }}</span>
 {%- endif %}
 <div class="writer-text">
-<p class="kicker">Who writes it</p>
 <h2 id="writer-title" class="section-title">I’m {{ site.author.name | split: " " | first }}. I studied finance and worked in a bank.</h2>
 <p>I finished a degree in finance and banking and worked in a bank for a year. Now I write about money: more than 500 finance and crypto articles so far.</p>
 <a class="action" href="{{ '/about/' | relative_url }}">More about me</a>
@@ -156,11 +159,11 @@ faq:
 
 {%- assign faq_to = site.data.old_new.to | append: "-01" | date: "%B %Y" %}
 <section class="home-faq" aria-labelledby="faq-title">
-<h2 id="faq-title" class="section-title">Common questions</h2>
+<h2 id="faq-title" class="kicker">Common questions</h2>
 <div class="home-faq-cols">
 {%- for column in page.faq_columns %}
 <div class="home-faq-col">
-<h3 class="kicker">{{ column[1] }}</h3>
+<h3>{{ column[1] }}</h3>
 <div class="faq">
 {%- assign items = page.faq | where: "column", column[0] %}
 {%- for item in items %}
@@ -171,7 +174,9 @@ faq:
 </div>
 {%- endfor %}
 </div>
-<p class="meta">Answers checked {{ page.faq_checked | date: "%-d %B %Y" }}. Figures from the calculator run to the end of {{ faq_to }} and update with it.</p>
+<!--footnote-->
+<p>The answers under “Common questions” were checked on {{ page.faq_checked | date: "%-d %B %Y" }}. Their figures from the calculator run to the end of {{ faq_to }} and update with it.</p>
+<!--footnote-->
 </section>
 
 <section class="closing" aria-labelledby="closing-title">

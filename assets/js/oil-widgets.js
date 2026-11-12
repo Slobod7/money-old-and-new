@@ -619,7 +619,7 @@
       // The worst moment, unless it rounds to no loss at all
       var w = r.worst;
       out('worst').textContent = Number((-w.gap * 100).toFixed(0)) > 0
-        ? 'The worst moment: on ' + dayName(w.date) + ' your oil was worth ' + m(w.value) + ', ' + pct(-w.gap, 0) + ' less than the ' + m(w.against) +
+        ? 'Furthest behind: on ' + dayName(w.date) + ' your oil was worth ' + m(w.value) + ', ' + pct(-w.gap, 0) + ' less than the ' + m(w.against) +
           (o.real ? ' you’d have needed just to keep up with inflation.' : ' you had put in.')
         : 'Your oil was never worth less than ' + (o.real ? 'it needed to keep up with inflation' : 'you had put in') + ', checked on the first trading day of each month.';
 

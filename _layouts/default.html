@@ -41,9 +41,22 @@ because schema.html reads page.image, and the default would become every article
 <a class="skip-link" href="#main">Skip to content</a>
 {% include header.html %}
 <main id="main">
+{%- comment -%}
+Small print goes to the foot of the page. Whatever a page or an include wraps in a pair of <!--footnote--> comments
+(a source credit, a disclaimer, a note on method) is lifted out here and printed in the footer under "Sources and
+notes", in the order it appeared. Split on the marker, the even pieces are the page and the odd ones the notes.
+{%- endcomment -%}
+{%- assign page_notes = "" -%}
+{%- assign note_parts = content | split: "<!--footnote-->" -%}
+{%- if note_parts.size > 1 %}
+{%- capture page_body %}{% for part in note_parts %}{% assign is_note = forloop.index0 | modulo: 2 %}{% if is_note == 0 %}{{ part }}{% endif %}{% endfor %}{% endcapture %}
+{%- capture page_notes %}{% for part in note_parts %}{% assign is_note = forloop.index0 | modulo: 2 %}{% if is_note == 1 %}{{ part }}{% endif %}{% endfor %}{% endcapture %}
+{{ page_body }}
+{%- else %}
 {{ content }}
+{%- endif %}
 </main>
-{% include footer.html %}
+{% include footer.html notes=page_notes %}
 {%- if site.cloudflare_analytics_token and site.cloudflare_analytics_token != "" %}
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ site.cloudflare_analytics_token }}"}'></script>
 {%- endif %}

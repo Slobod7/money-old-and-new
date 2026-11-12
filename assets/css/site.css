@@ -1,19 +1,28 @@
 /* Money, Old and New
-   Warm white, forest and an occasional burgundy. Besley for reading, Archivo for the interface.
-   Large surfaces stay warm white, except the forest blocks on the home and Data pages.
+   Warm white and forest, with a deep cordial red as the third colour (the accent). Besley for reading, Archivo for
+   the interface. Large surfaces stay warm white, except the forest blocks on the home and Data pages and the pale
+   sage block that opens the home page.
+   Forest is the identity: the mark, the headline, the buttons, the signup blocks, the data in charts. The accent is
+   the editor's red pen: the line across the top of every page, the small label that names a section, where you are
+   (the current page and tab), where a link is (its underline), where an article starts (its first letter) and the
+   editor's notes on a chart (events, shaded episodes, the money put in). It never colours running text, a button,
+   a large surface or a data series, and a screen should show only a little of it.
    No gradients, shadows or textures anywhere. */
 
 :root {
   --bg: #FAF9F6;        /* every page and section surface */
   --text: #242824;      /* body text and headings: 14.2:1 on warm white */
   --muted: #626960;     /* dates, bylines, captions: 5.4:1 */
-  --forest: #173C32;    /* identity, links, primary buttons: 11.5:1 */
-  --burgundy: #6B2938;  /* focus ring and rare editorial accents: 10:1. Never next to forest. */
-  --rule: #DEDFD7;      /* decorative dividers only, too light for control boundaries */
+  --forest: #173C32;    /* identity, link text, buttons, headings on the home page, data in charts: 11.5:1 */
+  --accent: #8A2022;    /* the accent: a deep, leathery cherry red with no pink in it: 8.6:1. See the note above. */
+  --rule: #DEDFD7;      /* decorative dividers and the frames of cards, too light for control boundaries */
+  --panel: #F0F0EA;     /* the strip that holds a calculator's inputs: muted text on it is 5:1 */
+  --mist: #E6EDE8;      /* pale sage: the ground of the home page's opening block and of every drawing: muted text on it is 4.8:1 */
   --edge: #626960;      /* boundaries of form controls */
   --on-forest: #FAF9F6;       /* text on forest: 11.5:1 */
   --on-forest-muted: #C5CFC8; /* secondary text on forest: 7.6:1 */
   --sage: #A9C5B4;            /* small labels and drawing accents on forest: 6.5:1 */
+  --accent-soft: #F0A8A6;     /* the accent's light sibling: the section label and one small mark on a forest block, and selected text: 6.3:1 on forest */
   --serif: 'Besley', Georgia, 'Times New Roman', serif;
   --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --page: 1040px;
@@ -25,14 +34,17 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--sans); }
+body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; border-top: 3px solid var(--accent); background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--sans); }
 main { flex: 1 0 auto; }
 img { max-width: 100%; height: auto; }
 h1, h2, h3, h4 { font-weight: 400; text-wrap: pretty; }
 p, li, dd { text-wrap: pretty; }
-a { color: var(--forest); text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+/* Link text is forest and its underline the accent. On a dark surface the underline takes the text's colour (--link-rule).
+   A rule that sets "text-decoration" on a link resets that colour, so it has to name the colour again. */
+a { color: var(--forest); text-decoration-color: var(--link-rule, var(--accent)); text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
 a:hover { text-decoration-thickness: 2px; }
-:focus-visible { outline: 3px solid var(--burgundy); outline-offset: 4px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+::selection { background: var(--accent-soft); color: var(--text); }
 
 .wrap { max-width: calc(var(--page) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -48,7 +60,14 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 /* Type */
-.kicker { margin: 0 0 8px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+/* The kicker names a section, in the accent, so a section's label never looks like the headlines under it.
+   Labels that only name a control (sharing, jump links) stay muted. */
+.kicker { margin: 0 0 8px; font: 600 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.kicker a { color: inherit; }
+.share .kicker, .brent-nav .kicker { font-weight: 500; color: var(--muted); }
+/* An article's series, wherever articles are listed: the accent again, but not in capitals, so it never reads as a section label */
+.topic { display: block; margin-bottom: 4px; font: 600 13px/1.45 var(--sans); color: var(--accent); }
+.topic.is-inline { display: inline; margin: 0 10px 0 0; }
 .meta { margin: 0; font: 400 14px/1.6 var(--sans); color: var(--muted); }
 .page-title { margin: 0 0 20px; font: 400 clamp(32px, 1.6vw + 21px, 44px)/1.22 var(--serif); letter-spacing: -0.015em; max-width: 20em; }
 .page-lede { margin: 0; max-width: 34em; font: 400 20px/1.65 var(--serif); }
@@ -59,7 +78,7 @@ a:hover { text-decoration-thickness: 2px; }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 28px; border: 1px solid var(--forest); background: var(--forest); color: var(--bg); font: 500 18px/1.25 var(--serif); letter-spacing: 0; text-align: center; text-decoration: none; cursor: pointer; }
 .button:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
 .action { display: inline-flex; align-items: center; min-height: 44px; font: 500 15px/1.3 var(--sans); }
-.link-button { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: var(--forest); font: 500 15px/1.3 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; cursor: pointer; }
+.link-button { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: var(--forest); font: 500 15px/1.3 var(--sans); text-decoration: underline; text-decoration-color: var(--link-rule, var(--accent)); text-decoration-thickness: 1px; text-underline-offset: 0.22em; cursor: pointer; }
 .link-button:hover { text-decoration-thickness: 2px; }
 .link-button[hidden] { display: none; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 32px; }
@@ -71,20 +90,20 @@ a:hover { text-decoration-thickness: 2px; }
 .brand-name { font: 400 22px/1.2 var(--serif); letter-spacing: -0.01em; white-space: nowrap; }
 .site-nav { display: flex; gap: 0 28px; margin-right: -4px; }
 .site-nav a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 4px; color: var(--text); font: 400 15px/1.2 var(--sans); letter-spacing: 0.01em; text-decoration: none; text-underline-offset: 7px; }
-.site-nav a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.site-nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--forest); text-decoration-thickness: 1px; }
+.site-nav a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
+.site-nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 
-/* Compact masthead: the name is too wide beside the links, so only the mark shows (the name stays for screen readers) */
+/* Compact masthead: the mark and the name stay together, a little smaller, and the four links drop to a row of
+   their own beneath once the two no longer fit side by side, so a phone always shows whose site this is */
 @media (max-width: 640px) {
-  .masthead { padding: 12px 0; }
-  .brand { margin-left: -2px; }
-  .brand-name { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .site-nav { gap: 0 4px; margin-right: -8px; }
+  .masthead { flex-wrap: wrap; gap: 0 12px; padding: 10px 0 2px; }
+  .brand { gap: 10px; margin-left: -2px; }
+  .brand-mark { width: 30px; height: 30px; }
+  .brand-name { font-size: 20px; }
+  .site-nav { gap: 0 4px; margin-inline: -8px; }
   .site-nav a { padding-inline: 8px; }
 }
-/* Small phones: the four links close up, and on the narrowest screens they drop to a row of their own */
-@media (max-width: 420px) {
-  .masthead { flex-wrap: wrap; column-gap: 12px; }
+@media (max-width: 360px) {
   .site-nav { gap: 0; margin-inline: -5px; }
   .site-nav a { padding-inline: 5px; }
 }
@@ -131,44 +150,90 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 /* Footer */
+/* Sources and notes: a page's small print (source credits, disclaimers, notes on method), gathered at its foot
+   instead of sitting under each chart and calculator. Quiet: small and grey, in two columns where there is room.
+   A page or include marks a note with a pair of <!--footnote--> comments, and _layouts/default.html moves it here. */
+.page-notes { padding: 28px 0; border-block: 1px solid var(--rule); scroll-margin-top: 24px; }
+.page-notes h2 { margin: 0 0 12px; font: 600 14px/1.45 var(--sans); color: var(--text); }
+.page-notes-body { columns: 2 380px; column-gap: 48px; font: 400 13.5px/1.6 var(--sans); color: var(--muted); }
+.page-notes-body > * { margin: 0 0 12px; break-inside: avoid; }
+.page-notes-body strong { font-weight: 600; color: var(--text); }
 .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px 48px; padding: 32px 0 48px; }
 .footer-note { flex: 1 1 320px; margin: 0; max-width: 34em; font: 400 14px/1.65 var(--sans); color: var(--muted); }
 .footer-title { font: 400 16px/1.5 var(--serif); color: var(--text); }
 .footer-nav ul { display: flex; flex-wrap: wrap; gap: 0 22px; margin: -10px 0 0; padding: 0; list-style: none; }
 .footer-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text); font: 400 14px/1.3 var(--sans); text-decoration: none; }
-.footer-nav a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.footer-nav a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
 
 /* Home, top to bottom: the slogan with the signup, the latest articles, the Sunday letter block,
-   who writes it, and a closing signup. No divider lines: space alone separates the sections. */
-.intro { padding: 88px 0 104px; text-align: center; }
+   who writes it, and a closing signup. No divider lines: space alone separates the sections.
+   The slogan sits on a pale sage block with two drawings anchored to its bottom corners: a coin at the left
+   (old money) and blocks at the right (new money). They are quiet enough for the text to run over them. */
+.intro { position: relative; overflow: hidden; margin: 6px 0 48px; padding: 84px 32px 80px; background: var(--mist); text-align: center; }
+.intro > :not(svg) { position: relative; }
+.intro-old, .intro-new { position: absolute; bottom: 0; aspect-ratio: 1; pointer-events: none; }
+.intro-old { left: 0; width: clamp(150px, 33vw, 380px); }
+.intro-new { right: 0; width: clamp(132px, 26vw, 300px); }
 .intro h1 { margin: 0 0 22px; font: 400 clamp(44px, 3.4vw + 28px, 72px)/1.1 var(--serif); letter-spacing: -0.025em; color: var(--forest); }
 .intro-lede { margin: 0 auto 32px; max-width: 28em; font: 400 clamp(19px, 0.3vw + 17px, 21px)/1.6 var(--serif); text-wrap: balance; }
 .signup-center { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .signup-center .meta { max-width: 26em; text-wrap: balance; }
 
-/* The old-vs-new calculator, across the full page width: the heading, an introduction that runs the full width,
-   then a rule, a short "Try it" line and the calculator, which arranges itself by its own width (see .onc). */
+/* The old-vs-new calculator, across the full page width: a label, the heading and a short introduction in a reading
+   measure, then the calculator in compartments, so it never reads as one run of text. The inputs sit on a tinted
+   strip; the answer follows as one serif sentence, with the amount the red marks stand for picked out; the ranking
+   and the chart are two framed cards, each with its caption as a title, and each row keeps the phone's order
+   (name and value, the bar, then the yearly rate and biggest fall); the chart's worst moment is marked off in the
+   accent. Under the answer, one line says which month "today" is; under the ranking, one line says what
+   "biggest fall" measures. The yearly-rate note and the start-month suggestions are folded into "How it works,
+   and sources".
+   The calculator arranges itself by its own width (see .onc). */
 .home-tool { padding: 0 0 96px; }
-.home-tool-head .section-title { margin-bottom: 20px; font-size: clamp(30px, 1.4vw + 22px, 40px); line-height: 1.2; text-wrap: balance; }
-.home-tool-head p { margin: 0 0 18px; font: 400 clamp(18px, 0.25vw + 16px, 20px)/1.7 var(--serif); }
-.home-tool-head p.home-tool-try { margin: 0 0 20px; padding-top: 20px; border-top: 1px solid var(--rule); font: 500 15px/1.5 var(--sans); }
+.home-tool-head .section-title { margin-bottom: 16px; font-size: clamp(30px, 1.4vw + 22px, 40px); line-height: 1.2; text-wrap: balance; }
+.home-tool-head p:not(.kicker) { margin: 0 0 28px; max-width: 36em; font: 400 clamp(18px, 0.25vw + 16px, 20px)/1.65 var(--serif); }
 .home-tool .oil-widget { margin: 0; }
-.home-tool-more { margin: 12px 0 0; }
+.home-tool-more { margin: 24px 0 0; }
+.home-tool .oil-form { margin: 0 0 32px; padding: 20px 24px 24px; background: var(--panel); }
+.home-tool .oil-widget .onc-putin { margin: 0 0 20px; font: 400 clamp(19px, 0.5vw + 17px, 23px)/1.4 var(--serif); }
+.oil-widget .onc-asof { margin: -12px 0 20px; font-size: 14px; color: var(--muted); }
+.onc-putin strong { font: 600 0.92em/1 var(--sans); font-variant-numeric: tabular-nums; color: var(--forest); }
+.onc-key [data-put-amount], .oil-key [data-put-amount] { font-variant-numeric: tabular-nums; }
+.oil-widget .onc-more .oil-rules p { font-size: 14px; line-height: 1.55; }
+.home-tool .onc-rank, .home-tool .onc-side { padding: 20px 24px 22px; border: 1px solid var(--rule); }
+.home-tool .onc-rank { margin-bottom: 16px; }
+.home-tool .onc-rank > .oil-note:last-of-type, .home-tool .onc-rank > .oil-note:empty { margin-bottom: 0; }
+.home-tool .onc-head .onc-ranked, .home-tool .onc-figure figcaption { font-size: 15px; font-weight: 500; color: var(--text); }
+.home-tool .oil-widget .onc-figure { margin-top: 0; }
+.home-tool .oil-widget .oil-worst { margin-bottom: 0; padding-left: 14px; border-left: 2px solid var(--accent); font-size: 15px; }
+@container (min-width: 860px) {
+  /* The ranking fills the left column; the chart and, under it, the folded rules share the right */
+  .home-tool .onc-cols { column-gap: 24px; grid-template-rows: auto 1fr; }
+  .home-tool .onc-rank { grid-row: span 2; margin-bottom: 0; }
+  .home-tool .onc-cols > .onc-more { grid-column: auto; align-self: start; }
+  .home-tool .onc-pick { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name value" "track track" "meta meta"; column-gap: 16px; padding: 10px 0 11px; }
+  .home-tool .onc-meta { text-align: left; }
+  /* The chart keeps its own height and its card ends after the note, instead of stretching to match the ranking */
+  .home-tool .onc-side { align-self: start; }
+  .home-tool .onc-plot { flex: none; height: 300px; min-height: 0; }
+}
 @media (max-width: 640px) {
   .home-tool { padding-bottom: 64px; }
+  .home-tool .oil-form { margin-inline: calc(-1 * var(--gutter)); padding: 18px var(--gutter) 22px; }
+  .home-tool .onc-rank, .home-tool .onc-side { padding: 16px 16px 18px; }
 }
 
 /* The forest feature block, for the Sunday letter on the home page and the Data page: heading at left, illustration at right, cards beneath.
    On phones it runs edge to edge and everything stacks. */
+.feature-block, .closing, .euro-page .oil-widget .onc-inflation, .euro-page .onc-yardstick { --link-rule: currentColor; }
+.feature-cards li, .euro-page .onc-answer-cards > div, .onc-yardstick-cards article { --link-rule: var(--accent); }
 .feature-block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head art" "cards cards"; align-items: center; gap: 32px 56px; margin: 0 0 96px; padding: 56px; background: var(--forest); color: var(--on-forest); }
 .feature-head { grid-area: head; }
-.feature-head .kicker { color: var(--sage); }
 .feature-head :is(h1, h2) { margin: 0 0 16px; font: 400 clamp(32px, 1.6vw + 22px, 44px)/1.15 var(--serif); letter-spacing: -0.02em; text-wrap: balance; }
 .feature-head p:not(.kicker) { margin: 0; max-width: 24em; font: 400 19px/1.6 var(--serif); color: var(--on-forest-muted); }
 .feature-art { grid-area: art; justify-self: end; width: 100%; max-width: 420px; }
 .feature-art svg { display: block; width: 100%; height: auto; }
 .feature-cards { grid-area: cards; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; margin: 0; padding: 0; list-style: none; }
-/* Each card shares its parent's rows (label, title, description), so the descriptions start level even when one title is shorter */
+/* Each card shares its parent's rows (number, title, description), so the descriptions start level even when one title is shorter */
 .feature-cards li { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; padding: 24px 24px 28px; background: var(--bg); color: var(--text); }
 .feature-label { display: block; margin-bottom: 20px; font: 500 13px/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest); }
 .feature-cards :is(h2, h3) { margin: 0 0 10px; font: 400 21px/1.3 var(--serif); text-wrap: balance; }
@@ -176,14 +241,18 @@ a:hover { text-decoration-thickness: 2px; }
 /* Cards that each open a page, any number of them: the gap between rows matches the columns, while each card's own rows stay flush.
    The link in the title stretches over the whole card, and its focus ring goes around the card. */
 .link-cards { row-gap: 16px; }
-.link-cards li { position: relative; row-gap: 0; }
-.link-cards h2 a { color: inherit; text-decoration: none; }
+.link-cards li { position: relative; grid-row: span 2; row-gap: 0; }
+.link-cards h2 a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
 .link-cards h2 a::after { content: ""; position: absolute; inset: 0; }
 .link-cards h2 a:focus-visible { outline: none; }
 .link-cards h2 a:focus-visible::after { outline: 3px solid var(--on-forest); outline-offset: 3px; }
 @media (hover: hover) {
   .link-cards li:hover { background: var(--sage); }
-  .link-cards li:hover h2 a { text-decoration: underline; text-decoration-thickness: 1px; }
+  .link-cards li:hover h2 a { text-decoration-thickness: 2px; }
+}
+/* Two or four cards sit in two columns, so no card is left alone on a row */
+@media (min-width: 861px) {
+  .link-cards:has(> li:nth-child(2):last-child), .link-cards:has(> li:nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .data-page { padding-top: 56px; }
 @media (max-width: 860px) {
@@ -206,8 +275,9 @@ a:hover { text-decoration-thickness: 2px; }
 
 /* Common questions: two columns of questions that open and close, one above the other on narrower screens */
 .home-faq { padding: 0 0 96px; }
-.home-faq-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 40px 56px; margin: 8px 0 24px; }
-.home-faq-col .kicker { margin-bottom: 12px; }
+.home-faq > .kicker { margin-bottom: 20px; }
+.home-faq-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 40px 56px; margin: 0 0 24px; }
+.home-faq-col h3 { margin: 0 0 14px; font: 400 clamp(23px, 0.6vw + 19px, 27px)/1.3 var(--serif); letter-spacing: -0.01em; }
 .home-faq .faq { margin: 0; }
 @media (max-width: 860px) {
   .home-faq-cols { grid-template-columns: minmax(0, 1fr); }
@@ -222,11 +292,12 @@ a:hover { text-decoration-thickness: 2px; }
 .closing .button { border-color: var(--on-forest); background: var(--on-forest); color: var(--forest); }
 .closing .button:hover { border-color: var(--sage); background: var(--sage); color: var(--forest); }
 .closing .meta { color: var(--on-forest-muted); }
-/* Burgundy doesn't show on forest, so focus rings there are warm white */
+/* The accent doesn't show on forest, so focus rings there are warm white */
 .feature-block :focus-visible, .closing :focus-visible { outline-color: var(--on-forest); }
 
-/* Latest articles: a plain list (.guide-list), newest first, that reads the same with one article or three */
+/* Latest articles: a label in the accent, then a plain list (.guide-list), newest first, that reads the same with one article or three */
 .latest { padding: 0 0 96px; }
+.latest > .kicker, .read-next .kicker { margin-bottom: 16px; }
 
 .subscribe { padding: 36px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .subscribe-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 48px; }
@@ -239,14 +310,56 @@ a:hover { text-decoration-thickness: 2px; }
 .signup { flex-direction: column; align-items: flex-start; gap: 10px; }
 .signup .meta { max-width: 30em; }
 
+/* Drawings. The home page's shapes and every article's cover are built from one small set of parts, so they follow
+   the palette: a pale sage ground, forest ink, three sage tints, warm white "paper", and the accent for one mark
+   in each drawing. The files are _includes/hero-art.html and _includes/covers/*.svg. */
+.art { display: block; }
+.art .ground { fill: var(--mist); }
+.art .paper { fill: var(--bg); }
+.art .solid { fill: var(--forest); }
+.art .t1 { fill: #DCE7E0; }
+.art .t2, .art .c-left { fill: #CFDCD3; }
+.art .t3, .art .c-right { fill: #B9CDC0; }
+.art .c-top { fill: #F3F6F3; }
+.art .c-top, .art .c-left, .art .c-right { stroke: var(--mist); stroke-width: 2; stroke-linejoin: round; }
+.art .edge { stroke: var(--forest); stroke-width: 2.5; stroke-linejoin: round; }
+.art .ink, .art .thin { fill: none; stroke: var(--forest); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.art .thin { stroke-width: 1.5; }
+.art .heavy { stroke-width: 4; }
+.art .ring, .art .soft { fill: none; stroke: var(--sage); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.art .soft { stroke-width: 3; }
+.art .coin { fill: var(--mist); stroke: var(--sage); stroke-width: 2; }
+.art .dots { fill: none; stroke: var(--sage); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 0.5 9; }
+.art .dots.strong { stroke: var(--forest); }
+.art .band { fill: var(--accent); fill-opacity: 0.12; }
+.art .mark { fill: var(--accent); }
+.art .mark-line { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* An article's cover: its drawing, wherever the article is listed and beside its headline. An article names its
+   drawing with "cover:" in its front matter; without one it gets covers/default.svg. Decorative, so hidden from
+   screen readers, and the copy that links to the article is skipped by the keyboard (the headline is the link). */
+.cover { display: block; aspect-ratio: 8 / 5; overflow: hidden; background: var(--mist); }
+.cover .art { width: 100%; height: 100%; }
+.with-cover { display: grid; grid-template-columns: minmax(0, 1fr) clamp(180px, 30%, 260px); align-items: start; gap: 20px 48px; }
+/* On phones the date and the headline come first, across the full width; the cover is a small picture beside the summary */
+@media (max-width: 640px) {
+  .with-cover { grid-template-columns: minmax(0, 1fr) 120px; gap: 0 16px; }
+  .with-cover > div { display: contents; }
+  .with-cover > div > .meta, .with-cover > div > :is(h2, h3) { grid-column: 1 / -1; }
+  .with-cover > div > p:not(.meta) { grid-column: 1; font-size: 16px; line-height: 1.55; }
+  .with-cover .cover { grid-column: 2; margin-top: 6px; }
+}
+
 /* Lists of articles */
+/* The Articles page: a narrower left column than an article's, so the headlines get the room. It still holds the date on one line. */
+.articles-page { --rail: 192px; --rail-gap: 24px; }
 .guide-list { margin: 0; padding: 0; list-style: none; }
 .guide-list > li { padding: 32px 0; border-top: 1px solid var(--rule); }
 .guide-list > li:last-child { border-bottom: 1px solid var(--rule); }
 .guide-list .meta { margin-bottom: 10px; }
 .guide-list h2, .guide-list h3 { margin: 0 0 10px; max-width: 22em; font: 400 clamp(23px, 0.8vw + 18px, 28px)/1.3 var(--serif); letter-spacing: -0.01em; }
 .guide-list h2 a, .guide-list h3 a { color: var(--text); text-decoration: none; }
-.guide-list h2 a:hover, .guide-list h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.guide-list h2 a:hover, .guide-list h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
 .guide-list p:not(.meta) { margin: 0; max-width: 34em; font: 400 18px/1.65 var(--serif); }
 
 /* Secondary pages */
@@ -271,10 +384,19 @@ a:hover { text-decoration-thickness: 2px; }
 .dateline { margin: 2px 0 0; }
 .changed { margin: 20px 0 0; max-width: 42em; font: 400 15px/1.65 var(--sans); color: var(--muted); }
 
+/* The cover sits in the rail beside the headline on wide screens, like the portrait on About; below the byline otherwise */
+.article-cover { margin: 0 0 32px; }
+@media (min-width: 960px) {
+  .article-cover { grid-column: 1; grid-row: 1; align-self: start; margin: 98px 0 0; }  /* level with the headline's first line */
+}
+@media (max-width: 959px) {
+  .article-cover .cover { aspect-ratio: 2 / 1; }
+}
+
 .toc ol, .toc-mobile ol { margin: 0; padding: 0; list-style: none; }
 .toc { display: none; }
 .toc a { display: block; padding: 6px 0; color: var(--text); font: 400 14.5px/1.4 var(--sans); text-decoration: none; }
-.toc a:hover { color: var(--forest); text-decoration: underline; }
+.toc a:hover { color: var(--forest); text-decoration: underline; text-decoration-color: var(--accent); }
 .toc-mobile { margin: 0 0 36px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .toc-mobile summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; font: 500 15px/1.3 var(--sans); cursor: pointer; list-style: none; }
 .toc-mobile summary::-webkit-details-marker { display: none; }
@@ -294,6 +416,10 @@ a:hover { text-decoration-thickness: 2px; }
 
 .prose { max-width: var(--read); font: 400 19px/1.75 var(--serif); }
 .prose p { margin: 0 0 1.15em; }
+/* An article opens with an initial in the accent, three lines deep, where the browser can set one (not Firefox, which shows the plain letter) */
+@supports (initial-letter: 3) or (-webkit-initial-letter: 3) {
+  .prose > p:first-of-type:not([class])::first-letter { -webkit-initial-letter: 3; initial-letter: 3; margin-right: 0.12em; color: var(--accent); }
+}
 .prose ul, .prose ol { margin: 0 0 1.15em; padding-left: 1.25em; }
 .prose li { margin: 0 0 0.45em; padding-left: 2px; }
 .prose li::marker { color: var(--muted); }
@@ -305,13 +431,17 @@ a:hover { text-decoration-thickness: 2px; }
 .prose .source { margin: 0 0 2em; font: 400 14px/1.65 var(--sans); color: var(--muted); }
 
 .short-version { margin: 0 0 2.4em; padding: 28px 0 10px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-.prose .short-version h2 { margin: 0 0 14px; font-size: 23px; }
+.prose .short-version h2 { margin: 0 0 14px; font: 600 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .short-version ul { font-size: 18px; line-height: 1.6; }
+/* Under an article's short version, one quiet line that offers the letter: a link, not a second filled button */
+.prose .short-version:has(+ .letter-line) { margin-bottom: 14px; }
+.prose .letter-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px; margin: 0 0 2.4em; font: 600 16px/1.5 var(--sans); }
+.letter-line span { font-weight: 400; font-size: 14px; color: var(--muted); }
 .short-version li { margin-bottom: 0.55em; }
 
 /* A review opens with its verdict: the call, its score as a meter and in words, then what was reviewed */
 .verdict { margin: 0 0 2.4em; padding: 28px 0 22px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-.prose .verdict h2 { margin: 0 0 10px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; }
+.prose .verdict h2 { margin: 0 0 10px; font: 600 13px/1.45 var(--sans); letter-spacing: 0.08em; }
 .verdict .verdict-call { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; margin: 0 0 14px; font: 400 clamp(28px, 0.8vw + 22px, 34px)/1.2 var(--serif); letter-spacing: -0.01em; }
 .verdict-score { display: inline-flex; align-items: center; gap: 10px; font: 500 15px/1.3 var(--sans); letter-spacing: 0; }
 .verdict-meter { display: inline-flex; gap: 4px; }
@@ -333,7 +463,7 @@ a:hover { text-decoration-thickness: 2px; }
 .t-catch { padding: 18px 0 2px 28px; border-left: 1px solid var(--rule); }
 .prose .t-account h4 { margin: 0 0 8px; font: 500 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; }
 .t-why h4 { color: var(--forest); }
-.t-catch h4 { color: var(--burgundy); }
+.t-catch h4 { color: var(--accent); }
 .prose .t-account p { margin: 0 0 16px; font-size: 17px; line-height: 1.7; }
 @media (max-width: 600px) {
   .t-account { grid-template-columns: 1fr; }
@@ -411,7 +541,7 @@ a:hover { text-decoration-thickness: 2px; }
 .oil-tabs { display: flex; flex-wrap: wrap; gap: 0 2px; }
 .oil-tabs button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; background: none; color: var(--text); font: 400 15px/1.2 var(--sans); text-underline-offset: 7px; cursor: pointer; }
 .oil-tabs button:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.oil-tabs button[aria-pressed="true"] { color: var(--forest); text-decoration: underline; text-decoration-color: var(--forest); text-decoration-thickness: 2px; }
+.oil-tabs button[aria-pressed="true"] { color: var(--forest); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 .oil-widget .oil-summary { margin: 0 0 10px; max-width: 40em; }
 
 /* The plot: 320px tall, 240px on phones. It takes sideways drags only, so a vertical swipe still scrolls the page. */
@@ -423,9 +553,9 @@ a:hover { text-decoration-thickness: 2px; }
 .oil-axis, .oil-cross, .oil-leader { stroke: var(--muted); }
 .oil-tick { fill: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .oil-line { fill: none; stroke: var(--forest); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.oil-put { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.oil-put { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .oil-kept { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 0.5 4; stroke-linecap: round; }
-.oil-mark { fill: var(--bg); stroke: var(--text); stroke-width: 1.5; }
+.oil-mark { fill: var(--bg); stroke: var(--accent); stroke-width: 2; }
 .oil-dot { fill: var(--forest); stroke: var(--bg); stroke-width: 2; }
 .oil-label { fill: var(--text); font-size: 12.5px; font-weight: 500; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 .oil-tip { position: absolute; z-index: 1; width: max-content; max-width: min(260px, 72%); padding: 8px 12px 9px; border: 1px solid var(--edge); background: var(--bg); pointer-events: none; }
@@ -510,7 +640,7 @@ a:hover { text-decoration-thickness: 2px; }
 .onc-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 20px; }
 .oil-widget .onc-head p { margin: 0 0 6px; font-size: 13.5px; color: var(--muted); }
 .onc-key { display: inline-flex; align-items: center; gap: 8px; }
-.onc-key-put { flex: none; width: 2px; height: 16px; background: var(--text); }
+.onc-key-put { flex: none; width: 2px; height: 16px; background: var(--accent); }
 .oil-widget .onc-list { margin: 0 0 12px; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
 .oil-widget .onc-row { margin: 0; padding: 0; border-bottom: 1px solid var(--rule); }
 .onc-pick { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name value" "track track" "meta meta"; gap: 6px 16px; width: 100%; min-height: 44px; margin: 0; padding: 10px 0 11px; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
@@ -523,15 +653,16 @@ a:hover { text-decoration-thickness: 2px; }
 .onc-pick[aria-pressed="true"] .onc-bar { background: var(--forest); }
 .onc-bar.is-broken { border-radius: 0; }
 .onc-bar.is-broken::after { content: ""; position: absolute; right: 18px; top: -3px; bottom: -3px; width: 5px; background: var(--bg); transform: skewX(-24deg); }
-.onc-put { position: absolute; top: -4px; bottom: -4px; display: block; width: 2px; margin-left: -1px; background: var(--text); box-shadow: -1px 0 0 var(--bg), 1px 0 0 var(--bg); }
+.onc-put { position: absolute; top: -4px; bottom: -4px; display: block; width: 2px; margin-left: -1px; background: var(--accent); box-shadow: -1px 0 0 var(--bg), 1px 0 0 var(--bg); }
 .onc-meta { grid-area: meta; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .oil-widget .onc-figure { margin-top: 24px; }
 .onc-plot { height: 260px; }
 .onc-plot .oil-svg { position: absolute; left: 0; top: 0; }  /* so the drawing never holds the plot open when it should shrink */
 .oil-widget .onc-results .oil-note:empty { display: none; }
-/* compact=true folds the rules and sources away, under the honesty note, whose bottom line it shares */
-.oil-widget .onc-more { margin-top: -16px; border-top: 0; }
+/* compact=true folds the rules away, under the chart */
+.oil-widget .onc-more { margin-top: 16px; }
 .oil-widget .onc-more .oil-rules { padding-top: 2px; }
+.oil-widget .onc-more .oil-rules > p:last-child { margin: 12px 0 16px; }
 .oil-widget .onc-more .oil-source { margin: 12px 0 16px; }
 /* The calculator sizes itself to its own width, not the screen's: in an article column it's one column; given the
    full page, as on the home page, the form runs in one row, the chart sits beside the ranking, and the honesty note
@@ -557,7 +688,7 @@ a:hover { text-decoration-thickness: 2px; }
   .onc-plot { flex: 1 1 auto; height: auto; min-height: 280px; margin-bottom: 0; }
   .oil-widget .onc-side .oil-worst { margin: 0; }
   .oil-widget .onc-foot .oil-honesty { margin: 0; }
-  .oil-widget .onc-more { margin-top: 0; border-top: 1px solid var(--rule); }
+  .onc-cols > .onc-more { grid-column: 1 / -1; }
   /* With the rules showing, as on the calculator's own page, the sources sit right under the honesty note, beside them */
   .onc-foot { grid-template-rows: auto 1fr; }
   .onc-foot > .oil-rules { grid-row: span 2; }
@@ -587,7 +718,7 @@ a:hover { text-decoration-thickness: 2px; }
 .ecb-plot { position: relative; height: calc(var(--span) * var(--ecb-unit)); margin-left: var(--ecb-left); }
 .ecb-plot svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; }
 .ecb-plot line, .ecb-plot polyline, .ecb-plot path { vector-effect: non-scaling-stroke; }
-.ecb-band { fill: var(--rule); fill-opacity: 0.6; }
+.ecb-band { fill: var(--accent); fill-opacity: 0.1; }
 .ecb-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .ecb-line.is-strong { stroke: var(--forest); }
 .ecb-line.is-soft { stroke: var(--muted); }
@@ -650,7 +781,10 @@ a:hover { text-decoration-thickness: 2px; }
 .link-list .meta { margin-top: 2px; }
 
 @media (max-width: 640px) {
-  .intro { padding: 56px 0 72px; }
+  /* On phones the drawings are cut off by the block's bottom edge, so they sit under the writer's name without pushing the articles down */
+  .intro { margin: 0 calc(-1 * var(--gutter)) 48px; padding: 44px var(--gutter) 56px; }
+  .intro-old, .intro-new { bottom: -44px; width: 132px; }
+  .intro-old .bank { transform: translateY(-34px); }  /* so the crop leaves the columns in view, not just the roof */
   .latest, .writer { padding-bottom: 64px; }
   .feature-block { gap: 28px; margin: 0 calc(-1 * var(--gutter)) 64px; padding: 40px var(--gutter); }
   .data-page { padding-top: 36px; }
@@ -763,11 +897,10 @@ a:hover { text-decoration-thickness: 2px; }
 .brent-household { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "cards"; gap: 32px; margin-bottom: 72px; padding: 48px 40px; }
 .brent-household .feature-head h2 { max-width: 20em; font-size: clamp(28px, 1.3vw + 18px, 36px); }
 .brent-household .feature-head p:not(.kicker) { max-width: 38em; font-size: 18px; }
-.brent-household .feature-cards li { grid-row: span 4; padding: 24px; }
-.brent-household .feature-label { margin-bottom: 16px; font-size: 12px; line-height: 1.5; }
+.brent-household .feature-cards li { grid-row: span 3; padding: 24px; }
 .brent-household .feature-cards h3 { font-size: 23px; text-wrap: pretty; }
 .brent-household .brent-card-source { margin-top: 24px; font-size: 14px; }
-.brent-household .feature-cards a:focus-visible { outline-color: var(--burgundy); }
+.brent-household .feature-cards a:focus-visible { outline-color: var(--accent); }
 .brent-timeline { margin: 24px 0 0; padding: 0; list-style: none; }
 .brent-timeline li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 32px; padding: 24px 0; border-top: 1px solid var(--rule); }
 .brent-timeline h3 { margin: 0; font: 400 24px/1.5 var(--serif); color: var(--forest); }
@@ -835,17 +968,15 @@ a:hover { text-decoration-thickness: 2px; }
 /* Euro calculator editorial layout: scoped so the homepage widget stays compact. */
 .euro-page [id] { scroll-margin-top: 24px; }
 .euro-page .page-head { padding-bottom: 28px; }
-.euro-page .euro-eyebrow { margin: 0 0 14px; }
 .euro-page .page-lede { max-width: 35em; }
 .euro-vintage { margin-top: 22px; }
 .euro-vintage strong { color: var(--text); font-weight: 500; }
 .euro-jumps { display: flex; flex-wrap: wrap; gap: 0 28px; margin-bottom: 36px; padding-block: 12px; border-block: 1px solid var(--rule); }
 .euro-jumps a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; font: 500 14px/1.4 var(--sans); text-decoration: none; }
-.euro-jumps a:hover { text-decoration: underline; }
+.euro-jumps a:hover { text-decoration: underline; text-decoration-color: var(--accent); }
 .euro-jumps a > span:first-child:not(:last-child) { color: var(--muted); font-size: 12px; }
 .euro-jumps a:last-child { margin-left: auto; }
 .euro-page .oil-widget .onc-inflation { margin: 0 0 32px; padding: 32px; border: 0; background: var(--forest); color: var(--on-forest); }
-.euro-page .onc-answer-head .kicker { margin: 0 0 10px; color: var(--sage); }
 .euro-page .oil-widget .onc-answer-head h2 { max-width: 24em; margin: 0 0 14px; font-size: clamp(26px, 2.3vw, 34px); }
 .euro-page .onc-inflation .onc-answer-period { max-width: 54em; margin-bottom: 24px; color: var(--on-forest-muted); font-size: 14px; }
 .euro-page .onc-answer-cards { display: grid; grid-template-columns: 1.2fr 1fr 1fr; max-width: none; gap: 14px; margin: 0 0 22px; }
@@ -863,18 +994,16 @@ a:hover { text-decoration-thickness: 2px; }
 .euro-page .onc-answer-maths ul { margin: 0 0 14px; padding-left: 20px; }
 .euro-page .onc-answer-maths :focus-visible, .euro-page .onc-yardstick :focus-visible { outline-color: var(--on-forest); }
 .euro-page .onc-section-intro { max-width: 50em; margin-bottom: 24px; }
-.euro-page .onc-section-intro .kicker { margin: 0 0 10px; }
 .euro-page .oil-widget .onc-section-intro h2 { margin-bottom: 12px; font-size: clamp(26px, 2.3vw, 34px); }
 .euro-page .onc-section-intro > p:last-child { margin-bottom: 0; }
 .euro-page .onc-explore { margin-top: 48px; }
 .onc-explorer { border-top: 1px solid var(--rule); }
 .onc-explorer:last-child { border-bottom: 1px solid var(--rule); }
-.onc-explorer > summary { display: grid; grid-template-columns: 44px minmax(0, 1fr) 24px; gap: 16px; align-items: center; min-height: 110px; padding: 22px 0; cursor: pointer; list-style: none; }
+.onc-explorer > summary { display: grid; grid-template-columns: 44px minmax(0, 1fr) 24px; gap: 16px; align-items: center; min-height: 88px; padding: 20px 0; cursor: pointer; list-style: none; }
 .onc-explorer > summary::-webkit-details-marker { display: none; }
 .onc-explorer > summary:hover .onc-explorer-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
-.onc-explorer-index { align-self: start; margin-top: 3px; font: 400 22px/1.4 var(--serif); color: var(--muted); }
+.onc-explorer-index { align-self: start; font: 400 22px/1.4 var(--serif); color: var(--muted); }
 .onc-explorer-label { display: flex; flex-direction: column; gap: 7px; }
-.onc-explorer-kicker { font: 500 12px/1.4 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--forest); }
 .onc-explorer-title { font: 400 clamp(19px, 1.65vw, 24px)/1.4 var(--serif); }
 .onc-explorer-sub { font: 400 13.5px/1.5 var(--sans); color: var(--muted); }
 .onc-explorer-symbol::after { content: "+"; font: 400 27px/1 var(--sans); color: var(--forest); }
@@ -886,7 +1015,6 @@ a:hover { text-decoration-thickness: 2px; }
 .euro-page .onc-costs { margin-top: 48px; }
 .onc-cost-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .onc-cost-card { display: flex; flex-direction: column; min-width: 0; padding: 28px; border: 1px solid var(--rule); }
-.euro-page .onc-card-label { display: block; margin: 0 0 16px; font: 500 12px/1.5 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--forest); }
 .euro-page .onc-cost-card h3 { min-height: 2.6em; margin: 0 0 24px; font: 400 24px/1.3 var(--serif); }
 .euro-page .onc-cost-card .onc-card-value { margin: 0 0 4px; color: var(--forest); font: 400 clamp(36px, 3.4vw, 48px)/1.1 var(--serif); letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
 .euro-page .onc-cost-card .onc-card-caption { margin-bottom: 24px; font-size: 13px; color: var(--muted); }
@@ -901,10 +1029,8 @@ a:hover { text-decoration-thickness: 2px; }
 .euro-page .onc-card-detail p { margin-top: 12px; margin-bottom: 0; font-size: 13.5px; color: var(--muted); }
 .euro-page .onc-yardstick { padding: 32px; background: var(--forest); color: var(--on-forest); }
 .euro-page .onc-yardstick .onc-section-intro > p:last-child { color: var(--on-forest-muted); font-size: 15px; }
-.euro-page .onc-yardstick .kicker { color: var(--sage); }
 .onc-yardstick-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .onc-yardstick-cards article { padding: 22px; background: var(--bg); color: var(--text); }
-.euro-page .onc-yardstick-cards .onc-card-label { margin-bottom: 16px; }
 .euro-page .onc-yardstick-cards h3 { margin: 0 0 14px; font: 400 22px/1.3 var(--serif); }
 .euro-page .onc-yardstick-cards p { margin: 0; font-size: 14px; line-height: 1.65; }
 .euro-page .onc-yardstick-link { display: inline-flex; gap: 14px; align-items: center; min-height: 44px; margin-top: 16px; color: var(--on-forest); font-size: 14px; }

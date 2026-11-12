@@ -6,7 +6,7 @@
 .illustration .panel { fill: var(--forest); }
 .illustration .grid { fill: none; stroke: #CFDCD3; stroke-width: 1.25; }
 .illustration .bar { fill: #CFDCD3; }
-.illustration .bar-on { fill: var(--sage); }
+.illustration .bar-on { fill: var(--accent); }
 .illustration .line { fill: none; stroke: var(--forest); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .illustration .dot { fill: var(--on-forest); stroke: var(--forest); stroke-width: 2; }
 .illustration .c-top { fill: #DCE7E0; }
@@ -15,7 +15,7 @@
 .illustration .c-top, .illustration .c-left, .illustration .c-right { stroke: var(--forest); stroke-width: 1.5; stroke-linejoin: round; }
 </style>
 <path class="path" d="M50 232C42 96 150 16 252 20C318 22 376 74 384 164"/>
-<path d="M252 8l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z" fill="var(--on-forest)"/>
+<path d="M252 8l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z" fill="var(--accent-soft)"/>
 <circle cx="96" cy="66" r="2.5" fill="var(--sage)"/>
 <circle cx="388" cy="92" r="2.5" fill="var(--sage)"/>
 
@@ -42,7 +42,7 @@
 <circle class="dot" cx="222" cy="138" r="3.5"/>
 <circle class="dot" cx="248" cy="120" r="3.5"/>
 <circle class="dot" cx="274" cy="132" r="3.5"/>
-<circle cx="300" cy="108" r="5" fill="var(--forest)"/>
+<circle cx="300" cy="108" r="5" fill="var(--accent)"/>
 
 <ellipse class="panel ink" cx="56" cy="274" rx="30" ry="9"/>
 <ellipse class="panel ink" cx="56" cy="266" rx="30" ry="9"/>

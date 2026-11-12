@@ -18,11 +18,16 @@ layout: default
 <p class="changed">{{ page.changed }}</p>
 {%- endif %}
 </header>
+{%- assign cover = page.cover | default: "default" %}
+<div class="article-cover"><span class="cover">{% include covers/{{ cover }}.svg %}</span></div>
 
 {%- if page.toc %}
 <nav class="toc" aria-labelledby="toc-title">
 <h2 id="toc-title" class="kicker">In this article</h2>
 <ol role="list">
+{%- if content contains '<section id="short"' %}
+<li><a href="#short">The short version</a></li>
+{%- endif %}
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
 {%- endfor %}
@@ -39,6 +44,9 @@ layout: default
 <summary>In this article</summary>
 <nav aria-label="In this article">
 <ol role="list">
+{%- if content contains '<section id="short"' %}
+<li><a href="#short">The short version</a></li>
+{%- endif %}
 {%- for item in page.toc %}
 <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
 {%- endfor %}
@@ -65,7 +73,22 @@ layout: default
 {%- endif %}
 </section>
 {%- endif %}
+{%- comment -%}
+An article that opens with a short version (<section id="short">) gets one quiet line after it that offers the letter,
+for readers who arrive from search and never see the home page. It shows only while signup is open.
+{%- endcomment -%}
+{%- assign short_parts = content | split: '<section id="short"' -%}
+{%- assign letter_open = true -%}
+{%- if site.substack_url == nil or site.substack_url == "" or site.substack_url contains "YOUR-NAME" %}{% assign letter_open = false %}{% endif -%}
+{%- if short_parts.size == 2 and letter_open %}
+{%- assign short_tail = short_parts[1] | append: '<!--end-->' | split: '</section>' %}
+{{ short_parts[0] }}<section id="short"{{ short_tail[0] }}</section>
+<p class="letter-line"><a href="{{ site.substack_url }}/subscribe">Get the Sunday letter</a><span>Free. One letter every Sunday.</span></p>
+{%- capture short_rest %}{% for part in short_tail offset: 1 %}{{ part }}{% unless forloop.last %}</section>{% endunless %}{% endfor %}{% endcapture %}
+{{ short_rest | remove: '<!--end-->' }}
+{%- else %}
 {{ content }}
+{%- endif %}
 {%- comment -%} The questions come from faq in front matter, which also feeds the FAQPage markup in schema.html, so the two always match. {%- endcomment -%}
 {%- if page.faq %}
 <h2 id="faq">{{ faq_heading }}</h2>
@@ -114,13 +137,17 @@ An article that already says "I write for Bitcoin.com", in whatever words after 
 {%- if others.size > 0 %}
 <section class="row read-next" aria-labelledby="next-title">
 <div class="body">
-<h2 id="next-title" class="section-title">Read next</h2>
+<h2 id="next-title" class="kicker">Read next</h2>
 <ul class="guide-list">
 {%- for post in others limit: 3 %}
-<li>
-<p class="meta">{{ post.topic }}</p>
+{%- assign cover = post.cover | default: "default" %}
+<li class="with-cover">
+<div>
+<p class="meta"><span class="topic">{{ post.topic }}</span></p>
 <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
 <p>{{ post.description }}</p>
+</div>
+<a class="cover" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">{% include covers/{{ cover }}.svg %}</a>
 </li>
 {%- endfor %}
 </ul>

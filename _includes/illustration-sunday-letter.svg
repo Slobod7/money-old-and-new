@@ -11,7 +11,7 @@
 .illustration .c-top, .illustration .c-left, .illustration .c-right { stroke: var(--forest); stroke-width: 1.5; stroke-linejoin: round; }
 </style>
 <path class="path" d="M92 150C150 40 290 40 352 132"/>
-<path d="M215 52l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z" fill="var(--on-forest)"/>
+<path d="M215 52l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z" fill="var(--accent-soft)"/>
 <circle cx="150" cy="78" r="2.5" fill="var(--sage)"/>
 <circle cx="292" cy="80" r="2.5" fill="var(--sage)"/>
 

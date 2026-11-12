@@ -82,7 +82,9 @@ Optional: hide_source=true when the page has a separate sources section.
 <p class="visually-hidden" aria-live="polite" data-out="live"></p>
 </div>
 
-<p class="oil-honesty"><strong>Before you read too much into this:</strong> this is a hypothetical holding of physical barrels valued at Brent spot prices. It does not model an oil fund or a futures strategy, including the effect of replacing expiring contracts. Fees, taxes and storage costs are excluded. The result is a historical comparison, not a forecast or investment recommendation.</p>
+<!--footnote-->
+<p class="oil-honesty"><strong>The oil calculator values a hypothetical holding of physical barrels at Brent spot prices.</strong> It does not model an oil fund or a futures strategy, including the effect of replacing expiring contracts. Fees, taxes and storage costs are excluded. The result is a historical comparison, not a forecast or investment recommendation.</p>
+<!--footnote-->
 <div class="oil-rules">
 <h4 class="oil-rules-title">How it works</h4>
 <ul>
@@ -95,7 +97,9 @@ Optional: hide_source=true when the page has a separate sources section.
 </ul>
 </div>
 {%- unless include.hide_source %}
+<!--footnote-->
 <p class="oil-source">Sources: U.S. Energy Information Administration (Brent spot price); European Central Bank (euro reference rates, and euro area HICP from Eurostat); U.S. Bureau of Labor Statistics consumer prices, via FRED. Prices to {{ cc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.</p>
+<!--footnote-->
 {%- endunless %}
 </section>
 {%- unless oil_widgets_script %}

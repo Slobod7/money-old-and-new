@@ -1,0 +1,16 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- An hourglass standing on a book, with a percent sign: interest as the price of time. The running sand is the accent. Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<rect class="solid" x="112" y="236" width="256" height="12" rx="3"/>
+<rect class="paper edge" x="120" y="214" width="240" height="22"/>
+<path class="thin" d="M132 221H348M132 229H348"/>
+<rect class="solid" x="112" y="202" width="256" height="12" rx="3"/>
+<path class="paper edge" d="M168 66C168 110 196 120 196 134C196 148 168 158 168 196H232C232 158 204 148 204 134C204 120 232 110 232 66Z"/>
+<path class="t3" d="M177 92H223C218 110 206 118 200 128C194 118 182 110 177 92Z"/>
+<path class="mark-line" d="M200 132V180"/>
+<path class="mark" d="M178 195C184 174 216 174 222 195Z"/>
+<path class="ink heavy" d="M156 62H244M156 199H244"/>
+<circle class="ink heavy" cx="300" cy="96" r="17"/>
+<circle class="ink heavy" cx="348" cy="170" r="17"/>
+<path class="ink heavy" d="M356 78L292 188"/>
+</svg>

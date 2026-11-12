@@ -1,0 +1,14 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- The site's own picture, for an article without a cover of its own: a coin (old money), the gateway, blocks (new money). Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<path class="dots" d="M112 126C170 40 320 40 372 132"/>
+<path class="mark" transform="translate(242 62) scale(1)" d="M0 -12l3.2 8.6 8.8 3.4-8.8 3.4-3.2 8.6-3.2-8.6-8.8-3.4 8.8-3.4z"/>
+<circle class="paper edge" cx="110" cy="182" r="56"/>
+<circle class="ring" cx="110" cy="182" r="46"/>
+<path class="thin" d="M86 168L110 152L134 168ZM84 173H136M91 179V202M103 179V202M117 179V202M129 179V202M82 207H138"/>
+<g transform="translate(196 118) scale(1.45)"><path class="solid" d="M4 56Q9 55 9 50V30Q9 21 29 6L42 17H55V50Q55 55 60 56H37V31Q37 25 29 19Q19 27 19 33V56Z"/></g>
+<polygon class="c-top" points="372,172 403,190 372,208 341,190"/><polygon class="c-left" points="341,190 372,208 372,244 341,226"/><polygon class="c-right" points="372,208 403,190 403,226 372,244"/>
+<polygon class="c-top" points="372,136 403,154 372,172 341,154"/><polygon class="c-left" points="341,154 372,172 372,208 341,190"/><polygon class="c-right" points="372,172 403,154 403,190 372,208"/>
+<polygon class="c-top" points="341,190 372,208 341,226 310,208"/><polygon class="c-left" points="310,208 341,226 341,262 310,244"/><polygon class="c-right" points="341,226 372,208 372,244 341,262"/>
+<polygon class="c-top" points="403,190 434,208 403,226 372,208"/><polygon class="c-left" points="372,208 403,226 403,262 372,244"/><polygon class="c-right" points="403,226 434,208 434,244 403,262"/>
+</svg>

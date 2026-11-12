@@ -1,0 +1,11 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- Oil (the drop and barrel), three steps up, then a U-turn in the accent. Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<path class="thin" d="M64 244H416"/>
+<rect class="t2 edge" x="86" y="140" width="66" height="92" rx="9"/>
+<path class="thin" d="M86 170H152M86 202H152"/>
+<path class="solid" d="M119 80C109 98 102 107 102 116a17 17 0 0 0 34 0C136 107 129 98 119 80Z"/>
+<path class="ink heavy" style="stroke-width:6" d="M184 222H236V188H288V154H340V120H366"/>
+<path class="mark-line" style="stroke-width:6" d="M366 120C410 120 410 190 366 190H348"/>
+<path class="mark" d="M322 190L350 175V205Z"/>
+</svg>

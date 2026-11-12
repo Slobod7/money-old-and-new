@@ -7,7 +7,6 @@ permalink: /data/
 <div class="wrap data-page">
 <section class="feature-block" aria-labelledby="data-title">
 <div class="feature-head">
-<p class="kicker">Data</p>
 <h1 id="data-title">Charts and calculators</h1>
 <p>European money in figures. Each one names its sources and shows how recent it is.</p>
 </div>
@@ -15,7 +14,6 @@ permalink: /data/
 <ul class="feature-cards link-cards" role="list">
 {%- for card in site.data.data_pages %}
 <li>
-<span class="feature-label">{{ card.label }}</span>
 <h2><a href="{{ card.url | relative_url }}">{{ card.title }}</a></h2>
 <p>{{ card.description }}</p>
 </li>

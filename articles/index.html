@@ -5,7 +5,7 @@ description: "Every article on Money, Old and New, newest first: macro deep dive
 permalink: /articles/
 schema_type: CollectionPage
 ---
-<div class="wrap">
+<div class="wrap articles-page">
 <header class="page-head row">
 <div class="body">
 <h1 class="page-title">Articles</h1>
@@ -21,11 +21,15 @@ schema_type: CollectionPage
 {%- for post in site.posts %}
 <li class="row">
 <div class="guide-meta">
-<p class="meta">{{ post.topic }}<br>{% include post-dates.html post=post %}</p>
+<p class="meta"><span class="topic">{{ post.topic }}</span>{% include post-dates.html post=post %}</p>
 </div>
-<div class="body">
+{%- assign cover = post.cover | default: "default" %}
+<div class="body with-cover">
+<div>
 <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
 <p>{{ post.description }}</p>
+</div>
+<a class="cover" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">{% include covers/{{ cover }}.svg %}</a>
 </div>
 </li>
 {%- endfor %}

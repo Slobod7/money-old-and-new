@@ -7,7 +7,9 @@ Use a unique id for each instance. Share links return to the existing calculator
 {%- assign gd = site.data.old_new -%}
 <section class="oil-widget onc gold-return" id="{{ gc }}" data-gold-return data-src="{{ '/assets/data/old-new.json' | relative_url }}" data-share-url="{{ '/data/euro-inflation-calculator/' | relative_url }}" aria-labelledby="{{ gc }}-title">
 <h2 class="oil-title" id="{{ gc }}-title">Gold return calculator</h2>
-<p class="oil-note">A gold-only view of the historical comparison. Purchases and valuations use monthly-average prices, not exact month-end trading prices.</p>
+<!--footnote-->
+<p class="oil-note"><strong>The gold return calculator is a gold-only view of the historical comparison.</strong> Purchases and valuations use monthly-average prices, not exact month-end trading prices.</p>
+<!--footnote-->
 <p class="oil-error" role="status" data-gold-out="notice"></p>
 <p class="oil-note" data-gold-out="bounds"></p>
 <p class="oil-fallback" data-gold-fallback>Example: €{{ gd.amount }} bought at January 2000’s average gold price, valued at {{ gd.to | append: "-01" | date: "%B %Y" }}’s average price. The initial contribution is €{{ gd.put_in_real }} in valuation-month money.</p>
@@ -63,7 +65,9 @@ Use a unique id for each instance. Share links return to the existing calculator
 <li>No dividends, interest or other income are added. Storage, insurance, dealer spreads, transaction and currency-conversion charges, fund fees and taxes are excluded. This does not model the return on a particular coin, bar or fund.</li>
 </ul></div>
 </details>
+<!--footnote-->
 <p class="oil-source">Sources: World Bank Commodity Price Data (gold); European Central Bank (exchange rates, and euro area HICP from Eurostat){% if gd.gold_source %}; US Bureau of Labor Statistics via FRED (US CPI){% endif %}. Observations through {{ gd.to | append: "-01" | date: "%B %Y" }}. {% if gd.gold_source %}Pink Sheet vintage: {{ gd.gold_source.released | date: "%-d %B %Y" }}. {% endif %}Site data updated {{ gd.updated | date: "%-d %B %Y" }}. {% if gd.gold_source %}<a href="{{ gd.gold_source.url }}">Source workbook and supplier notes</a>; {% endif %}<a href="https://www.worldbank.org/ext/en/legal/terms-conditions/datasets">World Bank dataset terms, including third-party exceptions</a>.</p>
+<!--footnote-->
 <p class="oil-note"><a href="{{ '/data/euro-inflation-calculator/' | relative_url }}#old-new">Compare gold with cash, deposits, bonds and stocks</a>.</p>
 </section>
 {%- unless old_new_script %}

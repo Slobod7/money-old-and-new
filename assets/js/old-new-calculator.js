@@ -488,10 +488,20 @@
     function render() {
       var r = state.r, o = state.o, today = monthName(r.to), when = monthName(o.start);
       var unit = dated ? 'in ' + today + ' euros' : 'in today’s money';
-      out('putin').textContent = r.buys > 1
-        ? 'You put in ' + money(o.amount) + ' at the end of every month from ' + when + ' to ' + today + ': ' + money(r.putIn) + ' in all' +
-          (o.real ? ', or ' + money(r.putInReal) + ' ' + unit + '.' : '.')
-        : 'You put in ' + money(o.amount) + ' at the end of ' + when + (o.real ? ', which is ' + money(r.putInReal) + ' ' + unit + '.' : '.');
+      // The sentence picks out one amount, the one the "money put in" marks stand for (r.base), and the two keys repeat it
+      var putin = out('putin'), base = money(r.base);
+      var say = function (text, strong) { if (strong) el('strong', null, text, putin); else putin.appendChild(document.createTextNode(text)); };
+      putin.textContent = '';
+      if (r.buys > 1) {
+        say('You put in ' + money(o.amount) + ' at the end of every month from ' + when + ' to ' + today + ': ');
+        if (o.real) { say(money(r.putIn) + ' in all, or '); say(base, true); say(' ' + unit + '.'); }
+        else { say(base, true); say(' in all.'); }
+      } else if (o.real) {
+        say('You put in ' + money(o.amount) + ' at the end of ' + when + ', which is '); say(base, true); say(' ' + unit + '.');
+      } else {
+        say('You put in '); say(base, true); say(' at the end of ' + when + '.');
+      }
+      Array.prototype.forEach.call(root.querySelectorAll('[data-put-amount]'), function (node) { node.textContent = ': ' + base; });
       out('ranked').textContent = 'Ranked by value at the end of ' + today + (o.real ? ', ' + unit : ', nominal euros');
 
       // The bars run from €0 on one scale, unless the top asset dwarfs the rest: then its bar runs off the end
@@ -634,7 +644,7 @@
       out('key-value').textContent = 'Value of your ' + name;
       var w = x.worst;
       out('worst').textContent = Number((-w.gap * 100).toFixed(0)) > 0
-        ? 'The worst moment: at the end of ' + monthName(w.key) + ' your ' + name + ' was worth ' + money(w.value) + ', ' + pct(-w.gap, 0) + ' less than the ' +
+        ? 'Furthest behind: at the end of ' + monthName(w.key) + ' your ' + name + ' was worth ' + money(w.value) + ', ' + pct(-w.gap, 0) + ' less than the ' +
           money(w.against) + (o.real ? ' you’d put in, adjusted for inflation.' : ' you’d put in.')
         : 'Your ' + name + ' was never worth less than ' + (o.real ? 'the money you’d put in, adjusted for inflation' : 'the money you’d put in') + ', checked at the end of each month.';
       if (out('drawdown')) {
