@@ -536,6 +536,10 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 202
 
 1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
 2. Add one entry to `_data/data_pages.yml`, with `title`, `description` and `url` (`label` is no longer shown). The Data page shows the cards in that order, and needs no HTML or CSS changes.
+3. Open it the way the other data pages open, so they all read as one set. Wrap the page in `<div class="wrap calc-page">`, then:
+   - a `<header class="page-head">` holding the title (`page-title`), a short introduction (`page-lede`) and one line saying how recent the figures are (`meta page-vintage`: the fact in bold, a middle dot, then the update date, both read from `_data/`);
+   - `{% include page-jumps.html %}` straight after it. It draws the numbered jump links from the page's front matter: `jumps` (a list of `label` and `href`, in page order) and `sources_href` (the anchor of the page's sources, shown at the right as "Sources & method").
+   - End the page with its sources, after any questions.
 
 ## Where things are
 

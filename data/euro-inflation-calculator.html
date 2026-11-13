@@ -5,24 +5,30 @@ description: "Convert past euros into equivalent purchasing power, then compare 
 last_modified_at: 2026-11-03
 permalink: /data/euro-inflation-calculator/
 redirect_from: /euro-inflation-calculator/
+jumps:
+  - { label: Calculate, href: "#old-new" }
+  - { label: Explore the history, href: "#old-new-explore" }
+  - { label: "Costs & tax", href: "#old-new-costs" }
+  - { label: Questions, href: "#old-new-questions" }
+sources_href: "#euro-sources"
 ---
 <div class="wrap calc-page euro-page">
 <header class="page-head">
 <h1 id="calc-title" class="page-title">Euro inflation calculator</h1>
 <p class="page-lede">Same euros. Different buying power. See what it takes to match an earlier amount, then follow what cash, deposits and assets became.</p>
-<p class="meta euro-vintage">Observations through <strong>{{ site.data.old_new.to | append: "-01" | date: "%B %Y" }}</strong><span aria-hidden="true"> · </span>Data updated {{ site.data.old_new.updated | date: "%-d %B %Y" }}</p>
+<p class="meta page-vintage">Observations through <strong>{{ site.data.old_new.to | append: "-01" | date: "%B %Y" }}</strong><span aria-hidden="true"> · </span>Data updated {{ site.data.old_new.updated | date: "%-d %B %Y" }}</p>
 {% if site.gold_return_preview %}<p class="oil-note"><a href="#gold-return">Use the gold-only return calculator</a></p>{% endif %}
 </header>
-<nav class="euro-jumps" aria-label="On this page">
-<a href="#old-new"><span aria-hidden="true">01</span> Calculate</a>
-<a href="#old-new-explore"><span aria-hidden="true">02</span> Explore the history</a>
-<a href="#old-new-costs"><span aria-hidden="true">03</span> Costs &amp; tax</a>
-<a href="#old-new-questions"><span aria-hidden="true">04</span> Questions</a>
-<a href="#euro-sources">Sources &amp; method <span aria-hidden="true">↗</span></a>
-</nav>
+{% include page-jumps.html %}
 {% include old-new-calculator.html labelledby="calc-title" interpretation=true %}
 {% if site.gold_return_preview %}{% include gold-return-calculator.html %}{% endif %}
-<p class="investment-related">Looking ahead instead? Use the <a href="{{ '/data/investment-calculator-with-inflation/' | relative_url }}">investment calculator with inflation</a> to model monthly savings using your own return, inflation and fee assumptions.</p>
+<aside class="next-step" aria-labelledby="next-step-title">
+<div>
+<h2 id="next-step-title">Looking ahead instead?</h2>
+<p>Model monthly savings with your own return, inflation and fee assumptions.</p>
+</div>
+<a href="{{ '/data/investment-calculator-with-inflation/' | relative_url }}">Investment calculator with inflation <span aria-hidden="true">→</span></a>
+</aside>
 {% include inflation-break-even.html sources_elsewhere=true %}
 {% include euro-inflation-sources.html %}
 </div>

@@ -5,14 +5,18 @@ seo_title: Investment calculator with inflation | Money, Old and New
 description: "Model a starting amount and monthly savings, with assumed returns, inflation and fees. Compare future euros with today’s purchasing power."
 permalink: /data/investment-calculator-with-inflation/
 last_modified_at: 2026-11-03
+jumps:
+  - { label: Calculate, href: "#investment" }
+  - { label: Compare two fees, href: "#fee-comparison" }
+sources_href: "#method"
 ---
 <div class="wrap calc-page investment-page">
 <header class="page-head">
 <h1 id="investment-page-title" class="page-title">Investment calculator with inflation</h1>
 <p class="page-lede">What could a starting amount and regular savings become? Set your own assumptions to compare the future balance with what it could buy at today’s prices, and see the effect of an annual balance fee.</p>
-<p class="meta investment-updated">Method updated <time datetime="2026-11-02">2 November 2026</time>. Assumptions only; no market observations.</p>
-<p class="oil-note"><a href="#fee-comparison">Compare two annual fees</a></p>
+<p class="meta page-vintage"><strong>Assumptions only</strong>, no market observations<span aria-hidden="true"> · </span>Method updated <time datetime="2026-11-02">2 November 2026</time></p>
 </header>
+{% include page-jumps.html %}
 {% include investment-calculator.html labelledby="investment-page-title" %}
 {% include fee-comparison.html %}
 <div class="investment-method page-content">

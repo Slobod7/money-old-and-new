@@ -9,13 +9,21 @@ content_updated: "2026-11-03"
 source_checked: "2026-11-02"
 verified_daily_date: "2026-11-02"
 verified_hicp_month: "2026-09"
+jumps:
+  - { label: Chart, href: "#ecb-rates" }
+  - { label: Last changes, href: "#ecb-changes-title" }
+  - { label: Your bank’s rate, href: "#rate-change" }
+  - { label: Questions, href: "#ecb-faq-title" }
+sources_href: "#ecb-source-series"
 ---
 {%- assign ecb = site.data.ecb_rates_inflation %}
 <div class="wrap calc-page ecb-page">
 <header class="page-head">
 <h1 class="page-title">ECB interest rates</h1>
 <p class="page-lede">The ECB’s deposit and main refinancing rates alongside euro area inflation, from {{ ecb.first_month | append: "-01" | date: "%B %Y" }} to {{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}. Explore monthly values and see when rate changes took effect.</p>
+<p class="meta page-vintage">Observations through <strong>{{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}</strong><span aria-hidden="true"> · </span>Data updated {{ ecb.updated | date: "%-d %B %Y" }}</p>
 </header>
+{% include page-jumps.html %}
 <p class="ecb-reading-note">Hover or tap to read a month. With a keyboard, focus the chart and use the arrow keys.</p>
 {% include ecb-rates-chart.html id="ecb-rates" source_in_method=true %}
 {% include ecb-rate-changes.html %}

@@ -1,0 +1,17 @@
+{%- comment -%}
+The jump links under a data page's heading, between two rules: the page's sections, numbered in order, then the
+link to its sources at the right.
+  {% include page-jumps.html %}
+It reads the page's front matter, so every data page gets the same strip:
+  jumps:                      the sections, in page order (label, href)
+    - { label: Calculate, href: "#old-new" }
+  sources_href: "#sources"    optional: where "Sources & method" goes
+{%- endcomment -%}
+<nav class="page-jumps" aria-label="On this page">
+{%- for jump in page.jumps %}
+<a href="{{ jump.href }}"><span class="page-jumps-n" aria-hidden="true">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</span> {{ jump.label | escape }}</a>
+{%- endfor %}
+{%- if page.sources_href %}
+<a class="page-jumps-sources" href="{{ page.sources_href }}">Sources &amp; method <span aria-hidden="true">↗</span></a>
+{%- endif %}
+</nav>

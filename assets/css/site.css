@@ -17,7 +17,7 @@
   --accent: #8A2022;    /* the accent: a deep, leathery cherry red with no pink in it: 8.6:1. See the note above. */
   --rule: #DEDFD7;      /* decorative dividers and the frames of cards, too light for control boundaries */
   --panel: #F0F0EA;     /* the strip that holds a calculator's inputs: muted text on it is 5:1 */
-  --mist: #E6EDE8;      /* pale sage: the ground of the home page's opening block and of every drawing: muted text on it is 4.8:1 */
+  --mist: #E6EDE8;      /* pale sage: the ground of the home page's opening block, of every drawing and of the card that leads on to a related page: muted text on it is 4.8:1 */
   --edge: #626960;      /* boundaries of form controls */
   --on-forest: #FAF9F6;       /* text on forest: 11.5:1 */
   --on-forest-muted: #C5CFC8; /* secondary text on forest: 7.6:1 */
@@ -61,10 +61,10 @@ a:hover { text-decoration-thickness: 2px; }
 
 /* Type */
 /* The kicker names a section, in the accent, so a section's label never looks like the headlines under it.
-   Labels that only name a control (sharing, jump links) stay muted. */
+   A label that only names a control (sharing) stays muted. */
 .kicker { margin: 0 0 8px; font: 600 13px/1.45 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .kicker a { color: inherit; }
-.share .kicker, .brent-nav .kicker { font-weight: 500; color: var(--muted); }
+.share .kicker { font-weight: 500; color: var(--muted); }
 /* An article's series, wherever articles are listed: the accent again, but not in capitals, so it never reads as a section label */
 .topic { display: block; margin-bottom: 4px; font: 600 13px/1.45 var(--sans); color: var(--accent); }
 .topic.is-inline { display: inline; margin: 0 10px 0 0; }
@@ -108,11 +108,42 @@ a:hover { text-decoration-thickness: 2px; }
   .site-nav a { padding-inline: 5px; }
 }
 
-/* The calculator's own page: the heading and introduction, then the calculator across the full page width */
+/* A data page (a chart or a calculator in data/). Every one opens the same way: the title, a short introduction, one line
+   saying how recent its figures are (.page-vintage: the fact in bold, then the update date), and the page's sections as
+   numbered jump links between two rules, with the link to its sources at the right (_includes/page-jumps.html).
+   Under that the chart or calculator runs across the full page width, and the page ends with its sources. */
+.calc-page [id] { scroll-margin-top: 24px; }
+.calc-page .page-head { padding-bottom: 28px; }
+.calc-page .page-lede { max-width: 35em; }
+.page-vintage { margin-top: 22px; }
+.page-vintage strong { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.page-jumps { display: flex; flex-wrap: wrap; gap: 0 28px; margin-bottom: 36px; padding-block: 12px; border-block: 1px solid var(--rule); }
+.page-jumps a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; font: 500 14px/1.4 var(--sans); text-decoration: none; }
+.page-jumps a:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+.page-jumps-n { color: var(--muted); font-size: 12px; }
+.page-jumps-sources { margin-left: auto; }
 .calc-page .oil-widget { margin: 0 0 72px; }
+/* The way on to a related page: a pale sage card that is one link, with the question at left and where it leads at right.
+   The section after it needs no rule of its own. */
+.next-step { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 48px; margin: 0 0 72px; padding: 28px 32px; background: var(--mist); }
+.next-step h2 { margin: 0 0 6px; font: 400 24px/1.3 var(--serif); letter-spacing: -0.01em; color: var(--forest); }
+.next-step p { margin: 0; max-width: 34em; font: 400 15.5px/1.6 var(--sans); }
+.next-step a { display: inline-block; padding-block: 11px; font: 500 15px/1.45 var(--sans); text-underline-offset: 0.3em; }
+.next-step a span { display: inline-block; margin-left: 4px; }  /* an inline block, so the link's underline stops before the arrow */
+.next-step a::after { content: ""; position: absolute; inset: 0; }
+.next-step a:focus-visible { outline: none; }
+.next-step a:focus-visible::after { outline: 3px solid var(--accent); outline-offset: 3px; }
+.next-step:hover a { text-decoration-thickness: 2px; }
+.next-step + .oil-widget { padding-top: 0; border-top: 0; }
+@media (max-width: 600px) {
+  .page-jumps { gap: 0 18px; margin-bottom: 28px; }
+  .page-jumps a { font-size: 13px; }
+  .page-jumps-sources { margin-left: 0; }
+  .next-step { margin-bottom: 56px; padding: 24px 20px; }
+  .next-step h2 { font-size: 22px; }
+}
 
 /* Explanatory content on the existing ECB data page. */
-.ecb-page .page-head { padding-bottom: 28px; }
 .ecb-reading-note { margin: 0 0 24px; font-size: 14px; color: var(--muted); }
 .ecb-page .ecb-chart { margin-bottom: 48px; }
 .ecb-changes { margin-bottom: 64px; }
@@ -140,7 +171,6 @@ a:hover { text-decoration-thickness: 2px; }
 .ecb-episode-sources { margin: 20px 0 28px; }
 .ecb-episode-sources summary { min-height: 44px; padding-block: 8px; cursor: pointer; }
 .ecb-episode-sources p { margin-top: 12px; }
-.ecb-page [id] { scroll-margin-top: 24px; }
 @media (max-width: 700px) {
   .ecb-change-list, .ecb-method-grid { grid-template-columns: minmax(0, 1fr); }
   .ecb-change-list { gap: 16px; }
@@ -835,7 +865,6 @@ a:hover { text-decoration-thickness: 2px; }
 .onc-detailed .onc-foot { display: block; }
 
 /* Savings/investment scenarios: share the existing widget, form, figure and table styles. */
-.investment-updated { margin-top: 20px; }
 .investment .investment-form { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-top: 12px; }
 .investment .oil-amount, .investment .oil-pair { max-width: none; }
 .investment .oil-field > input, .investment .oil-pair input { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--edge); border-radius: 0; background: var(--bg); color: var(--text); font: 400 17px/1.3 var(--sans); font-variant-numeric: tabular-nums; }
@@ -865,12 +894,6 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 /* Brent page: a compact reading guide, currency explanation and household-price cards. */
-.brent-page :is(h2, section[id]) { scroll-margin-top: 24px; }
-.brent-latest { margin: 22px 0 6px; font: 400 15px/1.7 var(--sans); }
-.brent-latest strong { font-weight: 500; font-variant-numeric: tabular-nums; }
-.brent-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); }
-.brent-nav .kicker { margin: 0; }
-.brent-nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
 .brent-chart-key { margin: -4px 0 16px; color: var(--muted); font-size: 14px; }
 .brent-chart-key span { padding-inline: 6px; }
 .brent-page .oil-chart { margin-bottom: 24px; }
@@ -919,8 +942,6 @@ a:hover { text-decoration-thickness: 2px; }
   .brent-household .feature-cards h3 { margin-bottom: 12px; }
 }
 @media (max-width: 640px) {
-  .brent-nav { gap: 0 20px; margin-top: 24px; }
-  .brent-nav .kicker { flex-basis: 100%; margin-bottom: 4px; }
   .brent-chart-key { line-height: 1.8; }
   .brent-fx-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .brent-fx-rule { max-width: 420px; }
@@ -966,16 +987,6 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 /* Euro calculator editorial layout: scoped so the homepage widget stays compact. */
-.euro-page [id] { scroll-margin-top: 24px; }
-.euro-page .page-head { padding-bottom: 28px; }
-.euro-page .page-lede { max-width: 35em; }
-.euro-vintage { margin-top: 22px; }
-.euro-vintage strong { color: var(--text); font-weight: 500; }
-.euro-jumps { display: flex; flex-wrap: wrap; gap: 0 28px; margin-bottom: 36px; padding-block: 12px; border-block: 1px solid var(--rule); }
-.euro-jumps a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; font: 500 14px/1.4 var(--sans); text-decoration: none; }
-.euro-jumps a:hover { text-decoration: underline; text-decoration-color: var(--accent); }
-.euro-jumps a > span:first-child:not(:last-child) { color: var(--muted); font-size: 12px; }
-.euro-jumps a:last-child { margin-left: auto; }
 .euro-page .oil-widget .onc-inflation { margin: 0 0 32px; padding: 32px; border: 0; background: var(--forest); color: var(--on-forest); }
 .euro-page .oil-widget .onc-answer-head h2 { max-width: 24em; margin: 0 0 14px; font-size: clamp(26px, 2.3vw, 34px); }
 .euro-page .onc-inflation .onc-answer-period { max-width: 54em; margin-bottom: 24px; color: var(--on-forest-muted); font-size: 14px; }
@@ -1037,7 +1048,7 @@ a:hover { text-decoration-thickness: 2px; }
 .euro-page .onc-yardstick-link:hover { text-decoration-thickness: 2px; }
 .euro-page .onc-explain:has(.faq) { margin-top: 48px; }
 .euro-page .onc-explain .faq { max-width: 840px; }
-.euro-sources { margin: 64px 0 72px; padding-top: 32px; border-top: 1px solid var(--muted); }
+.euro-sources { margin: 64px 0 72px; }
 .euro-source-head { max-width: 44em; margin-bottom: 22px; }
 .euro-source-head .section-title { margin-bottom: 12px; }
 .euro-source-head > p:last-child { margin: 0; font: 400 18px/1.6 var(--serif); }
@@ -1061,9 +1072,6 @@ a:hover { text-decoration-thickness: 2px; }
   .euro-page .onc-cost-card h3 { min-height: 0; }
 }
 @media (max-width: 600px) {
-  .euro-jumps { gap: 0 18px; margin-bottom: 28px; }
-  .euro-jumps a { font-size: 13px; }
-  .euro-jumps a:last-child { margin-left: 0; }
   .euro-page .oil-widget .onc-inflation, .euro-page .onc-yardstick { padding: 24px 20px; }
   .euro-page .onc-answer-cards, .onc-cost-cards { grid-template-columns: minmax(0, 1fr); }
   .euro-page .onc-answer-cards > div { grid-template-rows: auto auto auto; padding: 20px; }

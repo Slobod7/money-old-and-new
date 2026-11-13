@@ -7,6 +7,12 @@ permalink: /data/brent-oil-price-history/
 redirect_from: /brent-oil-price-history/
 last_modified_at: 2026-11-03
 content_checked: 2026-11-02
+jumps:
+  - { label: Chart, href: "#brent-chart-title" }
+  - { label: Calculator, href: "#brent-calculator" }
+  - { label: Household prices, href: "#household-prices" }
+  - { label: Questions, href: "#chart-questions" }
+sources_href: "#sources-method"
 faq:
   - question: "Why does the last point change when I switch from 1Y to 5Y?"
     answer: "1Y ends with the latest daily closing spot observation. 5Y and the other longer views end with a monthly average, which may cover only part of the month. They measure different periods, so they need not match."
@@ -23,16 +29,12 @@ faq:
 <header class="page-head">
 <h1 class="page-title">Brent oil price history</h1>
 <p class="page-lede">Follow EIA’s Europe Brent spot price since {{ brent_first[0] }}, in US dollars per barrel. Explore the history, adjust for inflation or try the calculator in euros.</p>
-<p class="brent-latest">Latest daily observation: <strong>${{ brent.calculator_default.latest_price }}</strong> per barrel · {{ brent.brent_to | date: "%-d %B %Y" }}</p>
-<p class="meta">Historical data, not a live quote. Dataset updated {{ brent.updated | date: "%-d %B %Y" }}.</p>
-<nav class="brent-nav" aria-label="On this page">
-<span class="kicker">On this page</span>
-<a href="#brent-chart-title">Chart</a>
-<a href="#brent-calculator">Calculator</a>
-<a href="#household-prices">Household prices</a>
-<a href="#sources-method">Sources &amp; method</a>
-</nav>
+<p class="meta page-vintage">Observations through <strong>{{ brent.brent_to | date: "%-d %B %Y" }}</strong>, latest ${{ brent.calculator_default.latest_price }} per barrel<span aria-hidden="true"> · </span>Data updated {{ brent.updated | date: "%-d %B %Y" }}</p>
 </header>
+{% include page-jumps.html %}
+<!--footnote-->
+<p><strong>The Brent prices are historical data, not a live quote.</strong> The latest one shown is the last daily observation in the dataset.</p>
+<!--footnote-->
 
 <section aria-labelledby="brent-chart-title">
 <h2 class="section-title" id="brent-chart-title">The chart</h2>
@@ -118,6 +120,15 @@ faq:
 </ol>
 </section>
 
+<section class="brent-section brent-questions" aria-labelledby="chart-questions">
+<h2 class="section-title" id="chart-questions">Questions about this chart</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</section>
+
 <section class="brent-section brent-method" aria-labelledby="sources-method">
 <h2 class="section-title" id="sources-method">Sources &amp; method</h2>
 <p class="meta">Observations through {{ brent.brent_to | date: "%-d %B %Y" }}{% if brent.eia_release %} · EIA release {{ brent.eia_release | date: "%-d %B %Y" }}{% endif %}. Explanatory notes checked {{ page.content_checked | date: "%-d %B %Y" }}.</p>
@@ -135,15 +146,6 @@ faq:
 <p>The site’s scheduled refresh is monthly, on the 18th at 06:30 UTC, with manual updates possible. The update date changes when the dataset changes. Failed downloads or validation leave the previous dataset in place; provider revisions can change history at a later refresh. This is not a live feed.</p>
 <p><a href="https://www.eia.gov/about/copyrights_reuse.php">EIA permits reuse of its data with dated acknowledgement</a>; third-party protected material has separate terms. See also the <a href="https://www.bls.gov/bls/linksite.htm">BLS reuse policy</a> and <a href="https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html">ECB attribution and reuse terms</a>.</p>
 </details>
-</div>
-</section>
-
-<section class="brent-section brent-questions" aria-labelledby="chart-questions">
-<h2 class="section-title" id="chart-questions">Questions about this chart</h2>
-<div class="faq">
-{%- for item in page.faq %}
-<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
-{%- endfor %}
 </div>
 </section>
 </div>
