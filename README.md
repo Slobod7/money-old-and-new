@@ -408,6 +408,10 @@ On `/data/euro-inflation-calculator/` the reader picks an end month as well as a
 
 There's no chart-image download. Tests: `node tests/euro-lookup-controls.cjs`.
 
+### Typed amounts
+
+The euro and Brent calculators read an amount typed the English way (1,000.50) or the continental way (1.000,50 or 1000,50). A comma or point before exactly three digits groups thousands; before one or two digits at the end it is the decimal mark; anything else (1,0000 or 1,000,50) is refused with the usual message instead of guessed. Until 13 November 2026 every comma was stripped, so 1000,50 was read as 100,050. A share link still carries a plain number and is read strictly. The rule is `parseAmount()` in `assets/js/old-new-calculator.js` and `assets/js/oil-widgets.js`, kept identical; `node tests/amount-input.cjs` checks both.
+
 ### Standalone euro page interpretation
 
 `data/euro-inflation-calculator.html` enables `interpretation=true`. The two `euro-inflation-*.html` includes hold its tables and explanatory content. All changing figures use the existing `assets/data/old-new.json`; no extra data refresh or new external browser requests are needed. January HICP observations (not annual averages) populate the €100 year table. The start comparison samples five-year starts, the selected start year and latest January. It uses a €100 lump sum and the common endpoint, marks unavailable assets, and labels unequal holding periods. Its final endpoint-price balances stay the same with the inflation toggle; its cumulative returns change.

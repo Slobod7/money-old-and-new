@@ -235,7 +235,9 @@
   function readPreset(hash) {
     var q = new URLSearchParams(hash.replace(/^#/, ''));
     if (!q.has('view') || q.get('view') === 'bitcoin-gold') return null; // the compact component restores its own fragment
-    var o = { view: q.get('view'), amount: parseAmount(q.get('amount')), mode: q.get('mode'),
+    // A link's amount is the plain number presetHash wrote, so it's read strictly: none of the typing allowances.
+    var plain = /^\d+(\.\d{1,2})?$/.test(q.get('amount') || '');
+    var o = { view: q.get('view'), amount: plain ? parseAmount(q.get('amount')) : null, mode: q.get('mode'),
       start: q.get('start'), end: q.get('end'), real: q.get('real') === 'yes', benchmark: q.get('benchmark') || 'us',
       pick: q.get('asset'), data: q.get('data') };
     // Everything here comes from the address bar: each value must match exactly, or the whole link is refused.
@@ -334,10 +336,14 @@
 
   // The calculator ---------------------------------------------------------------------------------
 
+  // Reads an amount typed the English way (1,000.50) or the continental way (1.000,50 or 1000,50). A comma or point
+  // before exactly three digits groups thousands; before one or two digits at the end it's the decimal mark. Anything
+  // else, such as 1,0000 or 1,000,50, is refused instead of guessed.
   function parseAmount(text) {
-    var clean = String(text).replace(/[\s,€]/g, '');
-    if (!/^\d+(\.\d{0,2})?$/.test(clean)) return null;
-    var n = parseFloat(clean);
+    var clean = String(text).replace(/[\s€]/g, ''), n = null;
+    if (/^\d{1,3}(,\d{3})+(\.\d{0,2})?$/.test(clean)) n = parseFloat(clean.replace(/,/g, ''));
+    else if (/^\d{1,3}(\.\d{3})+(,\d{0,2})?$/.test(clean)) n = parseFloat(clean.replace(/\./g, '').replace(',', '.'));
+    else if (/^\d+([.,]\d{0,2})?$/.test(clean)) n = parseFloat(clean.replace(',', '.'));
     return n >= 1 && n <= 100000000 ? n : null;
   }
 
@@ -888,7 +894,7 @@
     }
   }
 
-  window.OldNewCalculator = { prepare: prepare, calculate: calculate, dateProblem: dateProblem, xirr: xirr, load: load, inflation: inflation, januaryRows: januaryRows, startRows: startRows, drawdown: drawdown, readPreset: readPreset, presetHash: presetHash, makeChart: makeChart, onResize: onResize, monthName: monthName, money: money, pct: pct };
+  window.OldNewCalculator = { prepare: prepare, parseAmount: parseAmount, calculate: calculate, dateProblem: dateProblem, xirr: xirr, load: load, inflation: inflation, januaryRows: januaryRows, startRows: startRows, drawdown: drawdown, readPreset: readPreset, presetHash: presetHash, makeChart: makeChart, onResize: onResize, monthName: monthName, money: money, pct: pct };
   var start = function () {
     document.querySelectorAll('[data-old-new]').forEach(init);
     document.querySelectorAll('[data-gold-return]').forEach(initGold);
