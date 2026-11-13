@@ -1,6 +1,8 @@
 {
-"updated":"2026-11-10",
+"updated":"2026-11-13",
 "hicp_to":"2026-10",
+"rates_to":"2026-11-13",
+"latest":{"main":"2.65","deposit":"2.50"},
 "first_month":"2007-01",
 "months":238,
 "headline_peak":["2022-10","10.6"],

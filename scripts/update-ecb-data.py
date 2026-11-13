@@ -13,12 +13,15 @@ Downloads from the ECB Data Portal, with no API key:
     dates above are up to date
 
 Writes:
-  _data/ecb_rates_inflation.json   monthly rows for the table, rate steps and hiking episodes for the chart
+  _data/ecb_rates_inflation.json   monthly rows for the table, rate steps and hiking episodes for the chart, and the
+                                   two rates in force on the latest day of the daily series (latest, rates_to),
+                                   which the ECB page shows under its introduction
 
 Run it from the repository root:   python3 scripts/update-ecb-data.py
 Standard library only. It reuses the download and file helpers of update-oil-data.py, so it follows the same rules:
 every download is checked, and if one fails or looks wrong the script stops with an error and leaves the file
-exactly as it was. When nothing in the data has changed, it rewrites nothing.
+exactly as it was. When nothing in the data has changed, it rewrites nothing. The latest day of the daily series is
+part of the data, so a run on a later day normally rewrites the file and moves its "updated" date.
 """
 
 import calendar
@@ -156,6 +159,10 @@ def build(today):
         cut = [(d, up) for d, up in moves if end <= d <= days_after(end, TAKES_EFFECT_WITHIN)]
         check(cut and cut[0][1] < 0, 'No cut in the deposit rate within {} days of the decision on {}'.format(TAKES_EFFECT_WITHIN, end))
 
+    # The latest day both daily series reach, and the rates in force on it: the line at the top of the page. It can
+    # be later than the chart, which stops at the last month with inflation.
+    rates_to = min(max(daily['deposit']), max(daily['main']))
+
     # The rows: each month's inflation, and the rates in force at the end of the month
     keys = list(months(FIRST_MONTH, last_month))
     rows = [[k, pct(headline[k], 1), pct(core[k], 1), pct(rate_on(main, month_end(k)), 2), pct(rate_on(deposit, month_end(k)), 2)] for k in keys]
@@ -184,6 +191,8 @@ def build(today):
 
     return {
         'hicp_to': last_month,
+        'rates_to': rates_to,
+        'latest': {'main': pct(rate_on(main, rates_to), 2), 'deposit': pct(rate_on(deposit, rates_to), 2)},
         'first_month': FIRST_MONTH,
         'months': len(keys),
         'headline_peak': peak(headline),

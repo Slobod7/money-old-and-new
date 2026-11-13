@@ -6,9 +6,8 @@ description: "The ECB's main refinancing rate and deposit rate against euro area
 permalink: /data/ecb-interest-rates/
 redirect_from: /ecb-interest-rates/
 content_updated: "2026-11-03"
-source_checked: "2026-11-02"
-verified_daily_date: "2026-11-02"
-verified_hicp_month: "2026-09"
+last_modified_at: 2026-11-13
+dataset: ecb_rates_inflation
 jumps:
   - { label: Chart, href: "#ecb-rates" }
   - { label: Last changes, href: "#ecb-changes-title" }
@@ -21,12 +20,13 @@ sources_href: "#ecb-source-series"
 <header class="page-head">
 <h1 class="page-title">ECB interest rates</h1>
 <p class="page-lede">The ECB’s deposit and main refinancing rates alongside euro area inflation, from {{ ecb.first_month | append: "-01" | date: "%B %Y" }} to {{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}. Explore monthly values and see when rate changes took effect.</p>
-<p class="meta page-vintage">Observations through <strong>{{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}</strong><span aria-hidden="true"> · </span>Data updated {{ ecb.updated | date: "%-d %B %Y" }}</p>
+<p class="meta page-vintage">Deposit rate <strong>{{ ecb.latest.deposit | replace: "-", "−" }}%</strong>, main rate <strong>{{ ecb.latest.main | replace: "-", "−" }}%</strong>{% if ecb.rates_to != ecb.updated %} on {{ ecb.rates_to | date: "%-d %B %Y" }}{% endif %}<span aria-hidden="true"> · </span>Inflation through {{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}<span aria-hidden="true"> · </span>Data updated {{ ecb.updated | date: "%-d %B %Y" }}</p>
 </header>
 {% include page-jumps.html %}
 <p class="ecb-reading-note">Hover or tap to read a month. With a keyboard, focus the chart and use the arrow keys.</p>
 {% include ecb-rates-chart.html id="ecb-rates" source_in_method=true %}
 {% include ecb-rate-changes.html %}
+{% include data-articles.html %}
 {% include rate-change-impact.html %}
 <section class="ecb-faq" aria-labelledby="ecb-faq-title">
 <h2 class="section-title" id="ecb-faq-title">Frequently asked questions</h2>
@@ -75,7 +75,7 @@ sources_href: "#ecb-source-series"
 <li><a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.XEF000.4D0.ANR">Core HICP</a></li>
 </ul>
 <h3>Observation dates</h3>
-<p>At the {{ page.source_checked | date: "%-d %B %Y" }} source check, the latest available HICP observation was {{ page.verified_hicp_month | append: "-01" | date: "%B %Y" }}. <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.DFR.LEV">Daily deposit</a> and <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.MRR_FR.LEV">daily main-rate</a> observations were checked through {{ page.verified_daily_date | date: "%-d %B %Y" }}.</p>
+<p>At the {{ ecb.updated | date: "%-d %B %Y" }} update, the latest available HICP observation was {{ ecb.hicp_to | append: "-01" | date: "%B %Y" }}. <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.DFR.LEV">Daily deposit</a> and <a href="https://data.ecb.europa.eu/data/datasets/FM/FM.D.U2.EUR.4F.KR.MRR_FR.LEV">daily main-rate</a> observations were checked through {{ ecb.rates_to | date: "%-d %B %Y" }}. The rates at the top of this page are the ones in force on that day.</p>
 </div>
 <div>
 <h3>Timing and historical conventions</h3>

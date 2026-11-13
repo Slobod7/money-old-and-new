@@ -352,7 +352,7 @@ Both rates are there because the ECB article quotes the main rate for 2008 and 2
 
 The existing `/data/ecb-interest-rates/` page adds a reading guide, linked primary sources and `_includes/ecb-rate-changes.html`. Its “Last changes shown” summary uses the chart's `steps` and compares each rate with its preceding distinct level, independently of the other rate. It shows effective dates, never inferred announcement dates; the opening step is labelled as a chart boundary when needed. This summary stays on the last changes in the saved history while the existing chart readout selects months. Both the summary and the guide render without JavaScript.
 
-On that page, `content_updated` records the editorial review. `source_checked`, `verified_daily_date` and `verified_hicp_month` record a separate manual source check; change them only after checking those observations. The chart's `updated` date still comes from the data updater, and the plotted range still ends at `hicp_to`. A newer page/source check must not imply a newer plotted observation. The 2 November 2026 check matched all stored monthly observations and effective-date steps against the five source series, and checked the two daily rate series through 2 November. No chart values were changed.
+On that page, `content_updated` records the editorial review. The line under the introduction gives the two rates in force on the latest day of the ECB's daily series (`latest` and `rates_to` in the data file), so it can be more recent than the chart, which still ends at `hicp_to`. The "Observation dates" paragraph in the sources reads the same fields, so it moves with every update and nothing on the page is typed by hand. Until 13 November 2026 that paragraph recorded a manual check (2 November 2026: every stored monthly observation and effective-date step matched the five source series). The updater now makes the daily check on every run and refuses the update if it fails.
 
 ### Where the data comes from
 
@@ -370,7 +370,7 @@ The episodes are set in `EPISODES` at the top of `scripts/update-ecb-data.py`, a
 
 ### How it stays up to date
 
-`scripts/update-ecb-data.py` downloads the five series and writes `_data/ecb_rates_inflation.json` (about 12 KB). It reuses the oil script's download and file helpers and keeps its rules. It checks everything: the right series, every month present, plausible values, inflation no more than four months old, the rate change dates up to date against the ECB's daily series, and each episode against the rates. If anything fails, it stops with an error and leaves the file as it was. If nothing changed, it rewrites nothing.
+`scripts/update-ecb-data.py` downloads the five series and writes `_data/ecb_rates_inflation.json` (about 12 KB). It reuses the oil script's download and file helpers and keeps its rules. It checks everything: the right series, every month present, plausible values, inflation no more than four months old, the rate change dates up to date against the ECB's daily series, and each episode against the rates. If anything fails, it stops with an error and leaves the file as it was. If nothing changed, it rewrites nothing. The file also records the two rates in force on the latest day of the daily series (`latest`, `rates_to`), so a run on a later day normally rewrites it and moves its `updated` date, even when inflation has no new month.
 
 When the ECB first cuts after 11 June 2026, the script stops and asks for the date of that decision. Add it as the end of the last entry in `EPISODES`, run the script again and commit.
 
@@ -485,7 +485,7 @@ Editorial check: 2 November 2026. The public source link supports the purchasing
 
 ## Investment calculator with inflation
 
-The formula-only scenario at `/data/investment-calculator-with-inflation/` models a starting amount, fixed nominal monthly payments, horizon, annual effective gross return, annual inflation and optional balance fee. These are assumptions, not market data; there is no feed or monthly update to run. The Data card is in `_data/data_pages.yml`. Canonical metadata, the Data breadcrumb and the sitemap use the existing Jekyll plugins and front matter.
+The formula-only scenario at `/data/investment-calculator-with-inflation/` models a starting amount, fixed nominal monthly payments, horizon, annual effective gross return, annual inflation and optional balance fee. These are assumptions, not market data; there is no feed or monthly update to run. The Data card is in `_data/data_pages.yml`. Canonical metadata and the Data breadcrumb use the existing Jekyll plugins and front matter; the sitemap is the site's own `sitemap.xml`.
 
 Reuse the interface with `{% include investment-calculator.html %}`; pass a unique `id` for multiple copies and optional `labelledby` for an external heading. The include loads two scripts only on pages that use it. No requests, cookies or storage are added.
 
@@ -493,7 +493,7 @@ Reuse the interface with `{% include investment-calculator.html %}`; pass a uniq
 
 Each month's existing balance is multiplied by `((1 + annualReturn) * (1 - annualFee)) ** (1/12)`, then the payment is added. The no-fee path uses `(1 + annualReturn) ** (1/12)` on the same schedule. Real balances divide by `(1 + annualInflation) ** (month/12)`; real contributions sum each payment discounted from its own month. Real gains always use that contribution basis. Fee drag is the difference between the fee-free and fee-adjusted balance, including compounding, not a sum of bills.
 
-`assets/js/investment-calculator.js` handles validation, the nominal chart and the yearly table. Editing inputs hides stale results until Calculate is selected; errors link to fields, and successful submissions focus the results heading. With JavaScript off, the method remains readable and the page explains that calculation needs JavaScript.
+`assets/js/investment-calculator.js` handles validation, the nominal chart and the yearly table. Editing inputs hides stale results until Calculate is selected; errors link to fields, and successful submissions focus the results heading. With JavaScript off, the method remains readable and the page explains that calculation needs JavaScript. On the page, the method opens with two summary paragraphs; its detail (growth and the fee, today's purchasing power, limits, sources) sits in expanders beneath them, and a card above it leads to the euro inflation calculator.
 
 Check the engine with `node tests/investment-calculator.cjs` (no packages needed). Cases include zero rates/amounts/payments, zero/one/long horizons, negative rates, invalid values, effective-factor conversion, fee-free comparisons, payment timing and independent per-payment nominal/real accounting. The source/method date is in the new page's front matter and visible copy; update both when the method changes.
 
@@ -544,6 +544,10 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 202
    - a `<header class="page-head">` holding the title (`page-title`), a short introduction (`page-lede`) and one line saying how recent the figures are (`meta page-vintage`: the fact in bold, a middle dot, then the update date, both read from `_data/`);
    - `{% include page-jumps.html %}` straight after it. It draws the numbered jump links from the page's front matter: `jumps` (a list of `label` and `href`, in page order) and `sources_href` (the anchor of the page's sources, shown at the right as "Sources & method").
    - End the page with its sources, after any questions.
+4. If the page shows data from a file in `_data/` that has an `updated` date, name that file in the page's front matter: `dataset: brent_annual` for `_data/brent_annual.json`. The page then counts as changed whenever its data is: `_includes/page-modified.html` gives the later of `last_modified_at` and the data's date to `sitemap.xml` and to the page's markup (`dateModified`), so the monthly update moves both without anyone editing the page. Change `last_modified_at` yourself only when you change the page.
+5. To link the page and the articles that use its chart, both ways and with nothing listed by hand: have the chart's include print a comment naming the page before its figure (`<!--uses:/data/your-page/-->`), and end its source caption with a link to the page when it's shown anywhere else (see `_includes/oil-chart.html`). Then put `{% include data-articles.html %}` on the page: it shows a card leading to the latest article that contains that comment, and nothing while there is none.
+
+`sitemap.xml` at the top of the site replaces the one the jekyll-sitemap plugin would write (the plugin steps aside when the file exists). It lists the same addresses; the only difference is the date rule above.
 
 ## Where things are
 

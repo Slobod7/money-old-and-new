@@ -6,7 +6,7 @@ FAQPage when their front matter has faq and Review when it has review (the score
 review_scores in _config.yml, as on the page). Any other page with faq, such as the home page, is
 also an FAQPage; faq-fill.html fills in the figures its answers quote, as on the page. Other pages pick their type with schema_type in
 front matter (ProfilePage on About, CollectionPage on Articles); the rest are plain WebPages.
-A page under /data/ has Data in its breadcrumb. The Data page itself is Home > Data.
+A page under /data/ has Data in its breadcrumb, and the date it or its data last changed. The Data page itself is Home > Data.
 default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disagree.
 {%- endcomment -%}
 {%- assign home_url = '/' | absolute_url -%}
@@ -24,6 +24,9 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 {%- assign is_article = false -%}{%- if page.collection == 'posts' -%}{%- assign is_article = true -%}{%- endif -%}
 {%- assign url_start = page.url | slice: 0, 6 -%}
 {%- assign is_data_page = false -%}{%- if url_start == '/data/' and page.url != '/data/' -%}{%- assign is_data_page = true -%}{%- endif -%}
+{%- comment -%} A data page's date: its own, or its data's when that is later (page-modified.html). {%- endcomment -%}
+{%- assign data_modified = "" -%}
+{%- if is_data_page -%}{%- capture data_modified %}{% include page-modified.html doc=page %}{% endcapture -%}{%- assign data_modified = data_modified | strip -%}{%- endif -%}
 {%- assign person_image = site.author.avatar | default: site.author.photo -%}
 {%- assign same_as = site.author.same_as | default: '' -%}
 {%- if same_as == '' -%}{%- assign same_as = '' | split: '' -%}{%- endif -%}
@@ -83,6 +86,8 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 {%- if is_article %},
 "datePublished": {{ published_iso | jsonify }},
 "dateModified": {{ modified_iso | jsonify }}
+{%- elsif data_modified != "" %},
+"dateModified": {{ data_modified | date_to_xmlschema | jsonify }}
 {%- endif %}
 {%- if page_type == 'ProfilePage' %},
 "mainEntity": { "@id": {{ person_id | jsonify }} }

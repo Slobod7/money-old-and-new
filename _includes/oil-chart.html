@@ -7,12 +7,15 @@ Without JavaScript it shows annual averages from _data/brent_annual.json as a pl
 assets/js/oil-widgets.js, added once per page below, turns it into the interactive chart using assets/data/oil.json.
 Optional: hide_source=true when the page has a separate sources section.
 labelledby (optional): the id of the page heading that names this chart.
+Away from /data/brent-oil-price-history/, the source caption ends with a link to that page, and the comment before
+the figure lets that page find the articles that use the chart (_includes/data-articles.html).
 {%- endcomment -%}
 {%- assign oc = include.id | default: "oil-chart" -%}
 {%- assign ba = site.data.brent_annual -%}
 {%- assign oc_first = ba.rows | first -%}
 {%- assign oc_last = ba.rows | last -%}
 {%- assign oc_to = ba.brent_to | date: "%-d %B %Y" -%}
+<!--uses:/data/brent-oil-price-history/-->
 <figure{% if include.labelledby %} aria-labelledby="{{ include.labelledby }}"{% endif %} class="oil-widget oil-chart" id="{{ oc }}" data-oil-chart data-range="{{ include.range | default: 'all' }}" data-src="{{ '/assets/data/oil.json' | relative_url }}">
 {%- if include.title %}
 <h3 class="oil-title">{{ include.title }}</h3>
@@ -70,7 +73,7 @@ labelledby (optional): the id of the page heading that names this chart.
 <p class="oil-note">US dollars a barrel: the average of EIA’s daily Europe Brent spot prices each year{% if ba.partial_year %}, with {{ ba.partial_year }} up to {{ oc_to }}{% endif %}. In today’s dollars, each year’s average is scaled up by US consumer prices (CPI) to {{ ba.cpi_to | append: "-01" | date: "%B %Y" }}.{% for m in ba.cpi_filled %} Missing CPI for {{ m | append: "-01" | date: "%B %Y" }} is filled with the geometric mean of the months either side.{% endfor %}</p>
 </details>
 {%- unless include.hide_source %}
-<figcaption class="oil-source">Source: <a href="https://www.eia.gov/dnav/pet/hist/RBRTED.htm">U.S. Energy Information Administration, Europe Brent spot price FOB</a>. Today’s dollars: <a href="https://fred.stlouisfed.org/series/CPIAUCSL">U.S. Bureau of Labor Statistics consumer prices (CPI), via FRED</a>. Prices to {{ oc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.</figcaption>
+<figcaption class="oil-source">Source: <a href="https://www.eia.gov/dnav/pet/hist/RBRTED.htm">U.S. Energy Information Administration, Europe Brent spot price FOB</a>. Today’s dollars: <a href="https://fred.stlouisfed.org/series/CPIAUCSL">U.S. Bureau of Labor Statistics consumer prices (CPI), via FRED</a>. Prices to {{ oc_to }}. Updated {{ ba.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/brent-oil-price-history/" %} <a href="{{ '/data/brent-oil-price-history/' | relative_url }}">Full chart and data</a>.{% endunless %}</figcaption>
 {%- endunless %}
 </figure>
 {%- unless oil_widgets_script %}

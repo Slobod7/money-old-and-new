@@ -1,0 +1,13 @@
+{%- comment -%}
+The day a page last changed, as YYYY-MM-DD, or nothing when the page records none.
+  {% capture modified %}{% include page-modified.html doc=page %}{% endcapture %}
+It is last_modified_at from the page's front matter. A data page also names its data file there (dataset: brent_annual
+is _data/brent_annual.json, which has an "updated" date) and counts as changed whenever that data is. So the monthly
+data update moves the page's date in sitemap.xml and in its markup (schema.html) without anyone editing the page.
+{%- endcomment -%}
+{%- assign pm_day = include.doc.last_modified_at | date: "%Y-%m-%d" | default: "" -%}
+{%- if include.doc.dataset -%}
+{%- assign pm_data = site.data[include.doc.dataset].updated | date: "%Y-%m-%d" | default: "" -%}
+{%- if pm_data > pm_day -%}{%- assign pm_day = pm_data -%}{%- endif -%}
+{%- endif -%}
+{{- pm_day -}}

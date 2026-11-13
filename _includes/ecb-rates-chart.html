@@ -4,6 +4,8 @@ with each time the ECB raised rates into an energy shock shaded from its first h
   {% include ecb-rates-chart.html id="ecb-rates" %}
 Optional: title (a heading above the chart). Give each chart on a page its own id.
 source_in_method: omit the source caption and table note when the host page has its own sources/method section.
+Away from /data/ecb-interest-rates/, the source caption ends with a link to that page, and the comment before the
+figure lets that page find the articles that use the chart (_includes/data-articles.html).
 Jekyll draws it from _data/ecb_rates_inflation.json as inline SVG, so it reads the same without JavaScript, and the table
 beneath has every month. assets/js/ecb-chart.js, added once per page below, adds a readout on hover, tap and the arrow keys.
 The two panels give a percentage point the same height, so a rate and inflation can be compared across them.
@@ -23,6 +25,7 @@ The two panels give a percentage point the same height, so a rate and inflation 
 {%- capture e_desc -%}
 Two charts on one time scale, from {{ e_from }} to {{ e_to }}. The upper one shows euro area inflation, headline and core; the lower one shows the ECB’s main refinancing rate and deposit rate. Shaded: {{ e_words[ed.episodes.size] }} selected rate-rise episodes during energy shocks, from the decision on the first hike to the first cut: {% for e in ed.episodes %}{% if forloop.last and forloop.length > 1 %}and {% endif %}{{ e[0] | date: "%-d %B %Y" }} {% if e[1] %}to {{ e[1] | date: "%-d %B %Y" }}{% else %}to the chart’s end{% endif %}{% if forloop.last %}.{% else %}, {% endif %}{% endfor %} Headline inflation peaked at {{ ed.headline_peak[1] }}% in {{ ed.headline_peak[0] | append: "-01" | date: "%B %Y" }} and core inflation at {{ ed.core_peak[1] }}% in {{ ed.core_peak[0] | append: "-01" | date: "%B %Y" }}. In {{ e_to }}, headline inflation was {{ e_last[1] | replace: "-", "−" }}% and core {{ e_last[2] | replace: "-", "−" }}%; the main rate was {{ e_last[3] | replace: "-", "−" }}% and the deposit rate {{ e_last[4] | replace: "-", "−" }}%. Every month is in the table below.
 {%- endcapture -%}
+<!--uses:/data/ecb-interest-rates/-->
 <figure class="oil-widget ecb-chart" id="{{ ec }}" data-ecb-chart data-months="{{ en }}" data-scales="{{ ilo }} {{ ihi }} {{ rlo }} {{ rhi }}" data-episodes="{% for e in ed.episodes %}{{ e[2] }} {{ e[3] }} {{ e[4] }}{% unless forloop.last %};{% endunless %}{% endfor %}">
 {%- if include.title %}
 <h3 class="oil-title">{{ include.title }}</h3>
@@ -104,7 +107,7 @@ Two charts on one time scale, from {{ e_from }} to {{ e_to }}. The upper one sho
 {%- endunless %}
 </details>
 {%- unless include.source_in_method %}
-<figcaption class="oil-source">Source: Eurostat, euro area HICP, via the ECB Data Portal; European Central Bank, key interest rates. Inflation to {{ e_to }}. Updated {{ ed.updated | date: "%-d %B %Y" }}.</figcaption>
+<figcaption class="oil-source">Source: Eurostat, euro area HICP, via the ECB Data Portal; European Central Bank, key interest rates. Inflation to {{ e_to }}. Updated {{ ed.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/ecb-interest-rates/" %} <a href="{{ '/data/ecb-interest-rates/' | relative_url }}">Full chart and data</a>.{% endunless %}</figcaption>
 {%- endunless %}
 </figure>
 {%- unless ecb_chart_script %}

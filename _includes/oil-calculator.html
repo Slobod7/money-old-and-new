@@ -11,6 +11,7 @@ Optional: hide_source=true when the page has a separate sources section.
 {%- assign ex = ba.calculator_default -%}
 {%- assign cc_to = ba.brent_to | date: "%-d %B %Y" -%}
 {%- assign cc_months = "January,February,March,April,May,June,July,August,September,October,November,December" | split: "," -%}
+<!--uses:/data/brent-oil-price-history/-->
 <section class="oil-widget oil-calc" id="{{ cc }}" data-oil-calculator data-src="{{ '/assets/data/oil.json' | relative_url }}" aria-labelledby="{{ cc }}-title">
 <h3 class="oil-title" id="{{ cc }}-title">{{ include.title | default: "What if you had bought oil?" }}</h3>
 <p class="oil-fallback" data-fallback>$1,000 put into Brent at the spot price of ${{ ex.price }} a barrel on {{ ex.date | date: "%-d %B %Y" }} would have bought {{ ex.barrels }} barrels. At ${{ ex.latest_price }} on {{ cc_to }}, they’d be worth ${{ ex.value }}. With JavaScript on, you can try your own amount and dates here.</p>

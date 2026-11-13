@@ -883,8 +883,9 @@ a:hover { text-decoration-thickness: 2px; }
 .investment-table { min-width: 900px; }
 .investment-table caption { padding-bottom: 14px; font-size: 13.5px; text-align: left; color: var(--muted); }
 .investment-method { max-width: var(--read); margin-bottom: 72px; }
-.investment-method h3 { margin-top: 28px; }
-.investment-formula { overflow-wrap: anywhere; font-family: var(--sans); font-size: 16px; }
+/* The method's detail sits in expanders (.faq), whose paragraph style would otherwise restyle the formula and the small print. */
+.investment-method .investment-formula { overflow-wrap: anywhere; font-family: var(--sans); font-size: 16px; }
+.investment-method .faq .meta { font: 400 14px/1.6 var(--sans); }
 @media (max-width: 900px) {
   .investment .investment-form, .investment .investment-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

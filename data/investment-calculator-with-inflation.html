@@ -4,7 +4,7 @@ title: Investment calculator with inflation
 seo_title: Investment calculator with inflation | Money, Old and New
 description: "Model a starting amount and monthly savings, with assumed returns, inflation and fees. Compare future euros with today’s purchasing power."
 permalink: /data/investment-calculator-with-inflation/
-last_modified_at: 2026-11-03
+last_modified_at: 2026-11-13
 jumps:
   - { label: Calculate, href: "#investment" }
   - { label: Compare two fees, href: "#fee-comparison" }
@@ -19,22 +19,33 @@ sources_href: "#method"
 {% include page-jumps.html %}
 {% include investment-calculator.html labelledby="investment-page-title" %}
 {% include fee-comparison.html %}
+<aside class="next-step" aria-labelledby="next-step-title">
+<div>
+<h2 id="next-step-title">Looking back instead?</h2>
+<p>See what cash, deposits, bonds, gold and stocks became since 1999, after inflation.</p>
+</div>
+<a href="{{ '/data/euro-inflation-calculator/' | relative_url }}">Euro inflation calculator <span aria-hidden="true">→</span></a>
+</aside>
 <div class="investment-method page-content">
 <h2 class="section-title" id="method">Assumptions and method</h2>
 <p>The starting amount is invested immediately. Each monthly payment arrives after that month’s growth and fee, so the final payment has no time to earn a return or incur a fee. A zero-month horizon includes only the starting amount. The monthly payment does not rise with inflation.</p>
 <p>Return and inflation are constant annual effective assumptions. They may be negative, but must be above −100%. The fee is a fraction of the balance, from 0% to below 100%. This smooth path leaves out market fluctuations, taxes, transaction charges and fixed account fees. It is a scenario, not a prediction or a product quotation.</p>
-<h3>Growth and the fee</h3>
-<p>We use an annual-factor approximation: the net annual growth factor is <strong>(1 + gross return) × (1 − annual fee)</strong>. The monthly factor is its twelfth root. This spreads the fee’s effect across the months rather than deducting a bill once a year. Actual charging schedules can differ.</p>
+<div class="faq investment-method-details">
+<details><summary>Growth and the fee</summary><p>We use an annual-factor approximation: the net annual growth factor is <strong>(1 + gross return) × (1 − annual fee)</strong>. The monthly factor is its twelfth root. This spreads the fee’s effect across the months rather than deducting a bill once a year. Actual charging schedules can differ.</p>
 <p class="investment-formula">Monthly balance = previous balance × [(1 + r) × (1 − f)]<sup>1/12</sup> + monthly payment.</p>
 <p>Here, <em>r</em> and <em>f</em> are annual rates as decimals: 5% is 0.05. With a 5% gross return and 1% fee, the annual factor is 1.05 × 0.99 = 1.0395: a 3.95% net return. The no-fee comparison uses the same starting amount, payment dates, horizon and gross return, with <em>f</em> = 0. Fee drag is the difference between the two ending balances, including its compounding effect.</p>
-<h3>Today’s purchasing power</h3>
-<p>For <em>n</em> months and assumed annual inflation <em>i</em>, the price factor is (1 + i)<sup>n/12</sup>. The real ending balance is the nominal ending balance divided by that factor. “Today” is the start of your scenario, not a future endpoint.</p>
+</details>
+<details><summary>Today’s purchasing power</summary><p>For <em>n</em> months and assumed annual inflation <em>i</em>, the price factor is (1 + i)<sup>n/12</sup>. The real ending balance is the nominal ending balance divided by that factor. “Today” is the start of your scenario, not a future endpoint.</p>
 <p>We also divide each payment by the inflation factor at the month it enters the account. Total contributions in today’s money are the starting amount plus the sum of those discounted payments. The real gain or loss compares this total with the real ending balance. This keeps both sides at the same prices.</p>
 <p>For example, with no starting amount, zero return and no fee, one €100 payment at the end of one year with 10% annual inflation has a value of €90.91 in start-date money. Its ending balance is also €90.91 on that basis, so the real gain is zero. The calculator applies this principle to each monthly payment separately.</p>
-<p class="oil-note">Limits: amounts up to €1 billion each; a horizon up to 100 years in whole months; annual return and inflation up to 1,000%. Combinations producing values above €1,000 trillion are rejected. Values are calculated without rounding, then shown to the nearest cent.</p>
-<h3>Sources and a different view of inflation</h3>
-<p>The <a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.en.html">ECB’s explanation of inflation</a> describes how price rises reduce purchasing power and why households experience them differently. The US SEC’s <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/updated">bulletin on investment fees</a> (23 July 2025) explains how fees reduce the balance left to compound. These explain the concepts; the scenario uses your inputs and the method above, with no official rate carried forward.</p>
+</details>
+<details><summary>Limits and rounding</summary>
+<p>Limits: amounts up to €1 billion each; a horizon up to 100 years in whole months; annual return and inflation up to 1,000%. Combinations producing values above €1,000 trillion are rejected. Values are calculated without rounding, then shown to the nearest cent.</p>
+</details>
+<details><summary>Sources and a different view of inflation</summary><p>The <a href="https://www.ecb.europa.eu/ecb-and-you/explainers/tell-me-more/html/what_is_inflation.en.html">ECB’s explanation of inflation</a> describes how price rises reduce purchasing power and why households experience them differently. The US SEC’s <a href="https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/updated">bulletin on investment fees</a> (23 July 2025) explains how fees reduce the balance left to compound. These explain the concepts; the scenario uses your inputs and the method above, with no official rate carried forward.</p>
 <p>For observed history, use the <a href="{{ '/data/euro-inflation-calculator/' | relative_url }}">euro inflation calculator</a>. Its inflation-adjusted view restates historical balances and payments in end-month euros using observed HICP. This tool instead discounts a hypothetical future back to prices at the start.</p>
 <p class="meta">Source explanations checked 2 November 2026.</p>
+</details>
+</div>
 </div>
 </div>

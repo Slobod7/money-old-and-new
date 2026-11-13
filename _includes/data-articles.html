@@ -1,0 +1,20 @@
+{%- comment -%}
+On a data page: a card leading to the latest article that uses this page's chart or calculator.
+  {% include data-articles.html %}
+Optional: heading (the card's heading; the default is "This chart in an article").
+Nothing is listed by hand. An include that belongs to a data page prints a comment naming that page
+(<!--uses:/data/ecb-interest-rates/-->), and this looks for it in each article, newest first. The same includes link
+back from the article, under the chart. With no such article yet, it prints nothing.
+{%- endcomment -%}
+{%- assign uses_marker = "<!--uses:" | append: page.url | append: "-->" -%}
+{%- assign uses_posts = site.posts | where_exp: "p", "p.content contains uses_marker" -%}
+{%- assign uses_post = uses_posts | first -%}
+{%- if uses_post %}
+<aside class="next-step" aria-labelledby="in-article-title">
+<div>
+<h2 id="in-article-title">{{ include.heading | default: "This chart in an article" }}</h2>
+<p>{{ uses_post.title }}</p>
+</div>
+<a href="{{ uses_post.url | relative_url }}">Read the article <span aria-hidden="true">→</span></a>
+</aside>
+{%- endif %}
