@@ -100,7 +100,7 @@ Quiet and well made: warm white pages, one forest green for the identity (the ma
 
 - **Type:** Besley regular for headings, articles and introductions; Besley for buttons too; Archivo for navigation, dates and bylines. Articles are set at 19px (18px on phones) with a 680px reading column.
 - **Grid:** on wide screens a narrow left rail holds small labels, dates and an article's contents; everything else lines up on one column to its right. Below 960px the rail stacks above.
-- **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, the accent `#8A2022` (a leathery cherry red, deliberately not a pinkish burgundy), background `#FAF9F6`, dividers `#DEDFD7`, pale sage `#E6EDE8` (the opening block and the ground of every drawing). On forest, the accent is too dark to see, so its light sibling `#F0A8A6` stands in, for the section label and one small mark per block. The strip behind the home calculator's inputs is `#F0F0EA`. Dividers are decorative only; never put forest text on the accent or the reverse. To try a different accent, change `--accent` (and `--accent-soft`) at the top of `assets/css/site.css`: everything follows.
+- **Colours:** text `#242824`, secondary text `#626960`, forest `#173C32`, the accent `#8A2022` (a leathery cherry red, deliberately not a pinkish burgundy), background `#FAF9F6`, dividers `#DEDFD7`, pale sage `#E6EDE8` (the opening block and the ground of every drawing). On forest, the accent is too dark to see, so its light sibling `#F0A8A6` stands in, for the section label and one small mark per block. The strip behind the home calculator's inputs is `#F0F0EA`. Dividers are decorative only; never put forest text on the accent or the reverse. To try a different accent, change `--accent` (and `--accent-soft`) at the top of `assets/css/site.css`: everything follows. One more colour appears in a single place: the fuel map shades rising prices in a clay brown (`#BD7138`, `#7A3D12`), because a change needs two opposed hues and the accent never colours data.
 - **Masthead:** the gateway mark and the site name (set in Besley) at the left, Articles, Data, About and Subscribe at the right. At 640px and below the mark and the name get a little smaller and stay together, and the four links drop to a row of their own once they no longer fit beside them.
 - **Home page:** top to bottom, the slogan "Macro, through your wallet" with the Subscribe button and the writer's name, on the pale sage block; the Latest articles list (the three newest, each with its cover, hidden until the first article is published), the Sunday letter block (forest, with its illustration in `_includes/illustration-sunday-letter.svg` and three cards), the old-vs-new calculator in compartments (inputs on a tinted strip, the answer as one sentence with the amount the red marks stand for picked out and repeated in both keys, the ranking and the chart as two framed cards, the rules, the yearly-rate note and the start-month suggestions folded into "How it works" under the chart), who writes it (your photo, or your initials until `author.photo` is set), the common questions, and a closing Subscribe block in forest. The footer then opens with "Sources and notes": the calculator's disclaimer and sources, and the date the questions were checked. The header has no divider line on any page.
 - **Headings and small print:** a heading stands alone, with no small label above it; the small accent label is kept only where it is the heading itself. A chart or calculator carries no disclaimer or source line of its own: those print in the page footer under "Sources and notes" (see "Small print in the footer" below).
@@ -536,6 +536,67 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 202
 
 ---
 
+## Fuel prices map
+
+What a litre of petrol and diesel costs in each of the 27 EU countries this week, how much of it is tax, and where the price moved over four weeks. It lives at `/data/europe-fuel-prices/`. To put the map in an article, paste this line:
+
+```liquid
+{% include fuel-map.html id="fuel-prices" %}
+```
+
+One per page. Away from the fuel page it carries its own source line, ending with a link to the full page, and the fuel page then shows a card leading to the latest article that uses it.
+
+The page has three parts, all driven by `assets/js/fuel-prices.js`:
+
+- **The map** (`_includes/fuel-map.html`), shaded by price or by four-week change, for petrol (Euro-super 95) or diesel, with a card beside it that splits one place's price into the part before tax and the tax. Without JavaScript it shows petrol prices, each country links to its row in the table, and the card shows the EU average.
+- **Compare two countries**: the answer as a sentence, the figures side by side, and two years of weekly prices at the pump, before tax, or the tax alone. This part needs JavaScript.
+- **The table**, cheapest petrol first. With JavaScript it shows one fuel at a time and sorts by any column; without, it shows both fuels side by side.
+
+The fuel, the view and the two countries go into the page's address (`?fuel=diesel&view=change&country=fr&with=es`), so a comparison can be shared as a link. `country` and `with` take two-letter country codes; `with=eu` is the EU average.
+
+Prices are kept as whole euros per 1,000 litres, which is a tenth of a cent a litre, and shown as €1.877. Tax is always the price with taxes minus the price without, from the same row of the bulletin, so the parts add up exactly. Changes are in cents with one decimal. The page types no figure by hand: its introduction, summary, card and table all read `_data/fuel_prices.json`.
+
+One answer under "Questions about these prices" states a dated fact that the data can't supply: Spain's fuel duty cut of 1 October 2026. `content_checked` in the page's front matter is the day those answers were last checked. Update or remove that sentence when the cut ends.
+
+### Where the data comes from
+
+The European Commission's [Weekly Oil Bulletin](https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en), the workbook behind "Price developments 2005 onwards" (about 4.5 MB). Its sheets "Prices with taxes" and "Prices wo taxes" give each country's national average and the Commission's own consumption-weighted EU average, in euros per 1,000 litres, in rows dated by the Monday of each week. The first row names every column (`FR_price_with_tax_diesel`), and the script finds its columns by those names, not by position. Non-euro countries are already converted to euros by the Commission.
+
+The workbook's own VAT and duty sheets are not used: they don't reproduce the gap between the two price sheets for every country (Ireland's and Poland's are well out), so the page shows total tax only.
+
+The Commission allows reuse with credit and with changes indicated (its [legal notice](https://commission.europa.eu/legal-notice_en)). The page's sources say which steps are this site's.
+
+### How it stays up to date
+
+`scripts/update-fuel-data.py` downloads the workbook, reads it with Python's standard library, and writes `_data/fuel_prices.json` (about 13 KB: the latest week, ready-formatted, with each country's colour classes and the legends) and `assets/data/fuel.json` (about 56 KB: 105 weeks of the four series for each country and the EU). It checks the file as it goes: both sheets and every column present, the two sheets covering the same weeks, the latest week no more than 24 days old, every price plausible and above its pre-tax price, an EU average, and at least 24 of the 27 countries complete. If anything fails it stops with an error and leaves both files as they were. If nothing changed it rewrites nothing.
+
+A country with no figure for the week is shown without one and named under the table. A country whose four figures repeat the week before exactly is marked with a dagger: the bulletin doesn't say whether prices held or no new figures arrived.
+
+`.github/workflows/update-fuel-data.yml` runs it at 07:15 UTC on Mondays and Fridays and commits the two files only if they changed (**Actions → Update fuel data**, which you can also run by hand). The Commission publishes a week's prices a few days after its Monday; Friday's run normally finds them and Monday's catches a late bulletin. To update by hand, from this folder:
+
+```bash
+python3 scripts/update-fuel-data.py
+```
+
+It prints what it wrote, or "No change". Then commit `_data/fuel_prices.json` and `assets/data/fuel.json`. Give it a path to read a workbook you've already downloaded: `python3 scripts/update-fuel-data.py ~/Downloads/history.xlsx`.
+
+If the Commission ever moves the workbook, the script fails with "Download failed". Copy the new link from the bulletin's page into `WORKBOOK_URL` at the top of the script.
+
+### The map's outlines and colours
+
+`_data/fuel_map.json` (about 21 KB) holds one SVG path per country and one for the land around them. `scripts/build-fuel-map.py` made it from Natural Earth's 1:50m countries, which are public domain. Nothing runs it on a schedule. To redraw the map, download [the GeoJSON file](https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson) and run `python3 scripts/build-fuel-map.py path/to/it`. Luxembourg and Malta carry a dot that keeps its size on any screen, because their outlines are too small to see or tap on a phone.
+
+Prices are shaded light to dark in forest's hue, in five equal bands on round numbers that the script picks from the week's spread. The four-week change runs from forest (falling) through a neutral grey (within a cent) to a clay brown (rising). Both scales were checked for colour-blind readers. The colours are at the top of the fuel section in `assets/css/site.css`.
+
+### Check the sums
+
+```bash
+python3 -m unittest tests/test_fuel_updater.py
+node tests/fuel-prices.cjs
+```
+
+The first runs the script on a small workbook it makes itself: the latest week, the tax subtraction, a skipped week, a missing country, repeated figures, and the files it must refuse. The second checks that every figure the script printed for the page is the figure the page's JavaScript works out from the weekly history, then the comparison's sentences. Run both after changing either file.
+
 ## Add a data page
 
 1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
@@ -572,8 +633,11 @@ The data is fixed: `_data/variable_mortgages.json`, retrieved on 10 November 202
 | `assets/js/old-new-calculator.js` | The old-vs-new calculator (see "Old-vs-new calculator"). Loaded only by pages that use it |
 | `assets/data/old-new.json`, `_data/old_new.json` | The old-vs-new calculator's data, written by `scripts/update-old-new-data.py`. Don't edit by hand |
 | `_data/variable_mortgages.json` | The variable-rate mortgage chart's data, fixed (see "Variable-rate mortgage chart") |
+| `_includes/fuel-map.html`, `assets/js/fuel-prices.js` | The fuel prices map and the fuel page's comparison and table (see "Fuel prices map"). The script is loaded only by pages with the map |
+| `_data/fuel_prices.json`, `assets/data/fuel.json` | The fuel page's data, written by `scripts/update-fuel-data.py`. Don't edit by hand |
+| `_data/fuel_map.json` | The map's outlines, written once by `scripts/build-fuel-map.py`. Don't edit by hand |
 | `scripts/`, `tests/` | The data update scripts and the oil calculator's maths test. Not published |
-| `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data, and the Sunday rebuild that publishes scheduled posts |
+| `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the articles |

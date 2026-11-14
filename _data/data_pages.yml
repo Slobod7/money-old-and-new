@@ -15,3 +15,7 @@
   title: Brent oil price history
   description: "The price of a barrel since 1990, with a calculator."
   url: /data/brent-oil-price-history/
+- label: Map
+  title: Petrol and diesel prices in Europe
+  description: "A litre in each EU country this week, and how much of it is tax."
+  url: /data/europe-fuel-prices/

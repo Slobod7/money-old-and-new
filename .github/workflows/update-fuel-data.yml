@@ -1,0 +1,52 @@
+# Updates the fuel prices page twice a week: runs scripts/update-fuel-data.py, which downloads the European
+# Commission's Weekly Oil Bulletin, and commits its two files, but only when the data changed.
+# The Commission publishes a week's prices a few days after its Monday. Friday's run normally picks them up;
+# Monday's run catches a bulletin that came out late. A run that finds nothing new changes nothing.
+# If the download fails or looks wrong, the script stops with an error and leaves its files as they were: the old
+# week stays on the site, dated as such, and this run shows as failed (GitHub emails you about failed runs).
+name: Update fuel data
+
+on:
+  schedule:
+    - cron: '15 7 * * 1,5'   # 07:15 UTC on Mondays and Fridays
+  workflow_dispatch:          # to run it by hand: Actions → Update fuel data → Run workflow
+
+permissions:
+  contents: write   # to push the data commit
+  pages: write      # to ask GitHub Pages to rebuild: a push made with GITHUB_TOKEN doesn't start a Pages build
+
+concurrency:
+  group: update-fuel-data
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download the bulletin and rebuild the fuel files
+        run: python3 scripts/update-fuel-data.py
+
+      - name: Commit if the data changed
+        id: commit
+        run: |
+          files="_data/fuel_prices.json assets/data/fuel.json"
+          if git diff --quiet -- $files; then
+            echo "No change in the data, so nothing to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          week=$(python3 -c 'import json; print(json.load(open("_data/fuel_prices.json"))["week"])')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $files
+          git commit -m "Update fuel prices: week of $week"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Ask GitHub Pages to rebuild the site
+        if: ${{ steps.commit.outputs.changed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"

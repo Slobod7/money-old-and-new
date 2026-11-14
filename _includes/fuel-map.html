@@ -1,0 +1,79 @@
+{%- comment -%}
+The fuel map: the 27 EU countries shaded by the price of a litre of petrol or diesel, or by its change over four weeks,
+with a card beside it that splits one country's price into the part before tax and the tax.
+  {% include fuel-map.html id="fuel-prices" %}
+Optional: source_in_method=true omits the source caption when the host page has its own sources section.
+One per page. Away from /data/europe-fuel-prices/, the source caption ends with a link to that page, and the comment
+before the figure lets that page find the articles that use the map (_includes/data-articles.html).
+Jekyll draws it from _data/fuel_prices.json (the week's figures, written by scripts/update-fuel-data.py) and
+_data/fuel_map.json (the outlines, written once by scripts/build-fuel-map.py), so without JavaScript it shows petrol
+prices, each country links to its row in the page's table, and the card shows the EU average.
+assets/js/fuel-prices.js, added once below, adds the fuel and view tabs, the readout on hover and focus, and the
+choice of country, using assets/data/fuel.json. The same script runs the comparison and the table on the fuel page.
+{%- endcomment -%}
+{%- assign fid = include.id | default: "fuel-prices" -%}
+{%- assign fp = site.data.fuel_prices -%}
+{%- assign fm = site.data.fuel_map -%}
+{%- assign f_week = fp.week | date: "%-d %B %Y" -%}
+<!--uses:/data/europe-fuel-prices/-->
+<figure class="oil-widget fuel-widget" id="{{ fid }}" data-fuel-widget data-src="{{ '/assets/data/fuel.json' | relative_url }}" data-week="{{ fp.week }}">
+<div class="oil-controls" data-controls hidden>
+<div class="oil-tabs" role="group" aria-label="Fuel">
+<button type="button" data-fuel="petrol" aria-pressed="true">Petrol 95</button>
+<button type="button" data-fuel="diesel" aria-pressed="false">Diesel</button>
+</div>
+<div class="oil-tabs" role="group" aria-label="Shade the map by">
+<button type="button" data-view="price" aria-pressed="true">Price per litre</button>
+<button type="button" data-view="change" aria-pressed="false">Four-week change</button>
+</div>
+</div>
+<p class="oil-summary" data-summary aria-live="polite">Petrol is cheapest in {{ fp.cheapest.petrol.name }}, at €{{ fp.cheapest.petrol.price }} a litre, and dearest in {{ fp.dearest.petrol.name }}, at €{{ fp.dearest.petrol.price }}. The EU average is €{{ fp.eu.petrol.price }}.</p>
+<div class="fuel-layout">
+<div class="fuel-map" data-map>
+<svg class="fuel-svg" viewBox="0 0 {{ fm.width }} {{ fm.height }}" role="group" aria-label="Map of the {{ fp.countries }} EU countries, shaded by the price of a litre of petrol in the week of {{ f_week }}. Every figure is in the table on this page.">
+<path class="fuel-around" d="{{ fm.around }}"/>
+{%- for c in fm.countries %}
+{%- assign row = fp.rows | where: "code", c.code | first %}
+{%- if row.petrol %}{% assign f_class = "fuel-s" | append: row.petrol.price_class %}{% else %}{% assign f_class = "fuel-none" %}{% endif %}
+<a class="fuel-country" href="#{{ fid }}-{{ c.code }}" data-code="{{ c.code }}" data-x="{{ c.x }}" data-y="{{ c.y }}"><title>{{ c.name }}: {% if row.petrol %}petrol €{{ row.petrol.price }} a litre{% else %}no petrol price this week{% endif %}{% if row.diesel %}, diesel €{{ row.diesel.price }}{% endif %}</title><path class="fuel-shape {{ f_class }}" d="{{ c.d }}"/>{% if c.dot %}<path class="fuel-dot-ring" d="M{{ c.x }} {{ c.y }}h0.01"/><path class="fuel-dot {{ f_class }}" d="M{{ c.x }} {{ c.y }}h0.01"/>{% endif %}</a>
+{%- endfor %}
+<path class="fuel-ring" data-ring d=""/>
+</svg>
+<ul class="fuel-legend" data-legend aria-label="What the shades mean">
+{%- for label in fp.legend.petrol.price %}
+<li><span class="fuel-key fuel-s{{ forloop.index0 }}"></span>{{ label }}</li>
+{%- endfor %}
+</ul>
+</div>
+<div class="fuel-card" data-card>
+<h3 class="fuel-card-name" data-name>EU average</h3>
+<p class="fuel-card-price"><strong data-price>€{{ fp.eu.petrol.price }}</strong> <span data-unit>a litre of petrol</span></p>
+<div class="fuel-split" data-split aria-hidden="true"><span class="fuel-split-pre" style="flex-grow: {{ 100 | minus: fp.eu.petrol.share }}"></span><span class="fuel-split-tax" style="flex-grow: {{ fp.eu.petrol.share }}"></span></div>
+<dl class="fuel-figures">
+<div><dt><span class="fuel-key fuel-split-pre"></span>Before tax</dt><dd data-pretax>€{{ fp.eu.petrol.pretax }}</dd></div>
+<div><dt><span class="fuel-key fuel-split-tax"></span>Tax</dt><dd><span data-tax>€{{ fp.eu.petrol.tax }}</span> <small data-share>{{ fp.eu.petrol.share }}% of the price</small></dd></div>
+<div><dt>Four-week change</dt><dd><span data-change>{{ fp.eu.petrol.change }}c</span> <small data-parts>before tax {{ fp.eu.petrol.pretax_change }}c, tax {{ fp.eu.petrol.tax_change }}c</small></dd></div>
+<div><dt>{{ fp.fill_litres }}-litre fill</dt><dd data-fill>€{{ fp.eu.petrol.fill }}</dd></div>
+<div data-vs-row hidden><dt>Against the EU average</dt><dd data-vs></dd></div>
+</dl>
+<p class="oil-note" data-repeats hidden>These are the same figures as the week before.</p>
+<div class="oil-field fuel-pick" data-pick hidden>
+<label for="{{ fid }}-country">Show a country</label>
+<select id="{{ fid }}-country" data-country>
+<option value="">EU average</option>
+{%- assign f_by_name = fp.rows | sort: "name" %}
+{%- for row in f_by_name %}
+<option value="{{ row.code }}">{{ row.name }}</option>
+{%- endfor %}
+</select>
+</div>
+</div>
+</div>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">European Commission, Weekly Oil Bulletin</a>. National average prices for the week of {{ f_week }}; tax is the price with taxes minus the price without. Updated {{ fp.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/europe-fuel-prices/" %} <a href="{{ '/data/europe-fuel-prices/' | relative_url }}">Full map and data</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless fuel_prices_script %}
+{%- assign fuel_prices_script = true %}
+<script src="{{ '/assets/js/fuel-prices.js' | relative_url }}" defer></script>
+{%- endunless %}

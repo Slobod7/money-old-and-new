@@ -1,0 +1,180 @@
+---
+layout: default
+title: Petrol and diesel prices in Europe
+seo_title: "Fuel prices in Europe: petrol and diesel by country, with the tax"
+description: "What a litre of petrol and diesel costs in each EU country this week, how much of it is tax, and where prices rose or fell over four weeks. Map, comparison and table."
+permalink: /data/europe-fuel-prices/
+last_modified_at: 2026-11-14
+dataset: fuel_prices
+content_checked: 2026-11-14
+jumps:
+  - { label: Map, href: "#fuel-map-title" }
+  - { label: Compare, href: "#fuel-compare-title" }
+  - { label: All countries, href: "#fuel-table-title" }
+  - { label: Questions, href: "#fuel-questions" }
+sources_href: "#fuel-sources"
+faq:
+  - question: "Is this the price at my local station?"
+    answer: "No. Each figure is a national average that the country’s government reports to the European Commission. A motorway forecourt, a supermarket pump and a border town can all sit well away from it. Countries also collect their prices in different ways, so read a gap of a cent or two between two countries with care."
+  - question: "How is the tax worked out?"
+    answer: "The Commission publishes each price twice, with taxes and without. Tax here is the first minus the second, so it covers VAT, fuel duty and any other levy in the pump price. VAT is a percentage: the tax on a litre rises and falls with the price even when no rate has changed."
+  - question: "Why can an expensive country show a falling price?"
+    answer: "Because the level and the change are different questions. The map’s price view shows where a litre costs most this week. The four-week view shows where it moved, whatever the starting point."
+  - question: "Why did the tax change in one country and not its neighbour?"
+    answer: "Fuel tax is set country by country, and governments moved it often in 2026. Spain, for one, cut its fuel duty by 20 cents a litre from 1 October 2026, under [Royal Decree-law 25/2026](https://sede.agenciatributaria.gob.es/Sede/todas-noticias/2026/septiembre/30/nuevas-medidas-marco-plan-integral-medio.html), with smaller cuts written in for November and December unless fuel prices stay more than 15% above a year earlier. The figures show that a tax moved, not why: check the national decision before reading a change as policy."
+  - question: "Why do some countries’ figures repeat from week to week?"
+    answer: "A dagger in the table marks a country whose four figures are identical to the week before. Either prices held, as in Malta, where the government sets them, or no new figures arrived. The bulletin does not say which."
+---
+{%- assign fp = site.data.fuel_prices %}
+{%- assign f_week = fp.week | date: "%-d %B %Y" %}
+{%- assign f_then = fp.compared_with | date: "%-d %B %Y" %}
+{%- assign f_fuels = "petrol,diesel" | split: "," %}
+<div class="wrap calc-page fuel-page">
+<header class="page-head">
+<h1 class="page-title">Petrol and diesel prices in Europe</h1>
+<p class="page-lede">What a litre costs in each of the {{ fp.countries }} EU countries, how much of it is tax, and where the price rose or fell over four weeks.</p>
+<p class="meta page-vintage">Week of <strong>{{ f_week }}</strong>, EU average petrol €{{ fp.eu.petrol.price }} and diesel €{{ fp.eu.diesel.price }} a litre<span aria-hidden="true"> · </span>Data updated {{ fp.updated | date: "%-d %B %Y" }}</p>
+</header>
+{% include page-jumps.html %}
+<!--footnote-->
+<p><strong>The fuel prices are national averages, not a quote for any station.</strong> They come from the European Commission’s Weekly Oil Bulletin and are dated by the Monday of the bulletin’s week.</p>
+<!--footnote-->
+
+<section aria-labelledby="fuel-map-title">
+<h2 class="section-title" id="fuel-map-title">The map</h2>
+<p class="fuel-map-key">Euro-super 95 petrol and road diesel <span aria-hidden="true">·</span> Euros a litre, taxes included <span aria-hidden="true">·</span> Change since the week of {{ f_then }}</p>
+{% include fuel-map.html id="fuel-prices" source_in_method=true %}
+</section>
+
+<section class="fuel-section" aria-labelledby="fuel-compare-title">
+<h2 class="section-title" id="fuel-compare-title">Compare two countries</h2>
+<p class="section-intro">The gap at the pump is often tax, not the fuel. Pick any two countries and see which.</p>
+<div class="oil-widget fuel-compare" data-fuel-compare hidden>
+<div class="fuel-compare-form">
+<div class="oil-field"><label for="fuel-a">Country</label><select id="fuel-a" data-a></select></div>
+<div class="oil-field"><label for="fuel-b">Compared with</label><select id="fuel-b" data-b></select></div>
+<div class="oil-tabs" role="group" aria-label="Fuel">
+<button type="button" data-fuel="petrol" aria-pressed="true">Petrol 95</button>
+<button type="button" data-fuel="diesel" aria-pressed="false">Diesel</button>
+</div>
+</div>
+<p class="fuel-verdict" data-verdict aria-live="polite"></p>
+<div class="table-wrap">
+<table class="data fuel-compare-table">
+<thead><tr><th scope="col"><span class="visually-hidden">Figure</span></th><th scope="col" class="num" data-head-a></th><th scope="col" class="num" data-head-b></th><th scope="col" class="num">Difference</th></tr></thead>
+<tbody data-compare-rows></tbody>
+</table>
+</div>
+<div class="fuel-history">
+<div class="oil-controls">
+<h3 class="fuel-history-title">Two years, week by week</h3>
+<div class="oil-tabs" role="group" aria-label="The chart shows">
+<button type="button" data-measure="price" aria-pressed="true">At the pump</button>
+<button type="button" data-measure="pretax" aria-pressed="false">Before tax</button>
+<button type="button" data-measure="tax" aria-pressed="false">Tax</button>
+</div>
+</div>
+<ul class="oil-key" data-chart-key></ul>
+<div class="oil-plot fuel-plot" data-plot></div>
+</div>
+</div>
+<p class="fuel-nojs" data-fuel-nojs>The comparison and its chart need JavaScript. Every figure they use is in the table below.</p>
+</section>
+
+<section class="fuel-section" aria-labelledby="fuel-table-title">
+<h2 class="section-title" id="fuel-table-title">All {{ fp.countries }} countries</h2>
+<div class="oil-widget fuel-list" data-fuel-table>
+<div class="oil-controls" data-controls hidden>
+<div class="oil-tabs" role="group" aria-label="Fuel">
+<button type="button" data-fuel="petrol" aria-pressed="true">Petrol 95</button>
+<button type="button" data-fuel="diesel" aria-pressed="false">Diesel</button>
+</div>
+<p class="fuel-sort-hint">Select a column heading to sort, or a country to see it on the map.</p>
+</div>
+<div class="table-wrap" role="region" aria-label="Petrol and diesel prices in each EU country" tabindex="0">
+<table class="data fuel-table">
+<thead>
+<tr class="fuel-groups"><td></td><th scope="colgroup" colspan="6" class="is-petrol">Petrol 95</th><th scope="colgroup" colspan="6" class="is-diesel">Diesel</th></tr>
+<tr>
+<th scope="col" data-sort="name">Country</th>
+{%- for fuel in f_fuels %}
+<th scope="col" class="num is-{{ fuel }}" data-sort="price">Price, € a litre</th>
+<th scope="col" class="num is-{{ fuel }}" data-sort="change">Four-week change</th>
+<th scope="col" class="num is-{{ fuel }}" data-sort="pretax">Before tax</th>
+<th scope="col" class="num is-{{ fuel }}" data-sort="tax">Tax</th>
+<th scope="col" class="num is-{{ fuel }}" data-sort="share">Tax share</th>
+<th scope="col" class="num is-{{ fuel }}" data-sort="fill">{{ fp.fill_litres }}-litre fill</th>
+{%- endfor %}
+</tr>
+</thead>
+<tbody>
+{%- for row in fp.rows %}
+<tr id="fuel-prices-{{ row.code }}" data-code="{{ row.code }}">
+<th scope="row"><span data-country-name>{{ row.name }}</span>{% if row.repeats %}<span class="fuel-dagger" title="Same figures as the week before">&nbsp;†</span>{% endif %}</th>
+{%- for fuel in f_fuels %}
+{%- assign f = row[fuel] %}
+{%- if f %}
+<td class="num is-{{ fuel }}">€{{ f.price }}</td>
+<td class="num is-{{ fuel }}">{% if f.change %}{{ f.change }}c{% else %}–{% endif %}</td>
+<td class="num is-{{ fuel }}">€{{ f.pretax }}</td>
+<td class="num is-{{ fuel }}">€{{ f.tax }}</td>
+<td class="num is-{{ fuel }}">{{ f.share }}%</td>
+<td class="num is-{{ fuel }}">€{{ f.fill }}</td>
+{%- else %}
+<td class="num is-{{ fuel }}" colspan="6">No figure this week</td>
+{%- endif %}
+{%- endfor %}
+</tr>
+{%- endfor %}
+</tbody>
+<tfoot>
+<tr>
+<th scope="row">EU average</th>
+{%- for fuel in f_fuels %}
+{%- assign f = fp.eu[fuel] %}
+<td class="num is-{{ fuel }}">€{{ f.price }}</td>
+<td class="num is-{{ fuel }}">{{ f.change }}c</td>
+<td class="num is-{{ fuel }}">€{{ f.pretax }}</td>
+<td class="num is-{{ fuel }}">€{{ f.tax }}</td>
+<td class="num is-{{ fuel }}">{{ f.share }}%</td>
+<td class="num is-{{ fuel }}">€{{ f.fill }}</td>
+{%- endfor %}
+</tr>
+</tfoot>
+</table>
+</div>
+<p class="oil-note">Week of {{ f_week }}<span data-order>, cheapest petrol first</span>. Changes are in cents a litre since the week of {{ f_then }}. † Same figures as the week before.{% if fp.missing.size > 0 %} No complete figures this week for {{ fp.missing | join: ", " }}.{% endif %}</p>
+</div>
+</section>
+
+{% include data-articles.html heading="This map in an article" %}
+
+<section class="fuel-section fuel-questions" aria-labelledby="fuel-questions">
+<h2 class="section-title" id="fuel-questions">Questions about these prices</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</section>
+
+<section class="fuel-section brent-method" aria-labelledby="fuel-sources">
+<h2 class="section-title" id="fuel-sources">Sources &amp; method</h2>
+<p class="meta">Prices for the week of {{ f_week }}, read on {{ fp.updated | date: "%-d %B %Y" }}. Explanatory notes checked {{ page.content_checked | date: "%-d %B %Y" }}.</p>
+<dl class="brent-source-list">
+<div><dt>Prices</dt><dd><a href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">European Commission, Weekly Oil Bulletin</a>, price developments 2005 onwards: Euro-super 95 petrol and automotive gas oil (road diesel), the consumer price each country reports as most often charged, with and without taxes. Published in euros per 1,000 litres and shown here per litre.</dd></div>
+<div><dt>EU average</dt><dd>The Commission’s own figure in the same bulletin, weighted by how much of each fuel each country uses. It is not an average of the {{ fp.countries }} figures on this page.</dd></div>
+<div><dt>Tax</dt><dd>This site’s subtraction: the price with taxes minus the price without, from the same row of the bulletin. The split of a four-week change into its two parts is the same subtraction at both dates.</dd></div>
+<div><dt>Map</dt><dd>Outlines made with <a href="https://www.naturalearthdata.com/">Natural Earth</a>, simplified, on an equal-area projection. Overseas territories and the smallest islands are left out of the drawing.</dd></div>
+</dl>
+<div class="faq brent-method-details">
+<details><summary>Dates, currencies and gaps</summary>
+<p>The bulletin dates each row by a Monday; countries collect their prices on different days around it. Outside the euro, the Commission converts national prices to euros, so a currency move changes the price shown. The four-week change compares the latest week with the bulletin’s row four Mondays earlier. A country with no figure for a week is shown without one, never filled in.</p>
+</details>
+<details><summary>Update schedule and reuse</summary>
+<p>The saved data is refreshed by a scheduled download each week, after the Commission publishes, with manual updates possible. A failed download or check leaves the previous week in place, and the date at the top of the page says which week you are reading. The Commission can revise earlier weeks. This is not a live feed.</p>
+<p>The <a href="https://commission.europa.eu/legal-notice_en">Commission allows reuse of its content</a> with credit and with changes indicated: here, the conversion to euros per litre, the tax subtraction and the rounding are this site’s. Natural Earth’s map data is in the public domain.</p>
+</details>
+</div>
+</section>
+</div>
