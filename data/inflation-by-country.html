@@ -1,22 +1,25 @@
 ---
 layout: default
 title: Inflation by country
-seo_title: "Inflation by country in Europe: EU ranking and chart"
-description: "Annual inflation in each of the 27 EU countries, ranked for the latest month, and any country against the euro area month by month since 1999."
+seo_title: "Inflation by country in Europe: EU map, ranking and chart"
+description: "Annual inflation in each of the 27 EU countries on a map, where it is rising or falling, and any country against the euro area month by month since 1999."
 permalink: /data/inflation-by-country/
 last_modified_at: 2026-11-14
 dataset: inflation_by_country
 content_checked: 2026-11-14
 jumps:
-  - { label: Ranking, href: "#inflation-ranking-title" }
-  - { label: One country, href: "#inflation-country-title" }
+  - { label: Map, href: "#inflation-map-title" }
+  - { label: Compare, href: "#inflation-compare-title" }
+  - { label: All countries, href: "#inflation-table-title" }
   - { label: Questions, href: "#inflation-questions" }
 sources_href: "#inflation-sources"
 faq:
   - question: "Why does this differ from my country’s own inflation figure?"
     answer: "Because this is the HICP, the index every EU country compiles to the same rules so that the figures can be compared. A national consumer price index follows national rules. The best-known gap: the HICP leaves out the cost of living in a home you own, which some national indexes count."
-  - question: "Why can the ranking be a month behind the euro area’s latest figure?"
-    answer: "Eurostat’s first estimate for a month covers the euro area and the countries in it. The EU countries outside the euro follow with the full release, a couple of weeks later. The ranking waits for all 27, so no country is set against another’s earlier month."
+  - question: "Why can a country with high inflation show as falling?"
+    answer: "Because the level and the change are different questions. The map’s rate view shows where prices are rising fastest. The change view shows where that rate is higher or lower than a year earlier. A falling rate still means rising prices, only more slowly: prices themselves fall only when the rate is below zero."
+  - question: "Why can the map be a month behind the euro area’s latest figure?"
+    answer: "Eurostat’s first estimate for a month covers the euro area and the countries in it. The EU countries outside the euro follow with the full release, a couple of weeks later. The map waits for all 27, so no country is set against another’s earlier month."
   - question: "Does the ECB react to my country’s inflation?"
     answer: "No. The ECB sets one interest rate for the whole euro area and aims for 2% inflation across it, measured by the euro area figure on this page. A country far above or below that average gets the same rate as everyone else. The EU countries outside the euro have their own central banks and their own rates."
   - question: "Is the euro area’s rate the average of the countries shown?"
@@ -25,34 +28,40 @@ faq:
     answer: "Energy, food, alcohol and tobacco, the prices that swing the most. What remains moves more slowly, which is why central banks watch it for where inflation is settling."
 ---
 {%- assign ib = site.data.inflation_by_country %}
+{%- assign ib_x = ib.extremes.headline %}
 {%- capture ib_month %}{{ ib.to | append: "-01" | date: "%B %Y" }}{% endcapture %}
+{%- capture ib_before %}{{ ib.before | append: "-01" | date: "%B %Y" }}{% endcapture %}
 {%- capture ib_since %}{{ ib.from | append: "-01" | date: "%B %Y" }}{% endcapture %}
 {%- assign ib_countries = ib.areas.size | minus: 1 %}
-{%- assign ib_outside = ib.areas | where_exp: "a", "a[2] == false" %}
 <div class="wrap calc-page inflation-page">
 <header class="page-head">
 <h1 class="page-title">Inflation by country</h1>
-<p class="page-lede">The annual inflation rate in each of the {{ ib_countries }} EU countries, ranked, with the euro area marked. Then any one country against the euro area, month by month since {{ ib.from | slice: 0, 4 }}.</p>
-<p class="meta page-vintage">Year to <strong>{{ ib_month }}</strong>: euro area <strong>{{ ib.euro_area.headline | replace: "-", "−" }}%</strong>, from {{ ib.lowest[2] | replace: "-", "−" }}% in {{ ib.lowest[1] }} to {{ ib.highest[2] | replace: "-", "−" }}% in {{ ib.highest[1] }}<span aria-hidden="true"> · </span>Data updated {{ ib.updated | date: "%-d %B %Y" }}</p>
+<p class="page-lede">The annual inflation rate in each of the {{ ib_countries }} EU countries, where it is higher or lower than a year ago, and any country against the euro area month by month since {{ ib.from | slice: 0, 4 }}.</p>
+<p class="meta page-vintage">Year to <strong>{{ ib_month }}</strong>: euro area <strong>{{ ib.euro_area.headline.rate | replace: "-", "−" }}%</strong>, from {{ ib_x.lowest.rate | replace: "-", "−" }}% in {{ ib_x.lowest.place }} to {{ ib_x.highest.rate | replace: "-", "−" }}% in {{ ib_x.highest.place }}<span aria-hidden="true"> · </span>Data updated {{ ib.updated | date: "%-d %B %Y" }}</p>
 </header>
 {% include page-jumps.html %}
 <!--footnote-->
 <p><strong>The inflation figures are Eurostat’s harmonised index (HICP), not a national index.</strong> Eurostat can revise them; this page shows them as they stood when it was last updated.</p>
 <!--footnote-->
 
-<section class="fuel-section" aria-labelledby="inflation-ranking-title">
-<h2 class="section-title" id="inflation-ranking-title">The ranking</h2>
-<p class="fuel-map-key">Consumer prices, change on a year earlier <span aria-hidden="true">·</span> {{ ib_month }} <span aria-hidden="true">·</span> Highest first</p>
-{% include inflation-ranking.html source_in_method=true %}
+<section aria-labelledby="inflation-map-title">
+<h2 class="section-title" id="inflation-map-title">The map</h2>
+<p class="fuel-map-key">Consumer prices, change on a year earlier <span aria-hidden="true">·</span> {{ ib_month }} <span aria-hidden="true">·</span> Change in the rate since {{ ib_before }}</p>
+{% include inflation-map.html id="inflation-map" source_in_method=true %}
 </section>
 
-<section class="fuel-section" aria-labelledby="inflation-country-title">
-<h2 class="section-title" id="inflation-country-title">One country against the euro area</h2>
-<p class="section-intro">The euro area’s rate is the one the ECB steers by. Each country lives with its own. It opens on {{ ib.highest[1] }}, the highest in {{ ib_month }}.</p>
+<section class="fuel-section" aria-labelledby="inflation-compare-title">
+<h2 class="section-title" id="inflation-compare-title">Compare a country with the euro area</h2>
+<p class="section-intro">The euro area’s rate is the one the ECB steers by. Each country lives with its own. Pick a country and set it against the euro area, or against any other country.</p>
 {% include inflation-country-chart.html id="inflation-country" source_in_method=true %}
 </section>
 
-{% include data-articles.html %}
+<section class="fuel-section" aria-labelledby="inflation-table-title">
+<h2 class="section-title" id="inflation-table-title">All {{ ib_countries }} countries</h2>
+{% include inflation-ranking.html source_in_method=true %}
+</section>
+
+{% include data-articles.html heading="This data in an article" %}
 
 <aside class="next-step" aria-labelledby="next-step-title">
 <div>
@@ -78,8 +87,10 @@ faq:
 <div><dt>Inflation</dt><dd><a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, harmonised index of consumer prices (HICP)</a>, annual rate of change: the index in a month against the same month a year earlier, in percent, as Eurostat rounds it to one decimal. Monthly, not seasonally adjusted, from {{ ib_since }}.</dd></div>
 <div><dt>Core</dt><dd>The same rate for all items except energy, food, alcohol and tobacco. It starts later than the headline rate: in {{ ib.core_from.EA | append: "-01" | date: "%B %Y" }} for the euro area, and by {{ ib.core_by | append: "-01" | date: "%B %Y" }} in every country.</dd></div>
 <div><dt>Euro area</dt><dd>Eurostat’s figure for the area as it was each month, with a country counted from the month it adopted the euro. It is weighted by household spending, so it is not an average of the bars on this page.</dd></div>
-<div><dt>Ranking</dt><dd>This site’s ordering of Eurostat’s rates for the latest month all {{ ib_countries }} countries have. Countries with the same rate are listed by name.</dd></div>
+<div><dt>Change in a year</dt><dd>This site’s subtraction: the published rate for {{ ib_month }} minus the rate for {{ ib_before }}, in percentage points. It says whether inflation is higher or lower than a year earlier, not whether prices fell.</dd></div>
 <div><dt>Gap</dt><dd>This site’s subtraction: a country’s published rate minus the euro area’s, in percentage points.</dd></div>
+<div><dt>Ranking</dt><dd>This site’s ordering of Eurostat’s rates for the latest month all {{ ib_countries }} countries have. Countries with the same rate are listed by name.</dd></div>
+<div><dt>Map</dt><dd>Outlines made with <a href="https://www.naturalearthdata.com/">Natural Earth</a>, simplified, on an equal-area projection. Overseas territories and the smallest islands are left out of the drawing. Each view has five shades in equal bands, set afresh at every update from that month’s lowest and highest figures.</dd></div>
 </dl>
 <div class="faq brent-method-details">
 <details><summary>Estimates, breaks and checks</summary>
@@ -88,7 +99,7 @@ faq:
 </details>
 <details><summary>Update schedule and reuse</summary>
 <p>The saved data is refreshed by a scheduled download on the 18th of each month, with manual updates possible. The page ends at the last month every country has reported, so a flash estimate for the euro area alone does not move it, and a full release that comes out after the download shows at the next one. Eurostat revises earlier months, and an update takes the revisions with it. This is not a live feed.</p>
-<p><a href="https://ec.europa.eu/eurostat/help/copyright-notice">Eurostat allows reuse of its data</a> with the source named. The ranking, the gap to the euro area and each country’s highest rate are this site’s work on those figures.</p>
+<p><a href="https://ec.europa.eu/eurostat/help/copyright-notice">Eurostat allows reuse of its data</a> with the source named. The ranking, the change over a year, the gap to the euro area and each country’s highest rate are this site’s work on those figures. Natural Earth’s map data is in the public domain.</p>
 </details>
 </div>
 </section>

@@ -190,31 +190,62 @@ class AssembleTests(unittest.TestCase):
         with self.assertRaisesRegex(m.DataError, "copy of Euro area headline"):
             assemble(eurostat, ecb)
 
-    def test_the_ranking_runs_highest_first_with_the_euro_area_in_place(self):
-        headline = {'EA': series(3.8), 'RO': series(6.5), 'IE': series(3.8), 'AT': series(3.8), 'SE': series(1.0), 'HU': series(-0.4)}
+    def test_the_rows_run_highest_first_with_the_euro_area_in_place(self):
+        romania, area = series(6.5), series(3.8)
+        romania['2025-09'], area['2025-09'] = 8.6, 2.2
+        headline = {'EA': area, 'RO': romania, 'IE': series(3.8), 'AT': series(3.8), 'SE': series(1.0), 'HU': series(-0.4)}
         core = {'RO': series(7.0, '2001-12'), 'EA': series(2.5, '2000-12')}
         page, _, _ = assemble(*downloads(headline=headline, core=core))
-        rows = {row[0]: row for row in page['ranking']}
-        order = [row[0] for row in page['ranking']]
+        rows = {row['code']: row for row in page['rows']}
+        order = [row['code'] for row in page['rows']]
         self.assertEqual(len(order), 28)
-        self.assertEqual([float(row[3]) for row in page['ranking']], sorted((float(row[3]) for row in page['ranking']), reverse=True))
+        rates = [float(row['headline']['rate']) for row in page['rows']]
+        self.assertEqual(rates, sorted(rates, reverse=True))
         # A tie: the euro area first, then the countries by name
         self.assertEqual(order[order.index('EA'):order.index('EA') + 3], ['EA', 'AT', 'IE'])
-        self.assertEqual(rows['RO'], ['RO', 'Romania', False, '6.5', '7.0', '+2.7'])
-        self.assertEqual(rows['EA'], ['EA', 'Euro area', None, '3.8', '2.5', ''])
-        self.assertEqual(rows['IE'][5], '0.0')
-        self.assertEqual(rows['SE'][5], '-2.8')
-        self.assertEqual(rows['HU'][3:6:2], ['-0.4', '-4.2'])
-        self.assertEqual(page['euro_area'], {'headline': '3.8', 'core': '2.5'})
-        self.assertEqual(page['lowest'], ['HU', 'Hungary', '-0.4'])
-        self.assertEqual(page['above'], sum(1 for row in page['ranking'] if row[0] != 'EA' and float(row[3]) > 3.8))
-        self.assertEqual(page['rank_scale'], [-1, 9])
+        ro = rows['RO']
+        self.assertEqual((ro['name'], ro['place'], ro['euro']), ('Romania', 'Romania', False))
+        self.assertEqual({k: ro['headline'][k] for k in ('rate', 'before', 'change', 'gap', 'gap_before')},
+                         {'rate': '6.5', 'before': '8.6', 'change': '-2.1', 'gap': '+2.7', 'gap_before': '+6.4'})
+        self.assertEqual((ro['core']['rate'], ro['core']['change'], ro['core']['gap']), ('7.0', '0.0', '+4.5'))
+        # The euro area has no gap to itself and no shade on the map
+        self.assertEqual(rows['EA']['headline'], {'rate': '3.8', 'before': '2.2', 'change': '+1.6', 'peak': '3.8', 'peak_month': '2026-09'})
+        self.assertEqual((rows['EA']['euro'], rows['EA']['place'], rows['NL']['place']), (None, 'the euro area', 'the Netherlands'))
+        self.assertEqual(page['euro_area'], {'headline': rows['EA']['headline'], 'core': rows['EA']['core']})
+        self.assertEqual(rows['IE']['headline']['gap'], '0.0')
+        self.assertEqual(rows['SE']['headline']['gap'], '-2.8')
+        self.assertEqual((rows['HU']['headline']['rate'], rows['HU']['headline']['gap']), ('-0.4', '-4.2'))
+        self.assertEqual((page['to'], page['before']), ('2026-09', '2025-09'))
+        ends = page['extremes']['headline']
+        self.assertEqual(ends['highest'], {'code': 'BE', 'place': 'Belgium', 'rate': '8.8'})
+        self.assertEqual(ends['lowest'], {'code': 'HU', 'place': 'Hungary', 'rate': '-0.4'})
+        self.assertEqual(ends['above'], sum(1 for row in page['rows'] if row['code'] != 'EA' and float(row['headline']['rate']) > 3.8))
+        self.assertEqual(page['extremes']['core']['highest'], {'code': 'RO', 'place': 'Romania', 'rate': '7.0'})
 
     def test_the_page_opens_on_the_country_with_the_highest_rate(self):
         page, _, _ = assemble(*downloads(headline={'EA': series(9.9), 'LT': series(9.5)}))
-        self.assertEqual(page['ranking'][0][0], 'EA')
+        self.assertEqual(page['rows'][0]['code'], 'EA')
         self.assertEqual(page['default'], 'LT')
-        self.assertEqual(page['highest'], ['LT', 'Lithuania', '9.5'])
+        self.assertEqual(page['extremes']['headline']['highest'], {'code': 'LT', 'place': 'Lithuania', 'rate': '9.5'})
+
+    def test_the_map_bands_and_each_country_s_shade(self):
+        # Flat series in AREAS order: Austria 8.9% down to Sweden 6.3%, none of them moving
+        page, script, _ = assemble(*downloads())
+        bands = {'rate': [7.0, 8.0, 9.0, 10.0], 'change': [-0.5, -0.2, 0.2, 0.5]}
+        self.assertEqual(page['map_scales']['headline'], bands)
+        self.assertEqual(script['map_scales'], page['map_scales'])
+        self.assertEqual(page['legend']['headline']['rate'], ['Under 7%', '7% to 8%', '8% to 9%', '9% to 10%', '10% or more'])
+        self.assertEqual(page['legend']['headline']['change'], ['Down 0.5 points or more', 'Down 0.2 to 0.5', 'Within 0.2', 'Up 0.2 to 0.5', 'Up 0.5 points or more'])
+        rows = {row['code']: row for row in page['rows']}
+        self.assertEqual([rows[c]['headline']['rate_class'] for c in ('AT', 'FR', 'DE', 'SE')], [2, 2, 1, 0])   # 8.9, 8.0 on the break, 7.9, 6.3
+        self.assertEqual({row['headline']['change_class'] for row in page['rows'] if row['code'] != 'EA'}, {2})
+        self.assertNotIn('rate_class', rows['EA']['headline'])
+        # One country that fell by more than the outer band widens it for all of them
+        cyprus = series(3.0)
+        cyprus['2025-09'] = 8.4
+        page, _, _ = assemble(*downloads(headline={'CY': cyprus}))
+        self.assertEqual(page['map_scales']['headline']['change'], [-2, -0.2, 0.2, 2])
+        self.assertEqual(next(row for row in page['rows'] if row['code'] == 'CY')['headline']['change_class'], 0)
 
     def test_peaks_and_chart_scales(self):
         romania = series(4.0)
@@ -222,9 +253,15 @@ class AssembleTests(unittest.TestCase):
         romania.update({'2000-01': 56.7, '2016-09': -2.9, '2022-11': 14.6, '2023-01': 14.6})
         estonia = series(3.0)
         estonia.update({'2022-06': 25.2, '2022-08': 25.2})
-        page, _, _ = assemble(*downloads(headline={'EA': series(2.0), 'RO': romania, 'EE': estonia}))
-        self.assertEqual(page['peaks']['RO'], ['2000-01', '56.7'])
-        self.assertEqual(page['peaks']['EE'], ['2022-08', '25.2'])   # reached twice: the later month
+        # Core is counted from the first month every area has, so Bulgaria's early peak is left out
+        bulgaria = series(3.0, '1999-01')
+        bulgaria.update({'2000-05': 13.2, '2008-07': 11.4})
+        page, _, _ = assemble(*downloads(headline={'EA': series(2.0), 'RO': romania, 'EE': estonia}, core={'BG': bulgaria}))
+        rows = {row['code']: row for row in page['rows']}
+        self.assertEqual(page['since'], {'headline': '1999-01', 'core': '2001-12'})
+        self.assertEqual((rows['RO']['headline']['peak'], rows['RO']['headline']['peak_month']), ('56.7', '2000-01'))
+        self.assertEqual((rows['EE']['headline']['peak'], rows['EE']['headline']['peak_month']), ('25.2', '2022-08'))   # reached twice: the later month
+        self.assertEqual((rows['BG']['core']['peak'], rows['BG']['core']['peak_month']), ('11.4', '2008-07'))
         self.assertEqual(page['scales']['RO'], {'5y': [0, 15, 5], '10y': [-3, 15, 5], 'all': [-3, 60, 10]})
         self.assertEqual(page['scales']['EA']['all'], [0, 2, 1])
         self.assertEqual(page['scales']['EE'], {'5y': [0, 30, 5], '10y': [0, 30, 5], 'all': [0, 30, 5]})
@@ -261,6 +298,39 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(m.chart_scale([0.0, 0.0]), [0, 1, 1])
         self.assertEqual(m.chart_scale([-2.0, -0.5]), [-2, 1, 1])
         self.assertEqual(m.chart_scale([3.0, 547.6]), [0, 550, 50])
+
+    def test_the_map_s_rate_bands_are_equal_and_round(self):
+        self.assertEqual(m.rate_scale([1.0, 6.5]), [1.5, 3.0, 4.5, 6.0])
+        self.assertEqual(m.rate_scale([1.1, 7.0]), [1.5, 3.0, 4.5, 6.0])
+        self.assertEqual(m.rate_scale([-2.8, 0.8]), [-2.0, -1.0, 0.0, 1.0])
+        self.assertEqual(m.rate_scale([7.1, 22.5]), [8.0, 12.0, 16.0, 20.0])
+        self.assertEqual(m.rate_scale([2.0, 2.0]), [2.5, 3.0, 3.5, 4.0])
+        with self.assertRaisesRegex(m.DataError, 'too far apart'):
+            m.rate_scale([-15.0, 400.0])
+        bands = [1.5, 3.0, 4.5, 6.0]   # a rate on a break joins the band above
+        self.assertEqual([m.rate_class(v, bands) for v in (1.0, 1.4, 1.5, 2.9, 3.0, 4.4, 5.9, 6.0, 6.5)], [0, 0, 1, 1, 2, 2, 3, 4, 4])
+        self.assertEqual([m.rate_class(v, [-2.0, -1.0, 0.0, 1.0]) for v in (-2.8, -2.0, -0.1, 0.0, 0.8)], [0, 1, 2, 3, 3])
+
+    def test_the_map_s_change_bands_sit_either_side_of_no_change(self):
+        self.assertEqual(m.change_scale([-2.2, 5.2]), [-2, -0.2, 0.2, 2])
+        self.assertEqual(m.change_scale([0.1, -0.3]), [-0.5, -0.2, 0.2, 0.5])
+        self.assertEqual(m.change_scale([-20.2, 3.0]), [-10, -0.2, 0.2, 10])
+        bands = [-2, -0.2, 0.2, 2]
+        self.assertEqual([m.change_class(v, bands) for v in (-2.2, -2.0, -1.9, -0.3, -0.2, 0.0, 0.2, 0.3, 1.9, 2.0, 5.2)],
+                         [0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4])
+
+    def test_the_legend_s_words(self):
+        self.assertEqual(m.legend([1.5, 3.0, 4.5, 6.0], [-2, -0.2, 0.2, 2]), {
+            'rate': ['Under 1.5%', '1.5% to 3%', '3% to 4.5%', '4.5% to 6%', '6% or more'],
+            'change': ['Down 2 points or more', 'Down 0.2 to 2', 'Within 0.2', 'Up 0.2 to 2', 'Up 2 points or more']})
+        words = m.legend([-2.0, -1.0, 0.0, 1.0], [-1, -0.2, 0.2, 1])
+        self.assertEqual(words['rate'][:3], ['Under −2%', '−2% to −1%', '−1% to 0%'])
+        self.assertEqual((words['change'][0], words['change'][4]), ('Down 1 point or more', 'Up 1 point or more'))
+
+    def test_places_and_rows_on_their_own_lines(self):
+        self.assertEqual([m.place(n) for n in ('Netherlands', 'Euro area', 'Czechia')], ['the Netherlands', 'the euro area', 'Czechia'])
+        text = m.dumps({'to': '2026-09', 'rows': [{'code': 'RO'}, {'code': 'SE'}], 'headline': [['2026-09', 6.5]]})
+        self.assertEqual(text, '{\n"to":"2026-09",\n"rows":[\n{"code":"RO"},\n{"code":"SE"}\n],\n"headline":[\n["2026-09",6.5]\n]\n}\n')
 
     def test_signed_points_and_windows(self):
         self.assertEqual([m.signed(v) for v in (2.7, -0.4, 0.0, -0.04, 0.04)], ['+2.7', '-0.4', '0.0', '0.0', '0.0'])
@@ -325,7 +395,7 @@ class MainTests(unittest.TestCase):
         code, _ = self.run_main(lambda today: assemble(*downloads(headline={'RO': series(9.9)})))
         self.assertEqual(code, 0)
         page, script = (json.loads(b) for b in self.read())
-        self.assertEqual(page['highest'], ['RO', 'Romania', '9.9'])
+        self.assertEqual(page['extremes']['headline']['highest'], {'code': 'RO', 'place': 'Romania', 'rate': '9.9'})
         self.assertEqual(script['headline'][-1][script['cols'].index('RO')], 9.9)
 
 
@@ -336,13 +406,13 @@ class StoredFileTests(unittest.TestCase):
         root = pathlib.Path(__file__).parents[1]
         page = json.loads((root / '_data/inflation_by_country.json').read_text(encoding='utf-8'))
         script = json.loads((root / 'assets/data/inflation-by-country.json').read_text(encoding='utf-8'))
-        for key in ('updated', 'source_updated', 'from', 'to', 'months', 'areas', 'core_from', 'core_by', 'cols', 'headline', 'core'):
+        for key in ('updated', 'source_updated', 'from', 'to', 'before', 'since', 'months', 'areas', 'core_from', 'core_by', 'map_scales', 'cols', 'headline', 'core'):
             self.assertEqual(page[key], script[key], key)
-        self.assertEqual(len(page['ranking']), 28)
+        self.assertEqual(len(page['rows']), 28)
         self.assertEqual(page['headline'][-1][0], page['to'])
         self.assertEqual(len(page['headline']), page['months'])
         col = page['cols'].index(page['default'])
-        self.assertEqual(m.pct(page['headline'][-1][col]), page['highest'][2])
+        self.assertEqual(m.pct(page['headline'][-1][col]), page['extremes']['headline']['highest']['rate'])
 
 
 if __name__ == '__main__':

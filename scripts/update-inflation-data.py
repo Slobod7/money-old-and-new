@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Update the data behind the inflation-by-country page (data/inflation-by-country.html, _includes/inflation-ranking.html
-and _includes/inflation-country-chart.html).
+"""Update the data behind the inflation-by-country page (data/inflation-by-country.html and its three includes:
+inflation-map.html, inflation-country-chart.html and inflation-ranking.html).
 
 Downloads, with no API key:
   - prc_hicp_minr, unit RCH_A                 from Eurostat: HICP, annual rate of change, monthly, for the euro area and
@@ -13,8 +13,8 @@ Downloads, with no API key:
                                               answer: the figures on the page are Eurostat's own.
 
 Writes:
-  _data/inflation_by_country.json         everything Jekyll draws: the latest month's ranking, each area's peak and
-                                          chart scales, and every month for every area
+  _data/inflation_by_country.json         everything Jekyll draws: the latest month's figures for each area in ranking
+                                          order, the map's shade bands, each chart's scale, and every month
   assets/data/inflation-by-country.json   the same months, for the page's script (assets/js/inflation-by-country.js)
 
 Run it from the repository root:   python3 scripts/update-inflation-data.py
@@ -106,6 +106,13 @@ RANGES = [('5y', 60), ('10y', 120), ('all', None)]
 STEPS = (1, 2, 5, 10, 20, 50)   # the gap between the chart's gridlines, in percentage points
 MAX_STEPS = 6
 
+# The map: five shades for the rate, and five for how far the rate has moved in a year
+CLASSES = 5
+BAND_STEPS = (0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10, 15, 20, 25, 30, 40, 50)   # how wide a band of rates may be, in points
+CHANGE_MONTHS = 12
+STEADY = 0.2                     # a rate within this many points of a year earlier is shaded as unchanged
+OUTER = (0.5, 1, 2, 5, 10, 20)   # where the darkest shade of a rise or a fall may start, in points
+
 SOURCES = {
     'inflation': 'Eurostat, HICP, annual rate of change (prc_hicp_minr): all items, and all items excluding energy, '
                  'food, alcohol and tobacco. Euro area in its changing composition.',
@@ -175,6 +182,62 @@ def signed(v):
     """A difference in points with its sign: +2.7, -0.4, and 0.0 with none."""
     text = pct(v)
     return text if text.startswith('-') or float(text) == 0 else '+' + text
+
+
+def place(name):
+    """A name as it reads after "in": the Netherlands, the euro area."""
+    return {'Netherlands': 'the Netherlands', 'Euro area': 'the euro area'}.get(name, name)
+
+
+def tenths(v):
+    """A rate or a difference as a whole number of tenths of a point, which is how the map's bands compare them."""
+    return int(round(v * 10))
+
+
+def rate_scale(values):
+    """Break points for the map's rate shades: CLASSES equal bands on round numbers, as [b1, b2, b3, b4] in points."""
+    lo, hi = tenths(min(values)), tenths(max(values))
+    for step in BAND_STEPS:
+        width = tenths(step)
+        start = lo // width * width
+        if start + CLASSES * width > hi:
+            return [(start + width * i) / 10 for i in range(1, CLASSES)]
+    raise DataError('Rates spread too far apart to draw: {} to {}'.format(min(values), max(values)))
+
+
+def change_scale(values):
+    """Break points for the map's change shades: a band around zero, then two bands each way, as [-b, -STEADY, STEADY, b]."""
+    biggest = max(abs(v) for v in values)
+    outer = max(b for b in OUTER if b == OUTER[0] or b <= biggest / 2)
+    return [-outer, -STEADY, STEADY, outer]
+
+
+def rate_class(value, breaks):
+    """Which shade a rate takes: 0 below the first break, up to len(breaks). A rate on a break joins the band above."""
+    return sum(1 for b in breaks if tenths(value) >= tenths(b))
+
+
+def change_class(value, breaks):
+    """Which shade a change takes: 0 and 4 are falls and rises of the outer break or more, 2 is within STEADY either way."""
+    down_big, down, up, up_big = (tenths(b) for b in breaks)
+    v = tenths(value)
+    return 0 if v <= down_big else 1 if v < down else 2 if v <= up else 3 if v < up_big else 4
+
+
+def plain(v):
+    """A break point as the legend prints it: 3, 4.5, −1."""
+    return '{:g}'.format(v).replace('-', '−')
+
+
+def legend(rate, change):
+    """The words beside each shade, lowest first. assets/js/inflation-by-country.js writes the same (legendLabels)."""
+    rates = (['Under {}%'.format(plain(rate[0]))] + ['{}% to {}%'.format(plain(a), plain(b)) for a, b in zip(rate, rate[1:])]
+             + ['{}% or more'.format(plain(rate[-1]))])
+    big, small = plain(change[3]), plain(change[2])
+    points = '{} point{}'.format(big, '' if change[3] == 1 else 's')
+    changes = ['Down {} or more'.format(points), 'Down {} to {}'.format(small, big), 'Within {}'.format(small),
+               'Up {} to {}'.format(small, big), 'Up {} or more'.format(points)]
+    return {'rate': rates, 'change': changes}
 
 
 def chart_scale(values):
@@ -258,26 +321,59 @@ def assemble(eurostat, ecb, source_updated, today):
     euro = {area[0]: area[4] for area in AREAS}
     tables = {measure: [[k] + [series[measure, code].get(k) for code in codes] for k in keys] for measure, _, _ in MEASURES}
 
-    # The latest month, highest first. The euro area takes its place among the countries, ahead of any it ties with.
-    headline = {code: series['headline', code][to] for code in codes}
-    core = {code: series['core', code][to] for code in codes}
-    order = sorted(codes, key=lambda code: (-headline[code], code != EURO_AREA, names[code]))
-    ranking = [[code, names[code], euro[code], pct(headline[code]), pct(core[code]),
-                '' if code == EURO_AREA else signed(round(headline[code] - headline[EURO_AREA], 1))]
-               for code in order]
-    countries = [row for row in ranking if row[0] != EURO_AREA]
+    # The latest month against the same month a year earlier, for each measure: the rate, how far it has moved, how
+    # far it is from the euro area's, and the highest it has been. Core starts later, so its highest is counted from
+    # the first month every area has.
+    measures = [measure for measure, _, _ in MEASURES]
+    countries = [code for code in codes if code != EURO_AREA]
+    before = keys[-1 - CHANGE_MONTHS]
+    since = {'headline': FIRST_MONTH, 'core': max(starts['core', code] for code in codes)}
+    check(all(before >= since[m] for m in measures), 'There is no month a year before {} to compare with'.format(to))
 
-    # Each country's highest headline rate since FIRST_MONTH (the latest month, if it was reached twice), and the scale
-    # of each view of its chart, which has to hold the euro area's line too
-    peaks, scales = {}, {}
+    def numbers(measure, code):
+        s = series[measure, code]
+        top = max((k for k in keys if k >= since[measure]), key=lambda k: (s[k], k))   # the later month, if reached twice
+        out = {'rate': s[to], 'before': s[before], 'change': round(s[to] - s[before], 1), 'peak': s[top], 'peak_month': top}
+        if code != EURO_AREA:
+            area = series[measure, EURO_AREA]
+            out.update({'gap': round(s[to] - area[to], 1), 'gap_before': round(s[before] - area[before], 1)})
+        return out
+
+    figures = {(m, code): numbers(m, code) for m in measures for code in codes}
+    map_scales = {m: {'rate': rate_scale([figures[m, c]['rate'] for c in countries]),
+                      'change': change_scale([figures[m, c]['change'] for c in countries])} for m in measures}
+
+    def shown(measure, code):
+        """One area's figures for one measure as the page prints them, with a country's two shades on the map."""
+        f = figures[measure, code]
+        out = {'rate': pct(f['rate']), 'before': pct(f['before']), 'change': signed(f['change']),
+               'peak': pct(f['peak']), 'peak_month': f['peak_month']}
+        if code != EURO_AREA:
+            out.update({'gap': signed(f['gap']), 'gap_before': signed(f['gap_before']),
+                        'rate_class': rate_class(f['rate'], map_scales[measure]['rate']),
+                        'change_class': change_class(f['change'], map_scales[measure]['change'])})
+        return out
+
+    # Highest headline rate first. The euro area takes its place among the countries, ahead of any it ties with.
+    order = sorted(codes, key=lambda code: (-figures['headline', code]['rate'], code != EURO_AREA, names[code]))
+    rows = [dict({'code': code, 'name': names[code], 'place': place(names[code]), 'euro': euro[code]},
+                 **{m: shown(m, code) for m in measures}) for code in order]
+
+    def extremes(measure):
+        """The countries with the highest and the lowest rate (the first by name, if two tie), and how many are above the euro area."""
+        ranked = sorted(countries, key=lambda code: (-figures[measure, code]['rate'], names[code]))
+        ends = {key: {'code': code, 'place': place(names[code]), 'rate': pct(figures[measure, code]['rate'])}
+                for key, code in (('highest', ranked[0]), ('lowest', ranked[-1]))}
+        return dict(ends, above=sum(1 for code in countries if figures[measure, code]['rate'] > figures[measure, EURO_AREA]['rate']))
+
+    # The scale of each view of a country's chart, which has to hold the euro area's line too
+    scales = {}
     for code in codes:
         own = series['headline', code]
-        month = max(keys, key=lambda k: (own[k], k))
-        peaks[code] = [month, pct(own[month])]
         scales[code] = {}
         for view, back in RANGES:
-            shown = keys[window(len(keys), back):]
-            scales[code][view] = chart_scale([s[k] for s in (own, series['headline', EURO_AREA]) for k in shown])
+            shown_months = keys[window(len(keys), back):]
+            scales[code][view] = chart_scale([s[k] for s in (own, series['headline', EURO_AREA]) for k in shown_months])
 
     estimated = [[measure, code] + stretch for measure, _, _ in MEASURES for code in codes
                  for stretch in marked(flags[measure, code], keys, SHOWN)]
@@ -288,11 +384,14 @@ def assemble(eurostat, ecb, source_updated, today):
         'source_updated': source_updated,
         'from': FIRST_MONTH,
         'to': to,
+        'before': before,
+        'since': since,
         'months': len(keys),
         'areas_cols': ['code', 'name', 'uses the euro'],
         'areas': [[area[0], area[3], area[4]] for area in AREAS],
         'core_from': {code: starts['core', code] for code in codes},
-        'core_by': max(starts['core', code] for code in codes),
+        'core_by': since['core'],
+        'map_scales': map_scales,
     }
     series_tables = {
         'cols': ['month'] + codes,
@@ -301,15 +400,11 @@ def assemble(eurostat, ecb, source_updated, today):
     }
     page = dict(shared, **{
         'names': names,
-        'default': countries[0][0],
-        'euro_area': {'headline': pct(headline[EURO_AREA]), 'core': pct(core[EURO_AREA])},
-        'highest': countries[0][:2] + [countries[0][3]],
-        'lowest': countries[-1][:2] + [countries[-1][3]],
-        'above': sum(1 for row in countries if float(row[3]) > float(pct(headline[EURO_AREA]))),
-        'rank_scale': [min(0, math.floor(min(headline.values()))), max(1, math.ceil(max(headline.values())))],
-        'ranking_cols': ['code', 'name', 'uses the euro', 'headline', 'core', 'against the euro area'],
-        'ranking': ranking,
-        'peaks': peaks,
+        'default': next(row['code'] for row in rows if row['code'] != EURO_AREA),
+        'euro_area': {m: shown(m, EURO_AREA) for m in measures},
+        'extremes': {m: extremes(m) for m in measures},
+        'legend': {m: legend(map_scales[m]['rate'], map_scales[m]['change']) for m in measures},
+        'rows': rows,
         'scales': scales,
         'estimated_cols': ['measure', 'code', 'flag', 'first', 'last'],
         'estimated': estimated,
@@ -321,6 +416,20 @@ def assemble(eurostat, ecb, source_updated, today):
     page.update(series_tables)
     script = dict(shared, **series_tables)
     return page, script, (compared, differing)
+
+
+def dumps(obj):
+    """oil.dumps, with a list of objects written one to a line as well, so that a data update reads as a short diff."""
+    lines, items = ['{'], list(obj.items())
+    for i, (key, value) in enumerate(items):
+        comma = ',' if i < len(items) - 1 else ''
+        if isinstance(value, list) and value and isinstance(value[0], (list, dict)):
+            rows = [json.dumps(r, separators=(',', ':'), ensure_ascii=False) for r in value]
+            lines.append('{}:[\n{}\n]{}'.format(json.dumps(key), ',\n'.join(rows), comma))
+        else:
+            lines.append('{}:{}{}'.format(json.dumps(key), json.dumps(value, separators=(',', ':'), ensure_ascii=False), comma))
+    lines.append('}')
+    return '\n'.join(lines) + '\n'
 
 
 def build(today):
@@ -355,11 +464,12 @@ def main():
     # 'updated' is the day this script last found new data, so an unchanged run leaves the files byte for byte alone.
     page = dict({'updated': today.isoformat()}, **page)
     script = dict({'updated': today.isoformat()}, **script)
-    oil.write_atomically([(PAGE_JSON, oil.dumps(page)), (SCRIPT_JSON, oil.dumps(script))])
+    oil.write_atomically([(PAGE_JSON, dumps(page)), (SCRIPT_JSON, dumps(script))])
     for path in (PAGE_JSON, SCRIPT_JSON):
         print('Wrote {} ({:,} bytes)'.format(os.path.relpath(path, ROOT), os.path.getsize(path)))
     print('{} areas to {}; Eurostat last updated {}. Highest: {} {}%, euro area {}%.'.format(
-        len(AREAS), page['to'], page['source_updated'], page['highest'][1], page['highest'][2], page['euro_area']['headline']))
+        len(AREAS), page['to'], page['source_updated'], page['names'][page['extremes']['headline']['highest']['code']],
+        page['extremes']['headline']['highest']['rate'], page['euro_area']['headline']['rate']))
     print("{} of {:,} figures differ from the ECB's copy, none by more than {} point.".format(differing, compared, ECB_STEP))
     return 0
 

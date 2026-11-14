@@ -11,9 +11,9 @@
   title: ECB interest rates
   description: "The ECB’s main rates against euro area inflation, by month."
   url: /data/ecb-interest-rates/
-- label: Chart
+- label: Map
   title: Inflation by country
-  description: "Every EU country’s inflation rate, ranked, and each one against the euro area since 1999."
+  description: "Every EU country’s inflation rate on a map, and each one against the euro area since 1999."
   url: /data/inflation-by-country/
 - label: Chart
   title: Brent oil price history

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Draw the outline map on the fuel prices page (_includes/fuel-map.html), once.
+"""Draw the outline map on the fuel prices page (_includes/fuel-map.html), once. The inflation map
+(_includes/inflation-map.html) uses the same outlines.
 
 Reads Natural Earth's 1:50m countries (public domain, naturalearthdata.com), as GeoJSON:
   https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson
