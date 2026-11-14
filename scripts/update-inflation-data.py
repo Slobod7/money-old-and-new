@@ -292,6 +292,7 @@ def assemble(eurostat, ecb, source_updated, today):
         'areas_cols': ['code', 'name', 'uses the euro'],
         'areas': [[area[0], area[3], area[4]] for area in AREAS],
         'core_from': {code: starts['core', code] for code in codes},
+        'core_by': max(starts['core', code] for code in codes),
     }
     series_tables = {
         'cols': ['month'] + codes,
@@ -314,6 +315,7 @@ def assemble(eurostat, ecb, source_updated, today):
         'estimated': estimated,
         'core_differs': [differs[0], differs[-1]] if differs else [],
         'core_breaks': breaks,
+        'ecb_check': {'compared': '{:,}'.format(compared), 'differing': '{:,}'.format(differing)},
         'sources': SOURCES,
     })
     page.update(series_tables)

@@ -1174,3 +1174,33 @@ th[aria-sort="descending"] .fuel-sort::after { content: " \2193"; }
   .fuel-history .oil-controls { align-items: flex-start; flex-direction: column; }
   .fuel-history { padding-bottom: 40px; }   /* room for the chart's readout, which sits under the plot on a phone */
 }
+
+/* The inflation-by-country page (data/inflation-by-country.html, _includes/inflation-ranking.html and
+   inflation-country-chart.html, enhanced by assets/js/inflation-by-country.js). The ranking is a table drawn as the
+   mortgage chart's bars: muted for the countries, forest and bold for the euro area. Each bar grows from the zero
+   line, which moves in from the left edge (--zero) in a month when some country's prices are falling. The country
+   chart shares the oil widgets' plot, tabs, select and readout and the fuel page's sentence: forest for the country,
+   muted for the euro area. The chart's country is underlined in the ranking, as the current page is in the menu. */
+.ibc-rank { width: 100%; max-width: 760px; margin: 0 0 14px; table-layout: fixed; border-collapse: collapse; font: 400 14px/1.3 var(--sans); }
+.ibc-rank th, .ibc-rank td { padding: 0; font-weight: 400; text-align: left; vertical-align: middle; }
+.ibc-rank thead th { padding-bottom: 8px; font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
+.ibc-rank thead th:first-child { width: 7.8em; }
+.ibc-rank thead th:last-child { width: 4.4em; }
+.ibc-rank .num { text-align: right; font-variant-numeric: tabular-nums; }
+.ibc-rank .mv-track { position: relative; min-height: 30px; border-left: 0; }
+.ibc-rank .mv-track::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc((100% - 3.2em) * var(--zero, 0) / 100); border-left: 1px solid var(--muted); }
+.ibc-rank .mv-bar { margin-left: calc((100% - 3.2em) * var(--s, 0) / 100); }
+.ibc-rank .mv-bar.is-negative { border-radius: 4px 0 0 4px; }
+.ibc-rank .is-marked th, .ibc-rank .is-marked td, .ibc-rank .is-marked .mv-value { font-weight: 600; }
+.ibc-rank .is-marked .mv-bar { background: var(--forest); }
+.ibc-rank a { display: inline-block; padding-block: 6px; color: inherit; text-decoration: none; text-underline-offset: 5px; }
+.ibc-rank a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
+.ibc-rank .is-selected a { color: var(--forest); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+.ibc-chart .ibc-controls { margin-bottom: 20px; }
+.ibc-chart .fuel-verdict { margin-bottom: 8px; }
+.ibc-chart .fuel-nojs { margin-bottom: 16px; }
+.ibc-chart .oil-key { margin-top: 20px; }
+@media (max-width: 600px) {
+  .ibc-rank thead th:first-child { width: 6.9em; }
+  .ibc-rank thead th:last-child { width: 3.6em; }
+}

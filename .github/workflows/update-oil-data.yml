@@ -1,9 +1,9 @@
 # Updates the data behind the charts once a month: runs scripts/update-oil-data.py (the oil widgets),
-# scripts/update-ecb-data.py (the ECB rates chart) and scripts/update-old-new-data.py (the old-vs-new calculator),
-# and commits their files, but only when the data changed.
+# scripts/update-ecb-data.py (the ECB rates chart), scripts/update-old-new-data.py (the old-vs-new calculator) and
+# scripts/update-inflation-data.py (inflation by country), and commits their files, but only when the data changed.
 # If a download fails or looks wrong, that script stops with an error and leaves its files as they were: the other
-# script's update is still committed, the old data stays on the site, and this run shows as failed (GitHub emails you
-# about failed runs).
+# scripts' updates are still committed, the old data stays on the site, and this run shows as failed (GitHub emails
+# you about failed runs).
 name: Update oil data
 
 on:
@@ -36,6 +36,10 @@ jobs:
         if: ${{ !cancelled() }}   # runs even if the others failed
         run: python3 scripts/update-old-new-data.py
 
+      - name: Download inflation by country and rebuild its files
+        if: ${{ !cancelled() }}   # runs even if the others failed
+        run: python3 scripts/update-inflation-data.py
+
       - name: Commit if the data changed
         id: commit
         if: ${{ !cancelled() }}
@@ -43,6 +47,7 @@ jobs:
           oil_files="assets/data/oil.json _data/brent_annual.json"
           ecb_files="_data/ecb_rates_inflation.json"
           old_new_files="assets/data/old-new.json _data/old_new.json"
+          inflation_files="_data/inflation_by_country.json assets/data/inflation-by-country.json"
           parts=()
           if ! git diff --quiet -- $oil_files; then
             parts+=("Brent to $(python3 -c 'import json; print(json.load(open("assets/data/oil.json"))["brent_to"])')")
@@ -53,6 +58,9 @@ jobs:
           if ! git diff --quiet -- $old_new_files; then
             parts+=("old-vs-new calculator to $(python3 -c 'import json; print(json.load(open("assets/data/old-new.json"))["to"])')")
           fi
+          if ! git diff --quiet -- $inflation_files; then
+            parts+=("inflation by country to $(python3 -c 'import json; print(json.load(open("_data/inflation_by_country.json"))["to"])')")
+          fi
           if [ ${#parts[@]} -eq 0 ]; then
             echo "No change in the data, so nothing to commit."
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -60,7 +68,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add $oil_files $ecb_files $old_new_files
+          git add $oil_files $ecb_files $old_new_files $inflation_files
           message=$(printf '%s, ' "${parts[@]}")
           git commit -m "Update chart data: ${message%, }"
           git push

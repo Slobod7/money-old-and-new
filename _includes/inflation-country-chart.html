@@ -1,0 +1,122 @@
+{%- comment -%}
+One country's annual inflation against the euro area's, month by month.
+  {% include inflation-country-chart.html id="inflation-country" %}
+Optional:
+  country   the country it opens on, by its two-letter code (RO, DE, GR…). The default is the one with the highest
+            rate in the latest month, which the update script names in the data.
+  range     the view it opens on: 5y, 10y (the default) or all (since January 1999).
+  title     a heading above the chart.
+  source_in_method   omit the source caption when the host page has its own sources section.
+Give each chart on a page its own id.
+Away from /data/inflation-by-country/, the source caption ends with a link to that page, and the comment before the
+figure lets that page find the articles that use the chart (_includes/data-articles.html).
+Jekyll draws the chart from _data/inflation_by_country.json as inline SVG (headline inflation, the range asked for),
+so it reads the same without JavaScript, and the table beneath has every month of both measures.
+assets/js/inflation-by-country.js, added once per page below, adds the choice of country, measure and range and a
+readout on hover, tap and the arrow keys, from assets/data/inflation-by-country.json.
+{%- endcomment -%}
+{%- assign ic = include.id | default: "inflation-country" -%}
+{%- assign ib = site.data.inflation_by_country -%}
+{%- assign ic_code = include.country | default: ib.default -%}
+{%- unless ib.scales[ic_code] and ic_code != "EA" %}{% assign ic_code = ib.default %}{% endunless -%}
+{%- assign ic_range = include.range | default: "10y" -%}
+{%- unless ib.scales[ic_code][ic_range] %}{% assign ic_range = "10y" %}{% endunless -%}
+{%- assign ic_name = ib.names[ic_code] -%}
+{%- assign ic_scale = ib.scales[ic_code][ic_range] -%}
+{%- assign ic_lo = ic_scale[0] -%}{%- assign ic_hi = ic_scale[1] -%}{%- assign ic_step = ic_scale[2] -%}{%- assign ic_span = ic_hi | minus: ic_lo -%}
+{%- comment -%} Where the view starts: 60 or 120 months before the latest one, or at the first month {%- endcomment -%}
+{%- assign ic_back = 120 -%}{%- if ic_range == "5y" %}{% assign ic_back = 60 %}{% endif -%}
+{%- assign ic_start = ib.months | minus: 1 | minus: ic_back -%}
+{%- if ic_range == "all" or ic_start < 0 %}{% assign ic_start = 0 %}{% endif -%}
+{%- assign ic_n = ib.months | minus: 1 | minus: ic_start -%}
+{%- assign ic_shown = ic_n | plus: 1 -%}
+{%- comment -%} Years under the chart: every year, every second or every fifth, by how long the view is {%- endcomment -%}
+{%- assign ic_every = 5 -%}{%- if ic_shown <= 180 %}{% assign ic_every = 2 %}{% endif -%}{%- if ic_shown <= 72 %}{% assign ic_every = 1 %}{% endif -%}
+{%- assign ic_every2 = ic_every | times: 2 -%}
+{%- for c in ib.cols %}{% if c == ic_code %}{% assign ic_col = forloop.index0 %}{% endif %}{% if c == "EA" %}{% assign ic_ea = forloop.index0 %}{% endif %}{% endfor -%}
+{%- assign ic_first = ib.headline[ic_start] -%}
+{%- assign ic_last = ib.headline | last -%}
+{%- assign ic_row = ib.ranking | where_exp: "r", "r[0] == ic_code" | first -%}
+{%- assign ic_peak = ib.peaks[ic_code] -%}
+{%- capture ic_month %}{{ ib.to | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- capture ic_from %}{{ ic_first[0] | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- capture ic_since %}{{ ib.from | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- assign ic_gap = ic_row[5] | remove: "+" | remove: "-" -%}
+{%- capture ic_against -%}
+{%- if ic_row[5] contains "+" %}{{ ic_gap }} point{% unless ic_gap == "1.0" %}s{% endunless %} above the euro area’s {{ ib.euro_area.headline | replace: "-", "−" }}%
+{%- elsif ic_row[5] contains "-" %}{{ ic_gap }} point{% unless ic_gap == "1.0" %}s{% endunless %} below the euro area’s {{ ib.euro_area.headline | replace: "-", "−" }}%
+{%- else %}the same as the euro area’s {{ ib.euro_area.headline | replace: "-", "−" }}%
+{%- endif -%}
+{%- endcapture -%}
+{%- capture ic_verdict %}Inflation in {{ ic_name }} was {{ ic_row[3] | replace: "-", "−" }}% in {{ ic_month }}, {{ ic_against }}.{% endcapture -%}
+<!--uses:/data/inflation-by-country/-->
+<figure class="oil-widget ibc-chart" id="{{ ic }}" data-inflation-chart data-country="{{ ic_code }}" data-range="{{ ic_range }}" data-src="{{ '/assets/data/inflation-by-country.json' | relative_url }}">
+{%- if include.title %}
+<h3 class="oil-title">{{ include.title }}</h3>
+{%- endif %}
+<div class="fuel-compare-form ibc-controls" data-controls hidden>
+<div class="oil-field"><label for="{{ ic }}-country">Country</label><select id="{{ ic }}-country" data-country-select>
+{%- for a in ib.areas %}{% unless a[0] == "EA" %}
+<option value="{{ a[0] }}"{% if a[0] == ic_code %} selected{% endif %}>{{ a[1] }}</option>
+{%- endunless %}{% endfor %}
+</select></div>
+<div class="oil-tabs" role="group" aria-label="Measure">
+<button type="button" data-measure="headline" aria-pressed="true">Headline</button>
+<button type="button" data-measure="core" aria-pressed="false">Core</button>
+</div>
+<div class="oil-tabs" role="group" aria-label="Time range">
+<button type="button" data-range="5y" aria-pressed="{% if ic_range == '5y' %}true{% else %}false{% endif %}">5Y<span class="visually-hidden">, 5 years</span></button>
+<button type="button" data-range="10y" aria-pressed="{% if ic_range == '10y' %}true{% else %}false{% endif %}">10Y<span class="visually-hidden">, 10 years</span></button>
+<button type="button" data-range="all" aria-pressed="{% if ic_range == 'all' %}true{% else %}false{% endif %}">Since {{ ib.from | slice: 0, 4 }}</button>
+</div>
+</div>
+<p class="fuel-verdict" data-out="verdict" aria-live="polite">{{ ic_verdict }}</p>
+<p class="oil-note" data-out="record">Highest since {{ ic_since }}: {{ ic_peak[1] | replace: "-", "−" }}% in {{ ic_peak[0] | append: "-01" | date: "%B %Y" }}.</p>
+<p class="fuel-nojs" data-nojs>Choosing another country, core inflation or a different period needs JavaScript. Every country’s latest figure is in the ranking{% if page.url == "/data/inflation-by-country/" %} above{% else %} on the <a href="{{ '/data/inflation-by-country/' | relative_url }}">inflation by country</a> page{% endif %}.</p>
+<ul class="oil-key" aria-hidden="true">
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="ecb-line is-strong" x1="1" x2="23" y1="5" y2="5"/></svg><span data-out="key">{{ ic_name }}</span></li>
+<li><svg class="oil-swatch" viewBox="0 0 24 10"><line class="ecb-line is-soft" x1="1" x2="23" y1="5" y2="5"/></svg>Euro area</li>
+</ul>
+<p hidden id="{{ ic }}-desc" data-out="desc">Line chart of inflation in {{ ic_name }} and in the euro area, monthly from {{ ic_from }} to {{ ic_month }}. {{ ic_verdict }} Every month is in the table below.</p>
+<div class="oil-plot ibc-plot" data-plot>
+<div class="oil-static" data-panel role="img" aria-label="Line chart of inflation in {{ ic_name }} and in the euro area, monthly from {{ ic_from }} to {{ ic_month }}. {{ ic_verdict | escape }} Every month is in the table below.">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+{%- for t in (ic_lo..ic_hi) %}{% assign m = t | modulo: ic_step %}{% if m == 0 %}{% assign y = ic_hi | minus: t | times: 1000.0 | divided_by: ic_span | round: 1 %}
+<line class="{% if t == 0 %}oil-axis{% else %}oil-grid{% endif %}" x1="0" x2="1000" y1="{{ y }}" y2="{{ y }}"/>
+{%- endif %}{% endfor %}
+<polyline class="ecb-line is-soft" points="{% for row in ib.headline offset: ic_start %}{{ forloop.index0 | times: 1000.0 | divided_by: ic_n | round: 1 }},{{ ic_hi | minus: row[ic_ea] | times: 1000.0 | divided_by: ic_span | round: 1 }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"/>
+<polyline class="ecb-line is-strong" points="{% for row in ib.headline offset: ic_start %}{{ forloop.index0 | times: 1000.0 | divided_by: ic_n | round: 1 }},{{ ic_hi | minus: row[ic_col] | times: 1000.0 | divided_by: ic_span | round: 1 }}{% unless forloop.last %}{{ " " }}{% endunless %}{% endfor %}"/>
+</svg>
+{%- for t in (ic_lo..ic_hi) %}{% assign m = t | modulo: ic_step %}{% if m == 0 %}
+<span class="oil-static-y" style="bottom: {{ t | minus: ic_lo | times: 100.0 | divided_by: ic_span | round: 2 }}%">{{ t | replace: "-", "−" }}%</span>
+{%- endif %}{% endfor %}
+{%- for row in ib.headline offset: ic_start %}{% assign ym = row[0] | split: "-" %}{% if ym[1] == "01" %}{% assign year = ym[0] | plus: 0 %}{% assign m = year | modulo: ic_every %}{% if m == 0 %}{% assign m2 = year | modulo: ic_every2 %}
+<span class="oil-static-x{% if m2 != 0 %} is-minor{% endif %}" style="left: {{ forloop.index0 | times: 100.0 | divided_by: ic_n | round: 2 }}%">{{ year }}</span>
+{%- endif %}{% endif %}{% endfor %}
+</div>
+</div>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Inflation by month since {{ ic_since }}" tabindex="0">
+<table class="data ecb-table ibc-months">
+<thead><tr><th scope="col">Month</th><th scope="col" class="num" data-out="head-own">{{ ic_name }}</th><th scope="col" class="num">Euro area</th><th scope="col" class="num" data-out="head-own-core">{{ ic_name }}, core</th><th scope="col" class="num">Euro area, core</th></tr></thead>
+<tbody data-months data-for="{{ ic_code }}">
+{%- assign ic_at = ib.months %}
+{%- for row in ib.headline reversed %}
+{%- assign ic_at = ic_at | minus: 1 %}
+{%- assign core = ib.core[ic_at] %}
+<tr><th scope="row">{{ row[0] | append: "-01" | date: "%b %Y" }}</th><td class="num">{{ row[ic_col] | replace: "-", "−" }}%</td><td class="num">{{ row[ic_ea] | replace: "-", "−" }}%</td><td class="num">{% if core[ic_col] %}{{ core[ic_col] | replace: "-", "−" }}%{% else %}–{% endif %}</td><td class="num">{% if core[ic_ea] %}{{ core[ic_ea] | replace: "-", "−" }}%{% else %}–{% endif %}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<p class="oil-note">Annual rate of change in consumer prices (HICP), in percent. Core leaves out energy, food, alcohol and tobacco, and starts later than the headline rate: a dash marks a month with no figure.</p>
+</details>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, HICP, annual rate of change</a>. Figures to {{ ic_month }}. Updated {{ ib.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/inflation-by-country/" %} <a href="{{ '/data/inflation-by-country/' | relative_url }}">Every country and the ranking</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless inflation_by_country_script %}
+{%- assign inflation_by_country_script = true %}
+<script src="{{ '/assets/js/inflation-by-country.js' | relative_url }}" defer></script>
+{%- endunless %}

@@ -124,6 +124,7 @@ class AssembleTests(unittest.TestCase):
         self.assertIsNone(by_month['2001-11'])
         self.assertIsNotNone(by_month['2001-12'])
         self.assertEqual(page['core_from']['RO'], '2001-12')
+        self.assertEqual(page['core_by'], '2001-12')
 
     def test_the_endpoint_is_the_last_month_every_area_has(self):
         # The flash estimate: euro members a month ahead of the six countries outside the euro
@@ -164,9 +165,10 @@ class AssembleTests(unittest.TestCase):
     def test_the_ecb_copy_may_differ_by_one_rounding_step_only(self):
         eurostat, ecb = downloads()
         ecb['headline']['GR']['2020-08'] = round(ecb['headline']['GR']['2020-08'] - 0.1, 1)
-        _, _, (compared, differing) = assemble(eurostat, ecb)
+        page, _, (compared, differing) = assemble(eurostat, ecb)
         self.assertEqual(differing, 1)
         self.assertEqual(compared, 28 * 333 + 28 * 298)
+        self.assertEqual(page['ecb_check'], {'compared': '17,668', 'differing': '1'})
         ecb['headline']['GR']['2020-08'] = round(ecb['headline']['GR']['2020-08'] - 0.1, 1)
         with self.assertRaisesRegex(m.DataError, "The ECB's Greece headline inflation for 2020-08"):
             assemble(eurostat, ecb)
@@ -334,7 +336,7 @@ class StoredFileTests(unittest.TestCase):
         root = pathlib.Path(__file__).parents[1]
         page = json.loads((root / '_data/inflation_by_country.json').read_text(encoding='utf-8'))
         script = json.loads((root / 'assets/data/inflation-by-country.json').read_text(encoding='utf-8'))
-        for key in ('updated', 'source_updated', 'from', 'to', 'months', 'areas', 'core_from', 'cols', 'headline', 'core'):
+        for key in ('updated', 'source_updated', 'from', 'to', 'months', 'areas', 'core_from', 'core_by', 'cols', 'headline', 'core'):
             self.assertEqual(page[key], script[key], key)
         self.assertEqual(len(page['ranking']), 28)
         self.assertEqual(page['headline'][-1][0], page['to'])

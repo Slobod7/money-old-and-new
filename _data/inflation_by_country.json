@@ -36,6 +36,7 @@
 ["SE","Sweden",false]
 ],
 "core_from":{"EA":"2000-12","AT":"2000-12","BE":"1999-12","BG":"1999-01","HR":"1999-01","CY":"1999-01","CZ":"2000-12","DK":"2000-12","EE":"2001-12","FI":"2000-12","FR":"1999-01","DE":"1999-01","GR":"1999-01","HU":"2001-12","IE":"2000-12","IT":"2000-12","LV":"1999-01","LT":"1999-01","LU":"2000-12","MT":"1999-01","NL":"2000-12","PL":"1999-01","PT":"2000-12","RO":"2001-12","SK":"1999-01","SI":"2001-12","ES":"2001-12","SE":"2000-12"},
+"core_by":"2001-12",
 "names":{"EA":"Euro area","AT":"Austria","BE":"Belgium","BG":"Bulgaria","HR":"Croatia","CY":"Cyprus","CZ":"Czechia","DK":"Denmark","EE":"Estonia","FI":"Finland","FR":"France","DE":"Germany","GR":"Greece","HU":"Hungary","IE":"Ireland","IT":"Italy","LV":"Latvia","LT":"Lithuania","LU":"Luxembourg","MT":"Malta","NL":"Netherlands","PL":"Poland","PT":"Portugal","RO":"Romania","SK":"Slovakia","SI":"Slovenia","ES":"Spain","SE":"Sweden"},
 "default":"RO",
 "euro_area":{"headline":"3.8","core":"2.5"},
@@ -83,6 +84,7 @@
 ],
 "core_differs":["1999-01","2017-12"],
 "core_breaks":["2017-01","2018-01"],
+"ecb_check":{"compared":"18,209","differing":"32"},
 "sources":{"inflation":"Eurostat, HICP, annual rate of change (prc_hicp_minr): all items, and all items excluding energy, food, alcohol and tobacco. Euro area in its changing composition.","check":"Checked against the ECB Data Portal's copy (HICP.M.{area}.N.000000.4D0.ANR and .XEF000.)"},
 "cols":["month","EA","AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE"],
 "headline":[

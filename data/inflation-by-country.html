@@ -1,0 +1,95 @@
+---
+layout: default
+title: Inflation by country
+seo_title: "Inflation by country in Europe: EU ranking and chart"
+description: "Annual inflation in each of the 27 EU countries, ranked for the latest month, and any country against the euro area month by month since 1999."
+permalink: /data/inflation-by-country/
+last_modified_at: 2026-11-14
+dataset: inflation_by_country
+content_checked: 2026-11-14
+jumps:
+  - { label: Ranking, href: "#inflation-ranking-title" }
+  - { label: One country, href: "#inflation-country-title" }
+  - { label: Questions, href: "#inflation-questions" }
+sources_href: "#inflation-sources"
+faq:
+  - question: "Why does this differ from my country’s own inflation figure?"
+    answer: "Because this is the HICP, the index every EU country compiles to the same rules so that the figures can be compared. A national consumer price index follows national rules. The best-known gap: the HICP leaves out the cost of living in a home you own, which some national indexes count."
+  - question: "Why can the ranking be a month behind the euro area’s latest figure?"
+    answer: "Eurostat’s first estimate for a month covers the euro area and the countries in it. The EU countries outside the euro follow with the full release, a couple of weeks later. The ranking waits for all 27, so no country is set against another’s earlier month."
+  - question: "Does the ECB react to my country’s inflation?"
+    answer: "No. The ECB sets one interest rate for the whole euro area and aims for 2% inflation across it, measured by the euro area figure on this page. A country far above or below that average gets the same rate as everyone else. The EU countries outside the euro have their own central banks and their own rates."
+  - question: "Is the euro area’s rate the average of the countries shown?"
+    answer: "It is a weighted average of its members only: each counts by its share of the area’s household spending, so Germany moves it far more than Malta. The countries outside the euro aren’t in it. A country enters the figure from the month it adopted the euro."
+  - question: "What does core inflation leave out?"
+    answer: "Energy, food, alcohol and tobacco, the prices that swing the most. What remains moves more slowly, which is why central banks watch it for where inflation is settling."
+---
+{%- assign ib = site.data.inflation_by_country %}
+{%- capture ib_month %}{{ ib.to | append: "-01" | date: "%B %Y" }}{% endcapture %}
+{%- capture ib_since %}{{ ib.from | append: "-01" | date: "%B %Y" }}{% endcapture %}
+{%- assign ib_countries = ib.areas.size | minus: 1 %}
+{%- assign ib_outside = ib.areas | where_exp: "a", "a[2] == false" %}
+<div class="wrap calc-page inflation-page">
+<header class="page-head">
+<h1 class="page-title">Inflation by country</h1>
+<p class="page-lede">The annual inflation rate in each of the {{ ib_countries }} EU countries, ranked, with the euro area marked. Then any one country against the euro area, month by month since {{ ib.from | slice: 0, 4 }}.</p>
+<p class="meta page-vintage">Year to <strong>{{ ib_month }}</strong>: euro area <strong>{{ ib.euro_area.headline | replace: "-", "−" }}%</strong>, from {{ ib.lowest[2] | replace: "-", "−" }}% in {{ ib.lowest[1] }} to {{ ib.highest[2] | replace: "-", "−" }}% in {{ ib.highest[1] }}<span aria-hidden="true"> · </span>Data updated {{ ib.updated | date: "%-d %B %Y" }}</p>
+</header>
+{% include page-jumps.html %}
+<!--footnote-->
+<p><strong>The inflation figures are Eurostat’s harmonised index (HICP), not a national index.</strong> Eurostat can revise them; this page shows them as they stood when it was last updated.</p>
+<!--footnote-->
+
+<section class="fuel-section" aria-labelledby="inflation-ranking-title">
+<h2 class="section-title" id="inflation-ranking-title">The ranking</h2>
+<p class="fuel-map-key">Consumer prices, change on a year earlier <span aria-hidden="true">·</span> {{ ib_month }} <span aria-hidden="true">·</span> Highest first</p>
+{% include inflation-ranking.html source_in_method=true %}
+</section>
+
+<section class="fuel-section" aria-labelledby="inflation-country-title">
+<h2 class="section-title" id="inflation-country-title">One country against the euro area</h2>
+<p class="section-intro">The euro area’s rate is the one the ECB steers by. Each country lives with its own. It opens on {{ ib.highest[1] }}, the highest in {{ ib_month }}.</p>
+{% include inflation-country-chart.html id="inflation-country" source_in_method=true %}
+</section>
+
+{% include data-articles.html %}
+
+<aside class="next-step" aria-labelledby="next-step-title">
+<div>
+<h2 id="next-step-title">What did the ECB do about it?</h2>
+<p>Its interest rates against euro area inflation, month by month.</p>
+</div>
+<a href="{{ '/data/ecb-interest-rates/' | relative_url }}">ECB interest rates <span aria-hidden="true">→</span></a>
+</aside>
+
+<section class="fuel-section fuel-questions" aria-labelledby="inflation-questions">
+<h2 class="section-title" id="inflation-questions">Questions about these figures</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</section>
+
+<section class="fuel-section brent-method" aria-labelledby="inflation-sources">
+<h2 class="section-title" id="inflation-sources">Sources &amp; method</h2>
+<p class="meta">Figures to {{ ib_month }}, as Eurostat published them on {{ ib.source_updated | date: "%-d %B %Y" }}, read on {{ ib.updated | date: "%-d %B %Y" }}. Explanatory notes checked {{ page.content_checked | date: "%-d %B %Y" }}.</p>
+<dl class="brent-source-list">
+<div><dt>Inflation</dt><dd><a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, harmonised index of consumer prices (HICP)</a>, annual rate of change: the index in a month against the same month a year earlier, in percent, as Eurostat rounds it to one decimal. Monthly, not seasonally adjusted, from {{ ib_since }}.</dd></div>
+<div><dt>Core</dt><dd>The same rate for all items except energy, food, alcohol and tobacco. It starts later than the headline rate: in {{ ib.core_from.EA | append: "-01" | date: "%B %Y" }} for the euro area, and by {{ ib.core_by | append: "-01" | date: "%B %Y" }} in every country.</dd></div>
+<div><dt>Euro area</dt><dd>Eurostat’s figure for the area as it was each month, with a country counted from the month it adopted the euro. It is weighted by household spending, so it is not an average of the bars on this page.</dd></div>
+<div><dt>Ranking</dt><dd>This site’s ordering of Eurostat’s rates for the latest month all {{ ib_countries }} countries have. Countries with the same rate are listed by name.</dd></div>
+<div><dt>Gap</dt><dd>This site’s subtraction: a country’s published rate minus the euro area’s, in percentage points.</dd></div>
+</dl>
+<div class="faq brent-method-details">
+<details><summary>Estimates, breaks and checks</summary>
+<p>Eurostat marks some figures as estimates{% assign ib_marked = ib.estimated | where_exp: "e", "e[0] == 'headline'" %}{% if ib_marked.size > 0 %}: {% for e in ib_marked %}{{ ib.names[e[1]] }} from {{ e[3] | append: "-01" | date: "%B %Y" }} to {{ e[4] | append: "-01" | date: "%B %Y" }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}. They are shown as published.{% if ib.core_differs.size > 0 %} It also marks every core rate up to {{ ib.core_differs[1] | append: "-01" | date: "%B %Y" }} as following a different definition from the later ones{% if ib.core_breaks.size > 0 %}, with a break in the series in {% for b in ib.core_breaks %}{{ b | append: "-01" | date: "%B %Y" }}{% unless forloop.last %} and {% endunless %}{% endfor %}{% endif %}: read a core rate from those years as a guide, not to the decimal.{% endif %}</p>
+<p>Each update compares every figure with the copy in the <a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.000000.4D0.ANR">ECB Data Portal</a>, which this site’s <a href="{{ '/data/ecb-interest-rates/' | relative_url }}">ECB rates chart</a> reads. At the last update, {{ ib.ecb_check.differing }} of {{ ib.ecb_check.compared }} differed, none by more than 0.1 point. A larger difference, a missing month or a country that stops reporting leaves the page as it was.</p>
+</details>
+<details><summary>Update schedule and reuse</summary>
+<p>The saved data is refreshed by a scheduled download on the 18th of each month, with manual updates possible. The page ends at the last month every country has reported, so a flash estimate for the euro area alone does not move it, and a full release that comes out after the download shows at the next one. Eurostat revises earlier months, and an update takes the revisions with it. This is not a live feed.</p>
+<p><a href="https://ec.europa.eu/eurostat/help/copyright-notice">Eurostat allows reuse of its data</a> with the source named. The ranking, the gap to the euro area and each country’s highest rate are this site’s work on those figures.</p>
+</details>
+</div>
+</section>
+</div>

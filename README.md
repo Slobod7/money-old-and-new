@@ -597,6 +597,65 @@ node tests/fuel-prices.cjs
 
 The first runs the script on a small workbook it makes itself: the latest week, the tax subtraction, a skipped week, a missing country, repeated figures, and the files it must refuse. The second checks that every figure the script printed for the page is the figure the page's JavaScript works out from the weekly history, then the comparison's sentences. Run both after changing either file.
 
+## Inflation by country
+
+The annual inflation rate of each of the 27 EU countries in the latest month, ranked, with the euro area in its place, and any one country against the euro area month by month since January 1999. It lives at `/data/inflation-by-country/`. **The title and the address are provisional** until the search volumes have been checked in Ahrefs: to change the address later, change `permalink` in `data/inflation-by-country.html`, the card in `_data/data_pages.yml`, and the address in the two includes (the `<!--uses:…-->` comment and the links back), and add the old address to `redirect_from`.
+
+The page is two includes. Either can go in an article:
+
+```liquid
+{% include inflation-ranking.html %}
+{% include inflation-country-chart.html id="romania-prices" country="RO" range="all" title="Romania against the euro area" %}
+```
+
+- **The ranking** (`_includes/inflation-ranking.html`) is a table drawn as bars, plain HTML and CSS: country, headline inflation with its bar, core inflation. The euro area's row is in forest and bold; the six countries outside the euro carry an asterisk. The bars grow from a zero line, which moves in from the left edge in a month when some country's prices are falling. Optional: `id`, `title`.
+- **The country chart** (`_includes/inflation-country-chart.html`) draws one country in forest against the euro area in grey, with the latest month as one sentence above it and every month of both measures in a table beneath. Optional: `country` (a two-letter code; the default is whichever country has the highest rate that month, so the page opens on a different country as the ranking changes), `range` (`5y`, `10y`, the default, or `all`), `title`. Give each chart on a page its own `id`.
+
+Away from the inflation page each carries its own source line, ending with a link to the page, and the page then shows a card leading to the latest article that uses one. On the page itself `source_in_method=true` leaves the source line to the page's sources.
+
+Jekyll draws both from `_data/inflation_by_country.json`, so the page reads the same without JavaScript: the ranking in full, and the chart for its opening country and range. `assets/js/inflation-by-country.js`, loaded only by pages with one of the includes, adds the choice of country, of headline or core, and of 5 years, 10 years or since 1999; a readout on hover, tap or drag and with the keyboard (arrow keys, Page Up and Page Down for a year, Home and End); and links from each country in the ranking to its chart. It reads `assets/data/inflation-by-country.json` from this site alone: no outside requests, cookies or storage.
+
+The chart's view goes into the page's address as a fragment (`#country=RO&measure=core&range=all`), so it can be shared as a link. Every value is checked against the data, and one bad value refuses the whole fragment.
+
+The page types no figure by hand. Its introduction, the line under it, the ranking's summary, the chart's sentence and the dated statements in its sources all read the data file. The answers under "Questions about these figures" state rules, not figures (what the HICP leaves out, who the flash estimate covers, the ECB's 2% aim, how the euro area's rate is weighted). `content_checked` in the page's front matter is the day they were last checked.
+
+### Where the data comes from
+
+Eurostat's [prc_hicp_minr](https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en), unit `RCH_A`: the HICP's annual rate of change, monthly, as Eurostat rounds it to one decimal. Two categories: `TOTAL` (all items) and `TOT_X_NRG_FOOD` (all items excluding energy, food, alcohol and tobacco, "core"). 28 areas: the euro area in its changing composition (`EA`) and the 27 countries. This is Eurostat's live dataset. `prc_hicp_manr` and `prc_hicp_midx` stopped at December 2025, when the HICP moved to a new classification, and the category dimension is now called `coicop18`.
+
+The figures are Eurostat's own, not the ECB Data Portal's copy that the ECB rates chart reads. The two agree for every area except Greece, where the ECB's copy is 0.1 point away from Eurostat's in 16 months of each measure (checked 14 November 2026, most recently April 2025 for core). A ranking should show the rate Eurostat publishes, so Eurostat is the source and the ECB's copy (`HICP.M.{area}.N.000000.4D0.ANR` and `.XEF000.`, Greece as `GR`, the euro area as `U2`) is the check. For the euro area the two are identical, so this page and the ECB rates chart show the same line.
+
+Headline inflation starts in January 1999 for every area. Core starts later: December 2000 for the euro area, and between January 1999 and December 2001 for the countries. A month before a series starts is left empty, never estimated.
+
+Eurostat flags some figures, and the script keeps the flags: estimates (France to December 2016, Malta 2006 to 2010) and, for core in every area, "definition differs" up to December 2017 with breaks in January 2017 and January 2018. The page lists them under "Estimates, breaks and checks", from the file. A flag the script doesn't know stops it.
+
+Eurostat allows reuse with the source named (its [copyright notice](https://ec.europa.eu/eurostat/help/copyright-notice)). The ranking, the gap to the euro area and each country's highest rate are this site's work, and the page's sources say so.
+
+### How it stays up to date
+
+`scripts/update-inflation-data.py` downloads the two categories from Eurostat and the ECB's copy of each, and writes `_data/inflation_by_country.json` (about 91 KB: the latest month's ranking, each country's highest rate and chart scales, the flags, and every month for every area) and `assets/data/inflation-by-country.json` (about 87 KB: the same months for the page's script). It reuses the oil script's download and file helpers and keeps its rules. It checks everything: the right dataset, unit and category; all 28 areas; every month present from each series' first; plausible values; nothing more than four months old; core starting by December 2001; and no figure more than 0.1 point from the ECB's copy, in no more than 1% of them. If anything fails it stops with an error and leaves both files as they were. If nothing changed it rewrites nothing.
+
+**Both files end at the last month all 28 areas have.** Eurostat's flash estimate covers the euro area and its members only, so for about two weeks each month the six countries outside the euro hold the ranking back a month, and the ECB rates page can show a later month for the euro area than this page does. That is deliberate: no country is ranked against another's earlier month.
+
+`AREAS` at the top of the script lists the areas and says which use the euro. When a country adopts the euro, change its flag there. The script reads the member count from Eurostat's own label for the euro area ("EA21-2026") and stops if the two disagree.
+
+The monthly workflow (**Actions → Update oil data**, on the 18th) runs it after the other three scripts. Eurostat publishes a month's full figures around the middle of the next month, sometimes after the 18th. When they come out after the workflow has run, the page keeps the earlier month until the next run: run the workflow by hand that week, or update from this folder:
+
+```bash
+python3 scripts/update-inflation-data.py
+```
+
+It prints what it wrote, or "No change". Then commit `_data/inflation_by_country.json` and `assets/data/inflation-by-country.json`.
+
+### Check the sums
+
+```bash
+python3 -m unittest tests/test_inflation_updater.py
+node tests/inflation-by-country.cjs
+```
+
+The first runs the script's checks on figures it makes itself: the common last month, a gap, a late start, a stale or wild figure, an unknown flag, the ECB comparison, the ranking's order and ties, peaks, scales, and that a failed run leaves both files byte for byte as they were. The second checks that what the script worked out for Jekyll (the ranking's figures, each chart's scale, each highest rate, the sentence above the chart) is what the page's JavaScript works out from the monthly figures, then the address fragment. Run both after changing either file.
+
 ## Add a data page
 
 1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
@@ -636,8 +695,10 @@ The first runs the script on a small workbook it makes itself: the latest week, 
 | `_includes/fuel-map.html`, `assets/js/fuel-prices.js` | The fuel prices map and the fuel page's comparison and table (see "Fuel prices map"). The script is loaded only by pages with the map |
 | `_data/fuel_prices.json`, `assets/data/fuel.json` | The fuel page's data, written by `scripts/update-fuel-data.py`. Don't edit by hand |
 | `_data/fuel_map.json` | The map's outlines, written once by `scripts/build-fuel-map.py`. Don't edit by hand |
+| `_includes/inflation-ranking.html`, `_includes/inflation-country-chart.html`, `assets/js/inflation-by-country.js` | The inflation ranking and the country chart (see "Inflation by country"). The script is loaded only by pages with one of them; both read fine without it |
+| `_data/inflation_by_country.json`, `assets/data/inflation-by-country.json` | The inflation page's data, written by `scripts/update-inflation-data.py`. Don't edit by hand |
 | `scripts/`, `tests/` | The data update scripts and the oil calculator's maths test. Not published |
-| `.github/workflows/` | The monthly update of the oil, ECB and old-vs-new data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
+| `.github/workflows/` | The monthly update of the oil, ECB, old-vs-new and inflation-by-country data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the articles |

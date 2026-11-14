@@ -1,0 +1,47 @@
+{%- comment -%}
+The inflation ranking: the annual inflation rate of every EU country in the latest month all of them have, highest
+first, with the euro area in its place among them. A table drawn as bars, plain HTML and CSS.
+  {% include inflation-ranking.html %}
+Optional: id (for a second copy on the same page), title (a heading above it, set as a level-3 heading).
+source_in_method: omit the source caption when the host page has its own sources section.
+Away from /data/inflation-by-country/, the caption ends with a link to that page, and the comment before the figure
+lets that page find the articles that use the ranking (_includes/data-articles.html).
+It reads _data/inflation_by_country.json, written by scripts/update-inflation-data.py. The bars grow from the zero
+line, which moves in from the left edge in a month when some country's prices are falling. On a page that also has
+the country chart, assets/js/inflation-by-country.js turns each country's name into a link that shows it there.
+{%- endcomment -%}
+{%- assign ir = include.id | default: "inflation-ranking" -%}
+{%- assign ib = site.data.inflation_by_country -%}
+{%- capture ir_month %}{{ ib.to | append: "-01" | date: "%B %Y" }}{% endcapture -%}
+{%- assign ir_lo = ib.rank_scale[0] -%}{%- assign ir_hi = ib.rank_scale[1] -%}{%- assign ir_span = ir_hi | minus: ir_lo -%}
+{%- assign ir_outside = ib.areas | where_exp: "a", "a[2] == false" -%}
+{%- assign ir_countries = ib.areas.size | minus: 1 -%}
+<!--uses:/data/inflation-by-country/-->
+<figure class="oil-widget ibc-ranking" id="{{ ir }}" data-inflation-ranking>
+{%- if include.title %}
+<h3 class="oil-title">{{ include.title }}</h3>
+{%- endif %}
+<p class="oil-summary">Highest in {{ ib.highest[1] }}, at {{ ib.highest[2] | replace: "-", "−" }}%, and lowest in {{ ib.lowest[1] }}, at {{ ib.lowest[2] | replace: "-", "−" }}%. {{ ib.above }} of the {{ ir_countries }} countries are above the euro area’s {{ ib.euro_area.headline | replace: "-", "−" }}%.<span data-pick-hint hidden> Select a country to follow it in the chart below.</span></p>
+<table class="ibc-rank" style="--zero: {{ 0 | minus: ir_lo | times: 100.0 | divided_by: ir_span | round: 2 }}">
+<caption class="visually-hidden">Annual inflation in {{ ir_month }}, highest first</caption>
+<thead><tr><th scope="col">Country</th><th scope="col">Inflation, % a year</th><th scope="col" class="num">Core</th></tr></thead>
+<tbody>
+{%- for r in ib.ranking %}
+{%- assign v = r[3] | plus: 0 %}
+<tr{% if r[2] == nil %} class="is-marked"{% endif %} data-code="{{ r[0] }}">
+<th scope="row"><span data-country-name>{{ r[1] }}</span>{% if r[2] == false %}<span aria-hidden="true">*</span><span class="visually-hidden"> (outside the euro area)</span>{% endif %}</th>
+<td><span class="mv-track"><span class="mv-bar{% if v < 0 %} is-negative{% endif %}" style="--s: {% if v < 0 %}{{ v | minus: ir_lo | times: 100.0 | divided_by: ir_span | round: 2 }}{% else %}{{ 0 | minus: ir_lo | times: 100.0 | divided_by: ir_span | round: 2 }}{% endif %}; --v: {{ v | abs | times: 100.0 | divided_by: ir_span | round: 2 }}" aria-hidden="true"></span><span class="mv-value">{{ r[3] | replace: "-", "−" }}%</span></span></td>
+<td class="num">{{ r[4] | replace: "-", "−" }}%</td>
+</tr>
+{%- endfor %}
+</tbody>
+</table>
+<p class="oil-note">Year to {{ ir_month }}, the latest month all {{ ir_countries }} countries have reported. Core leaves out energy, food, alcohol and tobacco. *Outside the euro area: {% for a in ir_outside %}{{ a[1] }}{% unless forloop.last %}, {% endunless %}{% endfor %}.</p>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, HICP, annual rate of change</a>. Updated {{ ib.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/inflation-by-country/" %} <a href="{{ '/data/inflation-by-country/' | relative_url }}">Every country’s chart and data</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless inflation_by_country_script %}
+{%- assign inflation_by_country_script = true %}
+<script src="{{ '/assets/js/inflation-by-country.js' | relative_url }}" defer></script>
+{%- endunless %}
