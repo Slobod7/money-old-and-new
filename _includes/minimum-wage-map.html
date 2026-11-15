@@ -1,0 +1,79 @@
+{%- comment -%}
+The minimum wage map: the 27 EU countries shaded by the gross monthly minimum wage on Eurostat's latest date, in euros
+or by purchasing power, with a card beside it for the EU as a whole or for one country.
+  {% include minimum-wage-map.html id="minimum-wage-map" %}
+Optional: source_in_method=true omits the source caption when the host page has its own sources section.
+One per page. Away from /data/minimum-wage-europe/, each country links to its row on that page, the source caption
+ends with a link to it, and the comment before the figure lets that page find the articles that use the map
+(_includes/data-articles.html).
+Jekyll draws it from _data/minimum_wage_europe.json (written by scripts/update-minimum-wage-data.py) and
+_data/fuel_map.json (the outlines the fuel prices map uses), so without JavaScript it shows the figures in euros, each
+country links to its row in the table, and the card shows the EU: how many countries have a national minimum wage,
+the highest and lowest in each measure, and the five that have none. There is no EU average: Eurostat makes none.
+assets/js/minimum-wage-europe.js, added once below, adds the euros and purchasing power tabs, the readout on hover and
+focus, and the choice of country, using assets/data/minimum-wage-europe.json.
+{%- endcomment -%}
+{%- assign mm = include.id | default: "minimum-wage-map" -%}
+{%- assign mw = site.data.minimum_wage_europe -%}
+{%- assign fm = site.data.fuel_map -%}
+{%- capture mm_date %}{{ mw.date | date: "%-d %B %Y" }}{% endcapture -%}
+{%- capture mm_rows %}{% unless page.url == "/data/minimum-wage-europe/" %}{{ '/data/minimum-wage-europe/' | relative_url }}{% endunless %}#minimum-wage-table-{% endcapture -%}
+{%- capture mm_notes %}{% for n in site.data.minimum_wage_national %}{% if n[1].name %}{{ n[0] }} {% endif %}{% endfor %}{% endcapture -%}
+<!--uses:/data/minimum-wage-europe/-->
+<figure class="oil-widget fuel-widget mw-map" id="{{ mm }}" data-mw-map data-src="{{ '/assets/data/minimum-wage-europe.json' | relative_url }}" data-period="{{ mw.period }}" data-notes="{% if page.url == '/data/minimum-wage-europe/' %}{{ mm_notes | strip }}{% endif %}">
+<div class="mw-controls">
+<div class="oil-tabs" role="group" aria-label="Show the minimum wage" data-controls hidden>
+<button type="button" data-measure="eur" aria-pressed="true">In euros</button>
+<button type="button" data-measure="pps" aria-pressed="false">Purchasing power</button>
+</div>
+<p class="mw-mode-note">Purchasing power adjusts each wage for prices in its country, in purchasing power standards (PPS): a common unit, not euros and not take-home pay.</p>
+</div>
+<p class="oil-summary" data-summary aria-live="polite">{{ mw.summary.eur }}</p>
+<div class="fuel-layout">
+<div class="fuel-map" data-map>
+<svg class="fuel-svg" viewBox="0 0 {{ fm.width }} {{ fm.height }}" role="group" aria-label="Map of the {{ mw.total }} EU countries, shaded by the gross monthly minimum wage on {{ mm_date }}, in euros. Every figure is in the table of all countries.">
+<defs><pattern id="mw-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#ECECE4"/><rect width="3.5" height="9" fill="#BBBBB6"/></pattern></defs>
+<path class="fuel-around" d="{{ fm.around }}"/>
+{%- for c in fm.countries %}
+{%- assign row = mw.rows | where: "code", c.code | first %}
+{%- if row.status == "rate" %}{% assign mm_class = "fuel-s" | append: row.eur_class %}{% elsif row.status == "none" %}{% assign mm_class = "mw-none" %}{% else %}{% assign mm_class = "fuel-none" %}{% endif %}
+<a class="fuel-country" href="{{ mm_rows }}{{ c.code }}" data-code="{{ c.code }}" data-x="{{ c.x }}" data-y="{{ c.y }}"><title>{{ c.name }}: {% if row.status == "rate" %}€{{ row.eur_text }} a month, {{ row.pps_text }} PPS{% elsif row.status == "none" %}no national minimum wage{% else %}no figure{% endif %}</title><path class="fuel-shape {{ mm_class }}" d="{{ c.d }}"/>{% if c.dot %}<path class="fuel-dot-ring" d="M{{ c.x }} {{ c.y }}h0.01"/><path class="fuel-dot {{ mm_class }}" d="M{{ c.x }} {{ c.y }}h0.01"/>{% endif %}</a>
+{%- endfor %}
+<path class="fuel-ring" data-ring d=""/>
+</svg>
+<ul class="fuel-legend" data-legend aria-label="What the shades mean">
+{%- for label in mw.legend.eur %}
+<li><span class="fuel-key fuel-s{{ forloop.index0 }}"></span>{{ label }}</li>
+{%- endfor %}
+<li><span class="fuel-key mw-none-key"></span>No national minimum wage</li>
+</ul>
+</div>
+<div class="fuel-card mw-card" data-card>
+<h3 class="fuel-card-name" data-name>{{ mw.eu_card.name }}</h3>
+<p class="fuel-card-price"><strong data-value>{{ mw.eu_card.value }}</strong> <span data-unit>{{ mw.eu_card.unit }}</span></p>
+<dl class="fuel-figures" data-figures>
+{%- for r in mw.eu_card.rows %}
+<div><dt>{{ r[0] }}</dt><dd>{{ r[1] }}{% if r[2] != "" %}<small>{{ r[2] }}</small>{% endif %}</dd></div>
+{%- endfor %}
+</dl>
+<p class="oil-note" data-note>{{ mw.eu_card.note }}</p>
+<p class="mw-card-more" data-more hidden><a href="#minimum-wage-ie">Legal rates</a></p>
+<div class="oil-field fuel-pick" data-pick hidden>
+<label for="{{ mm }}-country">Show a country</label>
+<select id="{{ mm }}-country" data-country>
+<option value="">The EU as a whole</option>
+{%- for c in mw.countries %}
+<option value="{{ c[0] }}">{{ c[1] }}</option>
+{%- endfor %}
+</select>
+</div>
+</div>
+</div>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/earn_mw_cur/default/table?lang=en">Eurostat, monthly minimum wages</a>, gross, on {{ mm_date }}. Map made with Natural Earth. Updated {{ mw.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/minimum-wage-europe/" %} <a href="{{ '/data/minimum-wage-europe/' | relative_url }}">Every country and the comparison</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless minimum_wage_script %}
+{%- assign minimum_wage_script = true %}
+<script src="{{ '/assets/js/minimum-wage-europe.js' | relative_url }}" defer></script>
+{%- endunless %}

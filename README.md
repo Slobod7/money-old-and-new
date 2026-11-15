@@ -660,6 +660,71 @@ node tests/inflation-by-country.cjs
 
 The first runs the script's checks on figures it makes itself: the common last month, a gap, a late start, a stale or wild figure, an unknown flag, the ECB comparison, the table's order and ties, the change over a year, the map's bands and legend, peaks, scales, and that a failed run leaves both files byte for byte as they were. The second checks that what the script worked out for Jekyll (each area's figures for both measures, its two shades on the map, the legend, each chart's scale, the sentences above the map and the comparison) is what the page's JavaScript works out from the monthly figures, then the address fragment. Run both after changing either file.
 
+## Minimum wages in Europe
+
+The gross monthly minimum wage in each of the 27 EU countries on Eurostat's latest date, in euros and by purchasing power, on a map, side by side for any two countries, and in a table of all of them. It lives at `/data/minimum-wage-europe/` and is built the way the fuel and inflation pages are, from the same parts.
+
+The page is three includes. Each can go in an article on its own:
+
+```liquid
+{% include minimum-wage-map.html %}
+{% include minimum-wage-compare.html %}
+{% include minimum-wage-table.html %}
+```
+
+- **The map** (`_includes/minimum-wage-map.html`) shades each country by its minimum wage, with tabs for euros and purchasing power, and a card beside it for the EU or the country chosen: the amount, its rank, the other measure, the amount in the national currency where that isn't the euro, and the change in a year. The card for the EU gives how many countries have a national minimum wage, the highest and lowest in each measure and the five that have none. There is no EU average: Eurostat makes none. The five countries without a national minimum wage (Austria, Denmark, Finland, Italy and Sweden) are hatched, never shaded as zero. It uses the fuel map's outlines and its sequential scale. One per page.
+- **The comparison** (`_includes/minimum-wage-compare.html`) sets two countries side by side: one sentence, a table of both measures and both ranks, a bar for each country in each measure (each scale runs from zero to the EU's highest in that measure, and the two are never set against each other), and every half-year either has a figure for. Jekyll draws Ireland against Germany (`DEFAULT_PAIR` in the script): Ireland is higher in euros and lower by purchasing power, which is the page's point. One per page.
+- **The table** (`_includes/minimum-wage-table.html`) lists every country, highest in euros first, then the five without a national minimum wage by name. For each measure: the amount and its rank, and how many places a country moves between the two orders. Ranks are competition ranks: equal amounts share a rank, marked "=", and the next rank skips the shared places (Greece and Portugal are both 12= in euros in July 2026, and the next is 14). One per page: the map links each country to its row (`#minimum-wage-table-RO`).
+
+Away from the minimum wage page each carries its own source line, ending with a link to the page. On the page itself `source_in_method=true` leaves the source line to the page's sources.
+
+Jekyll draws all three from `_data/minimum_wage_europe.json`, so the page reads the same without JavaScript: the map in euros with each country linking to its row, the card for the EU, the comparison for Ireland and Germany, and the table with both measures. `assets/js/minimum-wage-europe.js`, loaded only by pages with one of the includes, adds the tabs, a readout on the map on hover and focus, the choice of country (on the map, in the card or in the table), the comparison's two countries, and a table that sorts by any column. The euros and purchasing power tabs also sort the table. It reads `assets/data/minimum-wage-europe.json` from this site alone. If that file is for another half-year than the page was built from, the script leaves the page as built.
+
+The view goes into the address as a fragment (`#country=RO&with=DE&measure=pps`: Romania on the map and first in the comparison, against Germany, in purchasing power), so it can be shared as a link. Only what differs from the view the page opens on is written. Every value is checked against the data, and one bad value refuses the whole fragment.
+
+**The map's shades are set afresh at every update**: five equal bands on round numbers, the narrowest that hold the lowest and highest country in each measure. A figure on a break joins the band above. The script writes the break points, each country's band and the legend's words to the data file. The page's JavaScript applies the same rules, and `tests/minimum-wage-europe.cjs` checks that the two agree.
+
+The page types no Eurostat figure by hand. The Ireland and Spain section is the exception, and it is kept apart on purpose: see below.
+
+### Where the data comes from
+
+Eurostat's [earn_mw_cur](https://ec.europa.eu/eurostat/databrowser/view/earn_mw_cur/default/table?lang=en), half-yearly, in three units: `EUR` (euros), `PPS` (purchasing power standards) and `NAC` (the national currency, which for euro countries is the euro at its fixed rate). Eurostat dates each figure at 1 January (`S1`) or 1 July (`S2`) and publishes it about a month later.
+
+- **The figures are Eurostat's own**, gross and monthly. The script never converts or adjusts them: no PPS made from price levels, no hourly rate from an assumed working week, no EU average.
+- **Purchasing power** is Eurostat's figure in PPS: a common unit that adjusts for price differences between countries. It is not euros and not take-home pay, and the page says so wherever it shows one. Every PPS figure for 2026 is flagged as an estimate, and the page shows the flag.
+- **No national minimum wage** is Eurostat's flag `m` ("data cannot exist"). The script expects exactly the five countries in `NO_NATIONAL` to have it and stops if the set changes, so a country that gains or drops a national rate gets a human look first.
+- **The change in a year** is worked out in the national currency, so a move in the exchange rate isn't counted as a pay rise.
+- `CONVERSIONS` at the top of the script says how Eurostat turns an hourly or weekly rate, or 14 payments a year, into its monthly figure, for the countries where it does (Germany, Ireland, France, the Netherlands, Malta, Greece, Spain and Portugal). The hours are the ones each country supplies to Eurostat, as Eurostat's [metadata](https://ec.europa.eu/eurostat/cache/metadata/en/earn_minw_esms.htm) gives them. `METHOD_CHECKED` is the day that was last checked.
+
+Eurostat allows reuse with the source named (its [copyright notice](https://ec.europa.eu/eurostat/help/copyright-notice)). The ranks, the places moved, the change in a year and the map's bands are this site's work, and the page's sources say so.
+
+**Ireland and Spain** set their minimum wage differently from the monthly figure Eurostat compares: Ireland by the hour, with lower rates under 20; Spain by the month, paid 14 times a year. The page explains both from the laws themselves, in `_data/minimum_wage_national.yml`, which is typed by hand and kept apart from Eurostat's figures. **Check it by its `review_by` date** (1 January 2027): Ireland's rate rises to €14.94 an hour on 1 January 2027 (S.I. No. 533/2026), and the page switches to it by itself on the first build after that date. Spain's 2026 decree runs to 31 December 2026, and its 2027 decree must be added by hand once it is published in the BOE.
+
+### How it stays up to date
+
+`scripts/update-minimum-wage-data.py` downloads the three units for all 27 countries and writes `_data/minimum_wage_europe.json` (about 44 KB: each country's figures on the latest date in rank order, the card for the EU, the comparison for the opening pair, the map's bands and legend, and the flags) and `assets/data/minimum-wage-europe.json` (about 27 KB: every half-year since 1999 for the page's script). It reuses the oil script's download and file helpers and keeps its rules. It checks the dataset's layout, every flag (one it doesn't know stops it), the five countries without a rate, plausible amounts, no six-month change in the national currency below 0.7 times or above 1.5 times, no half-year skipped, at least 20 countries with a rate, and a latest date no more than ten months old. If anything fails it stops with an error and leaves both files as they were. If nothing changed it rewrites nothing.
+
+- **Both files end at the latest half-year every country has.** When Eurostat publishes a new half-year for some countries first, the page stays at the earlier one and says which countries it is waiting for, so no country is set against another's earlier date.
+- **Revisions**: each run compares Eurostat's figures with the saved ones, half-year by half-year, and records any it changed or withdrew in `revisions`. The page says how many there were at the last update.
+- The page distinguishes three dates: the date the figures are for (1 July 2026), the day Eurostat last updated the dataset (`source_updated`) and the day this script last found new data (`updated`).
+
+The monthly workflow (**Actions → Update oil data**, on the 18th) runs it after the inflation script. Eurostat publishes a new half-year around the end of January and of July, so the page normally moves in February and August. To update by hand from this folder:
+
+```bash
+python3 scripts/update-minimum-wage-data.py
+```
+
+It prints what it wrote, or "No change". Then commit `_data/minimum_wage_europe.json` and `assets/data/minimum-wage-europe.json`.
+
+### Check the sums
+
+```bash
+python3 -m unittest tests/test_minimum_wage_updater.py
+node tests/minimum-wage-europe.cjs
+```
+
+The first runs the script's checks on figures it makes itself: reading Eurostat's file, the latest complete half-year and the one still waiting, the five countries without a rate, a stale, wild or skipped figure, an unknown flag, ranks and ties, the map's bands and legend, the sentences, revisions, and that a failed run leaves both files byte for byte as they were. The second checks that what the script worked out for Jekyll (ranks, shades, legend, the sentences above the map and the comparison, the card for the EU, the comparison's rows and history) is what the page's JavaScript works out, then the card in each measure, a country with no rate and one with no figure, the table's orders and the address fragment. Run both after changing either file.
+
 ## Add a data page
 
 1. Put the page in `data/`, with `permalink: /data/your-page/` in its front matter. The nav and the breadcrumb pick it up from the address.
@@ -701,8 +766,11 @@ The first runs the script's checks on figures it makes itself: the common last m
 | `_data/fuel_map.json` | The map's outlines, written once by `scripts/build-fuel-map.py` and shared by the fuel map and the inflation map. Don't edit by hand |
 | `_includes/inflation-map.html`, `_includes/inflation-country-chart.html`, `_includes/inflation-ranking.html`, `assets/js/inflation-by-country.js` | The inflation map, the comparison chart and the table of all countries (see "Inflation by country"). The script is loaded only by pages with one of them; both read fine without it |
 | `_data/inflation_by_country.json`, `assets/data/inflation-by-country.json` | The inflation page's data, written by `scripts/update-inflation-data.py`. Don't edit by hand |
+| `_includes/minimum-wage-map.html`, `_includes/minimum-wage-compare.html`, `_includes/minimum-wage-table.html`, `assets/js/minimum-wage-europe.js` | The minimum wage map, the two-country comparison and the table of all countries (see "Minimum wages in Europe"). The script is loaded only by pages with one of them; all three read fine without it |
+| `_data/minimum_wage_europe.json`, `assets/data/minimum-wage-europe.json` | The minimum wage page's data, written by `scripts/update-minimum-wage-data.py`. Don't edit by hand |
+| `_data/minimum_wage_national.yml` | Ireland's and Spain's legal rates, typed by hand from the laws. Check by its `review_by` date |
 | `scripts/`, `tests/` | The data update scripts and the oil calculator's maths test. Not published |
-| `.github/workflows/` | The monthly update of the oil, ECB, old-vs-new and inflation-by-country data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
+| `.github/workflows/` | The monthly update of the oil, ECB, old-vs-new, inflation-by-country and minimum wage data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the articles |

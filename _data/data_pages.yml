@@ -23,3 +23,7 @@
   title: Petrol and diesel prices in Europe
   description: "A litre in each EU country this week, and how much of it is tax."
   url: /data/europe-fuel-prices/
+- label: Map
+  title: Minimum wages in Europe
+  description: "Each EU country’s minimum wage in euros and adjusted for prices, and how the order changes."
+  url: /data/minimum-wage-europe/

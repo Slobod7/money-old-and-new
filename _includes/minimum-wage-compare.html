@@ -1,0 +1,82 @@
+{%- comment -%}
+Two countries' minimum wages side by side, in euros and by purchasing power: one sentence, a small table, a bar for
+each country in each measure, and every half-year since the first either has a figure for.
+  {% include minimum-wage-compare.html %}
+Optional: source_in_method=true omits the source caption when the host page has its own sources section.
+One per page. Jekyll draws it for the pair the update script names (default_pair: Ireland and Germany), from
+_data/minimum_wage_europe.json, which holds the rows ready to print. assets/js/minimum-wage-europe.js shows the
+selects and redraws it for any two countries, using assets/data/minimum-wage-europe.json.
+The two measures are never subtracted from each other: each has its own bars, scaled to the highest figure in the EU
+in that measure.
+{%- endcomment -%}
+{%- assign mw = site.data.minimum_wage_europe -%}
+{%- assign mc = mw.compare -%}
+{%- assign mc_a = mw.rows | where: "code", mc.a | first -%}
+{%- assign mc_b = mw.rows | where: "code", mc.b | first -%}
+{%- capture mc_date %}{{ mw.date | date: "%-d %B %Y" }}{% endcapture -%}
+<!--uses:/data/minimum-wage-europe/-->
+<figure class="oil-widget mw-compare" id="minimum-wage-compare" data-mw-compare data-src="{{ '/assets/data/minimum-wage-europe.json' | relative_url }}" data-period="{{ mw.period }}">
+<div class="fuel-compare-form" data-controls hidden>
+<div class="oil-field"><label for="mw-a">Country</label><select id="mw-a" data-a>
+{%- for c in mw.countries %}
+<option value="{{ c[0] }}"{% if c[0] == mc.a %} selected{% endif %}>{{ c[1] }}</option>
+{%- endfor %}
+</select></div>
+<div class="oil-field"><label for="mw-b">Compared with</label><select id="mw-b" data-b>
+{%- for c in mw.countries %}
+<option value="{{ c[0] }}"{% if c[0] == mc.b %} selected{% endif %}>{{ c[1] }}</option>
+{%- endfor %}
+</select></div>
+</div>
+<p class="fuel-verdict" data-out="verdict" aria-live="polite">{{ mc.sentence }}</p>
+<div class="mw-compare-body">
+<div class="table-wrap">
+<table class="data fuel-compare-table mw-compare-table">
+<caption class="visually-hidden">Monthly minimum wage on {{ mc_date }}, two countries</caption>
+<thead><tr><th scope="col"><span class="visually-hidden">Figure</span></th><th scope="col" class="num" data-out="head-a">{{ mc_a.name }}</th><th scope="col" class="num" data-out="head-b">{{ mc_b.name }}</th><th scope="col" class="num">Difference</th></tr></thead>
+<tbody data-compare-rows>
+{%- for r in mc.rows %}
+<tr><th scope="row">{{ r[0] }}</th><td class="num">{{ r[1] }}</td><td class="num">{{ r[2] }}</td><td class="num">{{ r[3] }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<div class="mw-bars" data-bars aria-hidden="true">
+{%- assign mc_measures = "eur,pps" | split: "," %}
+{%- for m in mc_measures %}
+<div class="mw-bar-group">
+<p class="mw-bar-title">{% if m == "eur" %}In euros{% else %}By purchasing power{% endif %}</p>
+{%- assign mc_pair = "a,b" | split: "," %}
+{%- for side in mc_pair %}
+{%- if side == "a" %}{% assign r = mc_a %}{% else %}{% assign r = mc_b %}{% endif %}
+<div class="mw-bar-row" data-bar="{{ m }}-{{ side }}"><span class="mw-bar-name">{{ r.name }}</span><span class="mw-bar"><span class="mw-bar-fill is-{{ side }}" style="width: {{ mc.bars[m][forloop.index0] }}%"></span></span><span class="mw-bar-value">{% if m == "eur" %}€{{ r.eur_text }}{% else %}{{ r.pps_text }} PPS{% endif %}</span></div>
+{%- endfor %}
+</div>
+{%- endfor %}
+<p class="mw-bar-note">Each scale runs from zero to the highest figure in the EU: {{ mw.extremes.eur.highest.text }} in euros, {{ mw.extremes.pps.highest.text }} by purchasing power.</p>
+</div>
+</div>
+<p class="oil-note">On {{ mc_date }}. Gross monthly amounts before tax and social contributions. Ranks are among the {{ mw.with_rate }} countries with a national minimum wage. (e) Eurostat estimate. The difference is the first country’s figure against the second’s.</p>
+<p class="fuel-nojs" data-nojs>Choosing two other countries needs JavaScript. Every country’s figures are in the table below.</p>
+<details class="oil-data">
+<summary>Every half-year for these two</summary>
+<div class="table-wrap" role="region" aria-label="Minimum wages by half-year, two countries" tabindex="0">
+<table class="data ecb-table mw-history">
+<thead><tr><th scope="col">Date</th><th scope="col" class="num"><span data-out="head-a">{{ mc_a.name }}</span>, €</th><th scope="col" class="num"><span data-out="head-b">{{ mc_b.name }}</span>, €</th><th scope="col" class="num"><span data-out="head-a">{{ mc_a.name }}</span>, PPS</th><th scope="col" class="num"><span data-out="head-b">{{ mc_b.name }}</span>, PPS</th></tr></thead>
+<tbody data-history data-for="{{ mc.a }}|{{ mc.b }}">
+{%- for r in mc.history %}
+<tr><th scope="row">{{ r[0] }}</th><td class="num">{{ r[1] }}</td><td class="num">{{ r[2] }}</td><td class="num">{{ r[3] }}</td><td class="num">{{ r[4] }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<p class="oil-note">The rate on 1 January (Jan) and 1 July (Jul) of each year, as Eurostat publishes it today. A rate that changed between those dates shows only at the next one. A dash is a date with no figure, and “No national rate” a date when the country had no national minimum wage.</p>
+</details>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/earn_mw_cur/default/table?lang=en">Eurostat, monthly minimum wages</a>. Updated {{ mw.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/minimum-wage-europe/" %} <a href="{{ '/data/minimum-wage-europe/' | relative_url }}">The map and every country</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless minimum_wage_script %}
+{%- assign minimum_wage_script = true %}
+<script src="{{ '/assets/js/minimum-wage-europe.js' | relative_url }}" defer></script>
+{%- endunless %}

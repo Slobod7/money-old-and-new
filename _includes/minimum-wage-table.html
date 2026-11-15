@@ -1,0 +1,67 @@
+{%- comment -%}
+The table of all 27 EU countries: the gross monthly minimum wage in euros and by purchasing power, each with its rank,
+and how many places a country moves between the two orders. Highest in euros first, then the countries with no
+national minimum wage, by name.
+  {% include minimum-wage-table.html %}
+Optional: source_in_method=true omits the source caption when the host page has its own sources section.
+One per page: the map links each country to its row here (#minimum-wage-table-RO).
+It reads _data/minimum_wage_europe.json, written by scripts/update-minimum-wage-data.py. Ranks are competition ranks:
+equal figures share a rank, marked "=", and the next rank skips the shared places. assets/js/minimum-wage-europe.js,
+added once below, adds tabs for the two measures (the same choice as the map's tabs: either set of tabs switches both),
+sorts the table by any column and turns each name into a button that shows the country on the map. Countries without a
+figure always sort last. Without JavaScript both measures show side by side; with it, a phone shows the measure chosen
+and the places moved, so the table fits without scrolling sideways.
+{%- endcomment -%}
+{%- assign mw = site.data.minimum_wage_europe -%}
+{%- capture mt_date %}{{ mw.date | date: "%-d %B %Y" }}{% endcapture -%}
+<!--uses:/data/minimum-wage-europe/-->
+<figure class="oil-widget fuel-list mw-list" id="minimum-wage-table" data-mw-table data-src="{{ '/assets/data/minimum-wage-europe.json' | relative_url }}" data-period="{{ mw.period }}">
+<div class="oil-controls" data-controls hidden>
+<div class="oil-tabs" role="group" aria-label="Measure in the table" data-measure-tabs>
+<button type="button" data-measure="eur" aria-pressed="true">In euros</button>
+<button type="button" data-measure="pps" aria-pressed="false">Purchasing power</button>
+</div>
+<p class="fuel-sort-hint">Select a column heading to sort, or a country to see it on the map.</p>
+</div>
+<div class="table-wrap" role="region" aria-label="Minimum wages in each EU country" tabindex="0">
+<table class="data fuel-table mw-table">
+<caption class="visually-hidden">Gross monthly minimum wage on {{ mt_date }}, in euros and by purchasing power</caption>
+<thead>
+<tr>
+<th scope="col" data-sort="name">Country</th>
+<th scope="col" class="num is-eur" data-sort="eur">Euros a month</th>
+<th scope="col" class="num is-eur">Rank</th>
+<th scope="col" class="num is-pps" data-sort="pps">Purchasing power, PPS</th>
+<th scope="col" class="num is-pps">Rank</th>
+<th scope="col" class="num" data-sort="shift">Places moved</th>
+</tr>
+</thead>
+<tbody>
+{%- for row in mw.rows %}
+<tr id="minimum-wage-table-{{ row.code }}" data-code="{{ row.code }}"{% if row.status != "rate" %} class="is-none"{% endif %}>
+<th scope="row"><span data-country-name>{{ row.name }}</span></th>
+{%- if row.status == "rate" %}
+<td class="num is-eur">€{{ row.eur_text }}{% if row.eur_flag != "" %}<sup class="mw-flag">{{ row.eur_flag }}</sup>{% endif %}</td>
+<td class="num is-eur">{{ row.eur_rank_text }}</td>
+<td class="num is-pps">{{ row.pps_text }}{% if row.pps_flag != "" %}<sup class="mw-flag" aria-hidden="true">{{ row.pps_flag }}</sup><span class="visually-hidden"> (estimated)</span>{% endif %}</td>
+<td class="num is-pps">{{ row.pps_rank_text }}</td>
+<td class="num">{% if row.shift > 0 %}<span aria-hidden="true">↑</span>{{ row.shift }}<span class="visually-hidden"> up</span>{% elsif row.shift < 0 %}<span aria-hidden="true">↓</span>{{ row.shift | abs }}<span class="visually-hidden"> down</span>{% else %}0{% endif %}</td>
+{%- elsif row.status == "none" %}
+<td class="mw-none-cell" colspan="5">No national minimum wage</td>
+{%- else %}
+<td class="mw-none-cell" colspan="5">No figure for {{ mt_date }}</td>
+{%- endif %}
+</tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+<p class="oil-note">On {{ mt_date }}<span data-order>, highest in euros first</span>. Gross monthly amounts before tax and social contributions. Ranks are among the {{ mw.with_rate }} countries with a national minimum wage; equal figures share a rank (=). Places moved: how far a country rises (↑) or falls (↓) when the order is by purchasing power instead of euros.{% if mw.estimated.pps.size == mw.with_rate %} e: Eurostat estimate, which every purchasing-power figure for this date is.{% elsif mw.estimated.pps.size > 0 %} e: Eurostat estimate.{% endif %}{% for f in mw.other_flags %} {{ f[1] }}, {{ f[0] }}: {{ f[2] }}.{% endfor %} The countries without a national minimum wage set pay floors in collective agreements, sector by sector.</p>
+{%- unless include.source_in_method %}
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/earn_mw_cur/default/table?lang=en">Eurostat, monthly minimum wages</a>. Ranks by Money, Old and New. Updated {{ mw.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/minimum-wage-europe/" %} <a href="{{ '/data/minimum-wage-europe/' | relative_url }}">The map and the comparison</a>.{% endunless %}</figcaption>
+{%- endunless %}
+</figure>
+{%- unless minimum_wage_script %}
+{%- assign minimum_wage_script = true %}
+<script src="{{ '/assets/js/minimum-wage-europe.js' | relative_url }}" defer></script>
+{%- endunless %}

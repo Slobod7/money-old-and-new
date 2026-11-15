@@ -1,0 +1,156 @@
+---
+layout: default
+title: Minimum wages in Europe
+seo_title: "Minimum wages in Europe: every EU country in euros and purchasing power"
+description: "The gross monthly minimum wage in each EU country, in euros and adjusted for prices, how the order changes between the two, and the legal rates in Ireland and Spain. Map, comparison and table."
+permalink: /data/minimum-wage-europe/
+last_modified_at: 2026-11-15
+dataset: minimum_wage_europe
+content_checked: 2026-11-15
+jumps:
+  - { label: Map, href: "#minimum-wage-map-title" }
+  - { label: Compare, href: "#minimum-wage-compare-title" }
+  - { label: All countries, href: "#minimum-wage-table-title" }
+  - { label: Ireland and Spain, href: "#minimum-wage-national-title" }
+  - { label: Questions, href: "#minimum-wage-questions" }
+sources_href: "#minimum-wage-sources"
+faq:
+  - question: "Is this what a minimum-wage worker takes home?"
+    answer: "No. Every figure is gross: pay before income tax and the worker’s own social contributions. What is left after them depends on each country’s tax rules and on the person, so take-home pay can rank in a different order from these figures."
+  - question: "What is a purchasing power standard?"
+    answer: "A common unit Eurostat uses to take out the difference in prices between countries: in principle, one PPS buys the same amount of goods and services in every country. A wage in PPS is not a sum of euros and can’t be spent. It shows how far a wage goes at home against the others, which is why a country with low prices climbs the order and a dear one falls."
+  - question: "Why do some countries show no figure?"
+    answer: "Because they have no national minimum wage. In Austria, Denmark, Finland, Italy and Sweden, pay floors are set by collective agreements between unions and employers, sector by sector, and Eurostat records that a national figure can’t exist. That is not a wage of zero, and not a gap in the data."
+  - question: "Why is Eurostat’s monthly figure different from my country’s own?"
+    answer: "Eurostat turns every national rate into a monthly amount so that countries can be compared. A rate set by the hour or the week is multiplied by the hours each country supplies. A rate paid 14 times a year, as in Greece, Spain and Portugal, is spread over 12 months. Outside the euro, the amount is converted at the exchange rate at the end of the month before. A country’s own monthly figure can be set another way, and real monthly pay depends on the hours worked."
+  - question: "Why is there no EU average?"
+    answer: "Eurostat doesn’t calculate one: not every country has a national minimum wage, and it calls an EU-wide figure, such as the mean of the national ones, questionable. This page doesn’t make one either."
+  - question: "How up to date are the figures?"
+    answer: "Eurostat publishes them twice a year, for 1 January and 1 July, a few weeks after each date. A rate that changes between those dates shows only at the next one, so a figure here can be months behind a country’s latest change. For the rate in force today, check the country’s own source, as in the Ireland and Spain section."
+---
+{%- assign mw = site.data.minimum_wage_europe %}
+{%- assign mn = site.data.minimum_wage_national %}
+{%- capture mw_date %}{{ mw.date | date: "%-d %B %Y" }}{% endcapture %}
+{%- assign mw_today = site.time | date: "%Y-%m-%d" %}
+<div class="wrap calc-page mw-page">
+<header class="page-head">
+<h1 class="page-title">Minimum wages in Europe</h1>
+<p class="page-lede">The national minimum wage in each EU country, in euros and adjusted for prices, and how the order changes between the two.</p>
+<p class="meta page-vintage"><strong>{{ mw_date }}</strong>: {{ mw.with_rate }} of the {{ mw.total }} EU countries have a national minimum wage, from {{ mw.extremes.eur.lowest.text }} a month in {{ mw.extremes.eur.lowest.names }} to {{ mw.extremes.eur.highest.text }} in {{ mw.extremes.eur.highest.names }}<span aria-hidden="true"> · </span>Data updated {{ mw.updated | date: "%-d %B %Y" }}</p>
+</header>
+{% include page-jumps.html %}
+<!--footnote-->
+<p><strong>The minimum wages are Eurostat’s gross monthly figures for {{ mw_date }}, not take-home pay.</strong> A country may have changed its rate since. Eurostat can revise them; this page shows them as they stood when it was last updated.</p>
+<!--footnote-->
+
+<section aria-labelledby="minimum-wage-map-title">
+<h2 class="section-title" id="minimum-wage-map-title">The map</h2>
+<p class="fuel-map-key">Gross monthly minimum wage <span aria-hidden="true">·</span> {{ mw_date }} <span aria-hidden="true">·</span> In euros, or by purchasing power</p>
+{% include minimum-wage-map.html id="minimum-wage-map" source_in_method=true %}
+</section>
+
+<section class="fuel-section" aria-labelledby="minimum-wage-compare-title">
+<h2 class="section-title" id="minimum-wage-compare-title">Compare two countries</h2>
+<p class="section-intro">A higher wage in euros can buy less at home. Pick any two countries and see both answers.</p>
+{% include minimum-wage-compare.html source_in_method=true %}
+</section>
+
+<section class="fuel-section" aria-labelledby="minimum-wage-table-title">
+<h2 class="section-title" id="minimum-wage-table-title">All {{ mw.total }} countries</h2>
+{% include minimum-wage-table.html source_in_method=true %}
+</section>
+
+<section class="fuel-section" aria-labelledby="minimum-wage-national-title">
+<h2 class="section-title" id="minimum-wage-national-title">Ireland and Spain: the legal rates</h2>
+<p class="section-intro">The map compares Eurostat’s monthly figures. Each country’s law sets its rate in its own way: by the hour in Ireland, by the month and paid 14 times a year in Spain.</p>
+<div class="mw-notes">
+{%- assign ie = mn.IE %}{% assign ie_now = nil %}{% assign ie_next = nil %}
+{%- for r in ie.rates %}{% assign r_from = r.from | date: "%Y-%m-%d" %}{% if r_from <= mw_today %}{% assign ie_now = r %}{% elsif ie_next == nil %}{% assign ie_next = r %}{% endif %}{% endfor %}
+{%- assign ie_row = mw.rows | where: "code", "IE" | first %}
+<article class="mw-note" id="minimum-wage-ie" aria-labelledby="minimum-wage-ie-title">
+<h3 class="mw-note-title" id="minimum-wage-ie-title">Ireland</h3>
+<p class="mw-note-rate"><strong>€{{ ie_now.hourly }} an hour</strong> for workers aged 20 and over, since {{ ie_now.from | date: "%-d %B %Y" }}</p>
+{%- if ie_now.ages %}
+<div class="table-wrap">
+<table class="data mw-age-table">
+<caption class="visually-hidden">Ireland’s national minimum wage by age, from {{ ie_now.from | date: "%-d %B %Y" }}</caption>
+<thead><tr><th scope="col">Age</th><th scope="col" class="num">An hour</th><th scope="col" class="num">Of the adult rate</th></tr></thead>
+<tbody>
+{%- for a in ie_now.ages %}
+<tr><th scope="row">{{ a[0] }}</th><td class="num">€{{ a[1] }}</td><td class="num">{{ a[2] }}</td></tr>
+{%- endfor %}
+</tbody>
+</table>
+</div>
+{%- endif %}
+{%- if ie_next %}
+<p><strong>From {{ ie_next.from | date: "%-d %B %Y" }}: €{{ ie_next.hourly }} an hour</strong>, under the {{ ie_next.order }} ({{ ie_next.ref }}), made on {{ ie_next.made | date: "%-d %B %Y" }}. The rates under 20 are set as shares of the adult rate, so they rise with it.</p>
+{%- else %}
+<p>The rates under 20 are set as shares of the adult rate. The <a href="{{ ie.wrc }}">Workplace Relations Commission</a> lists them in euros.</p>
+{%- endif %}
+<p>On the map: €{{ ie_row.eur_text }} a month on {{ mw_date }}, {{ ie_row.eur_ordinal }} in euros and {{ ie_row.pps_ordinal }} by purchasing power. Eurostat gets there with the hourly rate × 39 hours × 52 weeks ÷ 12, the hours Ireland supplies. Real monthly pay depends on the hours worked.</p>
+<p class="mw-note-source">Sources: <a href="{{ ie.wrc }}">Workplace Relations Commission</a>{% for r in ie.rates %}, <a href="{{ r.url }}">{{ r.ref }}</a>{% endfor %}. Checked {{ mn.checked | date: "%-d %B %Y" }}.</p>
+</article>
+{%- assign es = mn.ES %}{% assign es_now = es.rates | last %}
+{%- assign es_to = es_now.to | date: "%Y-%m-%d" %}
+{%- assign es_row = mw.rows | where: "code", "ES" | first %}
+<article class="mw-note" id="minimum-wage-es" aria-labelledby="minimum-wage-es-title">
+<h3 class="mw-note-title" id="minimum-wage-es-title">Spain</h3>
+<p class="mw-note-rate"><strong>€{{ es_now.monthly }} a month, 14 times a year</strong> for workers of any age, in {{ es_now.from | date: "%Y" }}</p>
+<dl class="fuel-figures mw-note-figures">
+<div><dt>By the month</dt><dd>€{{ es_now.monthly }}</dd></div>
+<div><dt>By the day</dt><dd>€{{ es_now.daily }}</dd></div>
+<div><dt>For the year, at least</dt><dd>€{{ es_now.annual }}</dd></div>
+<div><dt>Domestic workers, by the hour</dt><dd>€{{ es_now.domestic_hourly }}</dd></div>
+</dl>
+<p>The salario mínimo interprofesional (SMI) is set by {{ es_now.decree }}, published on {{ es_now.published | date: "%-d %B %Y" }} and backdated to {{ es_now.from | date: "%-d %B" }}. Workers are owed two extra payments a year, one at Christmas and one in the month their collective agreement sets, so a year’s minimum is 14 × €{{ es_now.monthly }}. Spread over 12 months, as an agreement may do, that is €{{ es_now.spread }}: the figure Eurostat rounds to €{{ es_row.eur_text }}, {{ es_row.eur_ordinal }} in euros and {{ es_row.pps_ordinal }} by purchasing power on {{ mw_date }}.</p>
+<p>{% if es_to < mw_today %}The decree set the rate for {{ es_now.from | date: "%Y" }}. The government sets the SMI each year, and this page has not yet been updated for the next one.{% else %}The decree covers {{ es_now.from | date: "%-d %B" }} to {{ es_now.to | date: "%-d %B %Y" }}. The government sets the SMI each year, after consulting unions and employers.{% endif %}</p>
+<p class="mw-note-source">Sources: <a href="{{ es_now.url }}">{{ es_now.decree }}</a> (BOE), <a href="{{ es.statute }}">Workers’ Statute</a>, articles 27 and 31. Checked {{ mn.checked | date: "%-d %B %Y" }}.</p>
+</article>
+</div>
+</section>
+
+{% include data-articles.html heading="This data in an article" %}
+
+<aside class="next-step" aria-labelledby="next-step-title">
+<div>
+<h2 id="next-step-title">And prices?</h2>
+<p>Inflation in each EU country, and each one against the euro area since 1999.</p>
+</div>
+<a href="{{ '/data/inflation-by-country/' | relative_url }}">Inflation by country <span aria-hidden="true">→</span></a>
+</aside>
+
+<section class="fuel-section fuel-questions" aria-labelledby="minimum-wage-questions">
+<h2 class="section-title" id="minimum-wage-questions">Questions about these figures</h2>
+<div class="faq">
+{%- for item in page.faq %}
+<details><summary>{{ item.question }}</summary>{{ item.answer | markdownify }}</details>
+{%- endfor %}
+</div>
+</section>
+
+<section class="fuel-section brent-method" aria-labelledby="minimum-wage-sources">
+<h2 class="section-title" id="minimum-wage-sources">Sources &amp; method</h2>
+<p class="meta">Figures for {{ mw_date }} (Eurostat’s half-year {{ mw.period }}), as Eurostat published them on {{ mw.source_updated | date: "%-d %B %Y" }}, downloaded on {{ mw.updated | date: "%-d %B %Y" }}. National rates and explanatory notes checked {{ page.content_checked | date: "%-d %B %Y" }}.{% if mw.pending %} Eurostat has begun publishing figures for {{ mw.pending.date | date: "%-d %B %Y" }}; this page waits until every country has one (still missing: {{ mw.pending.missing_names | join: ", " }}).{% endif %}</p>
+<dl class="brent-source-list">
+<div><dt>Minimum wages</dt><dd><a href="https://ec.europa.eu/eurostat/databrowser/view/earn_mw_cur/default/table?lang=en">Eurostat, monthly minimum wages (earn_mw_cur)</a>: each country’s national minimum wage on 1 January and 1 July, gross, as a monthly amount, in euros, in purchasing power standards and in national currency. {{ mw.with_rate }} EU countries have one; Eurostat flags the other {{ mw.no_national.size }} as having none.</dd></div>
+<div><dt>Monthly amounts</dt><dd>Eurostat’s, from each country’s own rate. A rate set by the hour or the week is multiplied by the hours that country supplies: 38.8 a week for Germany, 39 for Ireland, 35 for France and 36 for the Netherlands; Malta’s weekly rate × 52 ÷ 12. A rate paid 14 times a year, in Greece, Spain and Portugal, is multiplied by 14 and divided by 12. <a href="https://ec.europa.eu/eurostat/cache/metadata/en/earn_minw_esms.htm">Eurostat’s notes</a>, read {{ mw.method_checked | date: "%-d %B %Y" }}. This page applies no conversion of its own and works out no hourly rate.</dd></div>
+<div><dt>Euros</dt><dd>Outside the euro, Eurostat converts the national amount at the exchange rate at the end of the month before, so a currency move changes the euro figure when the wage hasn’t changed.</dd></div>
+<div><dt>Purchasing power</dt><dd>Eurostat’s own figures in purchasing power standards, converted with purchasing power parities for household spending from the latest year it had. Eurostat marks them as estimates. This page doesn’t work them out itself: dividing by Eurostat’s separate price levels gives different answers.</dd></div>
+<div><dt>Ranks</dt><dd>This site’s ordering of Eurostat’s figures, among the {{ mw.with_rate }} countries with a national minimum wage. Equal figures share a rank and the next rank skips the shared places. Places moved is the rank in euros minus the rank by purchasing power.</dd></div>
+<div><dt>Comparison</dt><dd>This site’s arithmetic: one country’s published figure against another’s, as a percentage of the second, one measure at a time. Euros are never set against purchasing power standards.</dd></div>
+<div><dt>Map</dt><dd>Outlines made with <a href="https://www.naturalearthdata.com/">Natural Earth</a>, simplified, on an equal-area projection. Overseas territories and the smallest islands are left out of the drawing. Each view has five shades in equal bands, set afresh at every update from that date’s lowest and highest figures. Hatching marks a country with no national minimum wage.</dd></div>
+<div><dt>Ireland and Spain</dt><dd>The legal rates from the <a href="https://www.irishstatutebook.ie/">Irish Statute Book</a> and the Workplace Relations Commission, and from Spain’s official gazette, the <a href="https://www.boe.es/">BOE</a>. Typed by hand and checked {{ mn.checked | date: "%-d %B %Y" }}; the data update doesn’t change them.</dd></div>
+</dl>
+<div class="faq brent-method-details">
+<details><summary>Flags, gaps and revisions</summary>
+<p>{% if mw.estimated.pps.size == mw.with_rate %}Eurostat marks every purchasing-power figure for {{ mw_date }} as an estimate.{% elsif mw.estimated.pps.size > 0 %}Eurostat marks these purchasing-power figures for {{ mw_date }} as estimates: {{ mw.estimated.pps | join: ", " }}.{% endif %}{% if mw.estimated.eur.size > 0 %} It marks these figures in euros as estimates: {{ mw.estimated.eur | join: ", " }}.{% endif %} They are shown as published, with an “e”. A country with no national minimum wage is shown as such, never as zero, and a country that has a rate but no figure for the date would show as “No figure”. Nothing is filled in or carried forward from an earlier date.</p>
+<p>Each update compares Eurostat’s figures with the saved ones.{% if mw.revisions.size > 0 %} At the last one, Eurostat had revised {{ mw.revisions.size }} earlier figure{% if mw.revisions.size > 1 %}s{% endif %}, and the page shows the revised ones.{% elsif mw.revisions %} At the last one, none of the earlier figures had changed.{% endif %} A download that fails or looks wrong leaves the page as it was.</p>
+</details>
+<details><summary>Update schedule and reuse</summary>
+<p>The saved data is refreshed by a scheduled download on the 18th of each month, with manual updates possible. Eurostat publishes new figures twice a year, in late January and late July, so a new date shows from the first download after that. This is not a live feed.</p>
+<p><a href="https://ec.europa.eu/eurostat/help/copyright-notice">Eurostat allows reuse of its data</a> with the source named. The ranks, the places moved, the comparisons and the map’s shades are this site’s work on those figures; Eurostat is not responsible for them. Natural Earth’s map data is in the public domain.</p>
+</details>
+</div>
+</section>
+</div>

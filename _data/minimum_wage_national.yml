@@ -1,0 +1,46 @@
+# The legal minimum wage in Ireland and in Spain, for the "Ireland and Spain" section of /data/minimum-wage-europe/.
+# Typed by hand from the national sources linked below, so the monthly data update never touches it. These are the
+# rates the law sets, which are not the same thing as Eurostat's monthly figures on the map.
+#
+# Check it again by review_by, and whenever a new rate is set. Each rate has the day it starts ("from"); the page
+# shows the latest one that has started on the day the site was built as the rate in force, and a later one as
+# announced, so the 1 January change shows on the first rebuild after it (the site rebuilds every Sunday).
+checked: 2026-11-15
+review_by: 2027-01-01
+
+IE:
+  name: Ireland
+  rates:
+    - from: 2026-01-01
+      hourly: "14.15"
+      order: "National Minimum Wage Order 2025"
+      ref: "S.I. No. 472/2025"
+      url: https://www.irishstatutebook.ie/eli/2025/si/472/made/en/print
+      # The Workplace Relations Commission's table (page updated 2 January 2026): age, euros an hour, share of the adult rate
+      ages:
+        - ["Under 18", "9.91", "70%"]
+        - ["18", "11.32", "80%"]
+        - ["19", "12.74", "90%"]
+        - ["20 and over", "14.15", "100%"]
+    - from: 2027-01-01
+      hourly: "14.94"
+      order: "National Minimum Wage Order 2026"
+      ref: "S.I. No. 533/2026"
+      made: 2026-10-15
+      url: https://www.irishstatutebook.ie/eli/2026/si/533/made/en/print
+  wrc: https://www.workplacerelations.ie/what_you_should_know/hours-and-wages/national-minimum-wage/
+
+ES:
+  name: Spain
+  rates:
+    - from: 2026-01-01
+      to: 2026-12-31
+      monthly: "1,221"
+      daily: "40.70"
+      annual: "17,094"
+      spread: "1,424.50"
+      domestic_hourly: "9.55"
+      decree: "Real Decreto 126/2026"
+      published: 2026-02-19
+      url: https://www.boe.es/buscar/doc.php?id=BOE-A-2026-3815
+  statute: https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430
