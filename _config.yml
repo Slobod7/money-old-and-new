@@ -25,7 +25,8 @@ author:
     - Cryptocurrency
     - Personal finance
   # Other profiles that are you, such as X. LinkedIn and the Substack address are added automatically
-  same_as: []
+  same_as:
+    - https://x.com/BSlobodzean
 
 # Your Substack newsletter. Every "Subscribe" button on the site points to its signup page.
 # While this still says YOUR-NAME, the buttons are replaced by "Signup isn't open yet".
