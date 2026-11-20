@@ -21,6 +21,9 @@ schema_type: ProfilePage
 <div class="actions">
 <a class="button" href="mailto:{{ site.author.email }}">Email me</a>
 <a class="action" href="{{ site.author.linkedin }}">Connect on LinkedIn</a>
+{%- if site.author.x %}
+<a class="action" href="{{ site.author.x }}">Follow on X</a>
+{%- endif %}
 </div>
 </div>
 </header>
