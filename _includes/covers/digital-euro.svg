@@ -1,0 +1,16 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- A payment card marked with the euro sign in the accent, in front; a stack of dollar tokens set apart and faint behind it: the digital euro as a payments project, with the stablecoin fight elsewhere. Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<path class="thin" d="M56 236H424"/>
+<ellipse class="coin" cx="360" cy="214" rx="46" ry="13"/>
+<ellipse class="coin" cx="360" cy="198" rx="46" ry="13"/>
+<ellipse class="coin" cx="360" cy="182" rx="46" ry="13"/>
+<ellipse class="coin" cx="360" cy="166" rx="46" ry="13"/>
+<path class="ring" d="M372 160C368 156 350 156 350 163C350 170 372 166 372 174C372 180 354 181 348 176M360 152V184" transform="matrix(1 0 0 0.42 0 96)"/>
+<path class="dots" d="M300 112C326 104 344 112 352 132"/>
+<rect class="paper edge" x="84" y="92" width="200" height="128" rx="12"/>
+<rect class="t2 edge" x="106" y="120" width="34" height="26" rx="5"/>
+<path class="thin" d="M106 192H190M206 192H238"/>
+<path class="mark-line" d="M266 131A24 24 0 1 0 266 169"/>
+<path class="mark-line" d="M222 145H254M222 157H250"/>
+</svg>
