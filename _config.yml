@@ -14,6 +14,7 @@ author:
   initials: BS
   email: slobodzeanb@gmail.com
   linkedin: https://www.linkedin.com/in/bogdanslobodzean/
+  x: https://x.com/BSlobodzean         # the footer's X link; also added to the schema's sameAs
   photo: /assets/img/bogdan.jpg      # 4:5 portrait, beside the About introduction
   avatar: /assets/img/bogdan-square.jpg   # square, cropped close to the face, for the circle on the home page. Empty uses photo
   # For search engines only (the schema.org Person in _includes/schema.html). None of this shows on the page.
@@ -24,9 +25,8 @@ author:
     - Stablecoins
     - Cryptocurrency
     - Personal finance
-  # Other profiles that are you, such as X. LinkedIn and the Substack address are added automatically
-  same_as:
-    - https://x.com/BSlobodzean
+  # Other profiles that are you. LinkedIn, X and the Substack address are added automatically
+  same_as: []
 
 # Your Substack newsletter. Every "Subscribe" button on the site points to its signup page.
 # While this still says YOUR-NAME, the buttons are replaced by "Signup isn't open yet".

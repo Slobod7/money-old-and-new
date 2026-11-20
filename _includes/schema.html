@@ -31,6 +31,7 @@ default.html drops the JSON-LD that jekyll-seo-tag writes, so the two never disa
 {%- assign same_as = site.author.same_as | default: '' -%}
 {%- if same_as == '' -%}{%- assign same_as = '' | split: '' -%}{%- endif -%}
 {%- if site.author.linkedin -%}{%- assign same_as = same_as | unshift: site.author.linkedin -%}{%- endif -%}
+{%- if site.author.x -%}{%- assign same_as = same_as | push: site.author.x -%}{%- endif -%}
 {%- unless site.substack_url == nil or site.substack_url == '' or site.substack_url contains 'YOUR-NAME' -%}{%- assign same_as = same_as | push: site.substack_url -%}{%- endunless -%}
 {%- if is_article -%}
 {%- assign modified = page.last_modified_at | default: page.date -%}

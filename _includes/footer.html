@@ -25,6 +25,9 @@ otherwise carry. _layouts/default.html collects them and passes them in.
 <li><a href="{{ '/subscribe/' | relative_url }}">Subscribe</a></li>
 <li><a href="{{ '/feed.xml' | relative_url }}">RSS</a></li>
 <li><a href="{{ site.author.linkedin }}">LinkedIn</a></li>
+{%- if site.author.x %}
+<li><a href="{{ site.author.x }}">X</a></li>
+{%- endif %}
 <li><a href="{{ '/privacy/' | relative_url }}">Privacy</a></li>
 </ul>
 </nav>
