@@ -1,0 +1,12 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- Three gold bars stacked, and beside them a price line that climbs to a peak and falls away in the accent: gold's crash from a record. Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<path class="thin" d="M64 244H416"/>
+<path class="t3 edge" d="M80 244H176L164 210H92Z"/>
+<path class="t2 edge" d="M184 244H280L268 210H196Z"/>
+<path class="t1 edge" d="M132 210H228L216 176H144Z"/>
+<path class="thin" d="M100 222H132M204 222H236M152 188H184"/>
+<path class="ink heavy" style="stroke-width:6" d="M300 214L326 180L344 194L376 112"/>
+<path class="mark-line" style="stroke-width:6" d="M376 112L400 161"/>
+<path class="mark" d="M410 182L390 166L410 156Z"/>
+</svg>

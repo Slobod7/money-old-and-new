@@ -1,0 +1,69 @@
+{%- comment -%}
+Gold after its records, lined up: the World Bank's monthly average gold price as a share of the peak month's average,
+for the four months that each started a fall of a third or more (December 1974, January 1980, September 2011 and
+February 2026), over the 48 months that followed. A static drawing: the figures are fixed, so it needs no data file
+or JavaScript. Rebuild it from the Pink Sheet if 2026's line needs more months, and move the open dot for the latest
+spot price with it.
+  {% include gold-crashes-chart.html %}
+{%- endcomment -%}
+<figure class="oil-widget gold-crashes" id="gold-crashes" aria-labelledby="gold-crashes-title">
+<h3 class="oil-title" id="gold-crashes-title">Gold after its records, lined up</h3>
+<p class="oil-summary">The monthly average price as a share of the peak month, for the four years after each peak. In 1980 gold fell to less than half; in 1974 it fell by 40% and was back within three and a quarter years.</p>
+<ul class="gold-key" style="display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 10px;padding:0;list-style:none;font-size:14px;">
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--muted);stroke-width:1.75;stroke-linecap:round;" stroke-dasharray="6 4"/></svg>From December 1974</li>
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--forest);stroke-width:2;stroke-linecap:round;"/></svg>From January 1980</li>
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--forest);stroke-width:2;stroke-linecap:round;" stroke-dasharray="1 5"/></svg>From September 2011</li>
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--accent);stroke-width:3;stroke-linecap:round;"/></svg>From February 2026</li>
+</ul>
+<div class="oil-plot">
+<div class="oil-static" role="img" aria-label="Line chart of gold’s monthly average price after each of four peaks, as a share of the peak month. After January 1980 it fell to 47% by June 1982 and was still at 55% four years on. After December 1974 it fell to 60% by August 1976, then recovered to 100% by March 1978 and 113% by December 1978. After September 2011 it was at 63% four years on. After February 2026 it was at 82% in October, and the spot price on 20 November was about 70% of February’s average. The figures are in the table below.">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+<line class="oil-axis" x1="0" x2="1000" y1="1000.0" y2="1000.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="800.0" y2="800.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="600.0" y2="600.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="400.0" y2="400.0" style="stroke:var(--muted);stroke-dasharray:3 4;"/>
+<line class="oil-grid" x1="0" x2="1000" y1="200.0" y2="200.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="0.0" y2="0.0"/>
+<polyline points="0.0,400.0 20.8,443.5 41.7,421.7 62.5,432.6 83.3,476.1 104.2,492.4 125.0,508.7 145.8,503.3 166.7,514.1 187.5,617.4 208.3,622.8 229.2,628.3 250.0,644.6 270.8,688.0 291.7,688.0 312.5,677.2 333.3,704.3 354.2,709.8 375.0,715.2 395.8,758.7 416.7,802.2 437.5,780.4 458.3,769.6 479.2,693.5 500.0,671.7 520.8,682.6 541.7,660.9 562.5,595.7 583.3,590.2 604.2,601.1 625.0,633.7 645.8,622.8 666.7,612.0 687.5,584.8 708.3,535.9 729.2,519.6 750.0,530.4 770.8,459.8 791.7,432.6 812.5,400.0 833.3,448.9 854.2,443.5 875.0,400.0 895.8,372.8 916.7,280.4 937.5,247.8 958.3,166.3 979.2,280.4 1000.0,269.6" style="fill:none;stroke:var(--muted);stroke-width:1.75;stroke-dasharray:6 4;stroke-linejoin:round;stroke-linecap:round;"/>
+<polyline points="0.0,400.0 20.8,414.8 41.7,579.3 62.5,634.1 83.3,638.5 104.2,509.6 125.0,447.4 145.8,471.1 166.7,401.5 187.5,420.7 208.3,474.1 229.2,603.0 250.0,574.8 270.8,659.3 291.7,660.7 312.5,665.2 333.3,688.9 354.2,717.0 375.0,794.1 395.8,792.6 416.7,742.2 437.5,751.1 458.3,788.1 479.2,792.6 500.0,831.1 520.8,845.9 541.7,911.1 562.5,881.5 583.3,905.2 604.2,933.3 625.0,897.8 645.8,860.7 666.7,752.6 687.5,774.8 708.3,785.2 729.2,740.7 750.0,687.4 770.8,672.6 791.7,777.8 812.5,758.5 833.3,751.1 854.2,788.1 875.0,803.0 895.8,783.7 916.7,789.6 937.5,816.3 958.3,834.1 979.2,825.2 1000.0,850.4" style="fill:none;stroke:var(--forest);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;"/>
+<polyline points="0.0,400.0 20.8,459.8 41.7,418.6 62.5,474.5 83.3,466.6 104.2,415.2 125.0,454.2 145.8,469.4 166.7,503.3 187.5,497.6 208.3,500.5 229.2,480.1 250.0,415.2 270.8,414.1 291.7,428.2 312.5,449.1 333.3,456.4 354.2,481.3 375.0,501.0 395.8,560.3 416.7,602.0 437.5,642.1 458.3,674.3 479.2,637.0 500.0,638.7 520.8,656.8 541.7,679.9 562.5,710.4 583.3,698.0 604.2,666.4 625.0,646.0 645.8,667.5 666.7,672.6 687.5,678.2 708.3,660.2 729.2,669.2 750.0,701.9 770.8,710.4 791.7,736.9 812.5,722.2 833.3,694.0 854.2,707.6 875.0,734.7 895.8,723.4 916.7,723.4 937.5,733.0 958.3,763.4 979.2,769.1 1000.0,765.1" style="fill:none;stroke:var(--forest);stroke-width:2;stroke-dasharray:1 5;stroke-linejoin:round;stroke-linecap:round;"/>
+<polyline points="0.0,400.0 20.8,432.7 41.7,459.6 62.5,486.3 83.3,557.8 104.2,588.6 125.0,521.3 145.8,539.6 166.7,582.3" style="fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;"/>
+<line x1="166.7" y1="582.0" x2="187.5" y2="695.0" style="stroke:var(--accent);stroke-width:2;stroke-dasharray:2 4;stroke-linecap:round;"/>
+</svg>
+<span aria-hidden="true" style="position:absolute;left:18.75%;top:69.5%;width:11px;height:11px;margin:-6px 0 0 -6px;border:2px solid var(--accent);border-radius:50%;background:var(--bg);"></span>
+<span aria-hidden="true" style="position:absolute;left:calc(18.75% - 8px);top:calc(69.5% + 10px);font-size:12.5px;line-height:1.25;color:var(--accent);white-space:nowrap;">20 Nov, spot</span>
+<span class="oil-static-y" style="bottom: 0.0%">40%</span>
+<span class="oil-static-y" style="bottom: 20.0%">60%</span>
+<span class="oil-static-y" style="bottom: 40.0%">80%</span>
+<span class="oil-static-y" style="bottom: 60.0%">100%</span>
+<span class="oil-static-y" style="bottom: 80.0%">120%</span>
+<span class="oil-static-y" style="bottom: 100.0%">140%</span>
+<span class="oil-static-x" style="left: 0.0%">Peak</span>
+<span class="oil-static-x" style="left: 25.0%">1 year</span>
+<span class="oil-static-x" style="left: 50.0%">2 years</span>
+<span class="oil-static-x" style="left: 75.0%">3 years</span>
+<span class="oil-static-x" style="left: 100.0%">4 years</span>
+</div>
+</div>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Gold after its records, every six months" tabindex="0">
+<table class="data">
+<thead><tr><th scope="col">Months after the peak</th><th scope="col" class="num">December 1974</th><th scope="col" class="num">January 1980</th><th scope="col" class="num">September 2011</th><th scope="col" class="num">February 2026</th></tr></thead>
+<tbody>
+<tr><th scope="row">The peak month</th><td class="num">$184 (100%)</td><td class="num">$675 (100%)</td><td class="num">$1,772 (100%)</td><td class="num">$5,020 (100%)</td></tr>
+<tr><th scope="row">6</th><td class="num">$164 (89%)</td><td class="num">$643 (95%)</td><td class="num">$1,676 (95%)</td><td class="num">$4,411 (88%)</td></tr>
+<tr><th scope="row">12</th><td class="num">$139 (76%)</td><td class="num">$557 (82%)</td><td class="num">$1,745 (98%)</td><td class="num">–</td></tr>
+<tr><th scope="row">18</th><td class="num">$126 (68%)</td><td class="num">$409 (61%)</td><td class="num">$1,593 (90%)</td><td class="num">–</td></tr>
+<tr><th scope="row">24</th><td class="num">$134 (73%)</td><td class="num">$384 (57%)</td><td class="num">$1,349 (76%)</td><td class="num">–</td></tr>
+<tr><th scope="row">30</th><td class="num">$141 (77%)</td><td class="num">$339 (50%)</td><td class="num">$1,336 (75%)</td><td class="num">–</td></tr>
+<tr><th scope="row">36</th><td class="num">$160 (87%)</td><td class="num">$481 (71%)</td><td class="num">$1,237 (70%)</td><td class="num">–</td></tr>
+<tr><th scope="row">42</th><td class="num">$184 (100%)</td><td class="num">$403 (60%)</td><td class="num">$1,179 (66%)</td><td class="num">–</td></tr>
+<tr><th scope="row">48</th><td class="num">$208 (113%)</td><td class="num">$371 (55%)</td><td class="num">$1,125 (64%)</td><td class="num">–</td></tr>
+</tbody>
+</table>
+</div>
+<p class="oil-note">US dollars a troy ounce, monthly averages. Each line starts in the month with the highest average before the fall: December 1974, January 1980, September 2011 and February 2026. 2026’s line ends in October, the latest month published; the open dot is the spot price late on 20 November, about $3,540, against February’s average of $5,020. Daily prices went higher than the monthly averages: about $195 on 30 December 1974, $850 on 21 January 1980, above $1,900 on 6 September 2011 and $5,307 on 28 January 2026 (LBMA Gold Price PM).</p>
+</details>
+<figcaption class="oil-source">Source: <a href="https://www.worldbank.org/en/research/commodity-markets">World Bank, Commodity Price Data (the Pink Sheet)</a>, gold, monthly averages to October 2026 (CC BY 4.0). Spot price on 20 November: <a href="https://www.cnbc.com/2026/11/20/gold-federal-reserve-price-dollar-metals.html">Reuters, via CNBC</a>, and <a href="https://www.kitco.com/news/article/2026-11-20/wall-street-stays-bearish-after-golds-slide-3500-main-street-pessimism">Kitco</a>.</figcaption>
+</figure>
