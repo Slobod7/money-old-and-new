@@ -1181,8 +1181,20 @@ th[aria-sort="descending"] .fuel-sort::after { content: " \2193"; }
    and the table that sorts. The rate takes the price scale (higher is darker) and the change over a year takes the
    diverging one (forest for a rate that fell, clay for one that rose). These rules are only what differs: the table
    shows headline and core side by side without JavaScript and one at a time with it, the euro area's row is set in
-   forest, and the comparison's highest rate carries its month underneath. */
-.ibc-list[data-show="headline"] .is-core, .ibc-list[data-show="core"] .is-headline { display: none; }
+   forest, and the comparison's highest rate carries its month underneath. The four groups (food, energy, goods and
+   services) are measures like core: their columns stay hidden without the script, and the card lists them. */
+.ibc-list:not([data-show]) .ibc-cat, .ibc-list[data-show] .ibc-m { display: none; }   /* headline and core without the script */
+.ibc-list[data-show="headline"] .is-headline, .ibc-list[data-show="core"] .is-core, .ibc-list[data-show="food"] .is-food,
+.ibc-list[data-show="energy"] .is-energy, .ibc-list[data-show="goods"] .is-goods, .ibc-list[data-show="services"] .is-services { display: table-cell; }
+/* The card's four groups, with the euro area's figure under a country's and the group on the map set in forest */
+.ibc-parts-title { margin: 18px 0 0; font-size: 13.5px; font-weight: 500; color: var(--muted); }
+.ibc-parts { margin-top: 6px; }
+.ibc-parts > div { padding: 7px 0; }
+.ibc-parts > div.is-current dt, .ibc-parts > div.is-current [data-part-rate] { color: var(--forest); font-weight: 600; }
+@media (max-width: 420px) {   /* the six measure tabs on one line on a phone: 360px wide and up */
+  .ibc-measures { gap: 0; margin-left: 4px; }
+  .ibc-measures button { min-width: 0; padding: 0 4px; font-size: 14px; }
+}
 .ibc-table { min-width: 600px; }
 .ibc-list[data-show] .ibc-table { min-width: 0; max-width: 760px; }
 .ibc-table thead th, .ibc-table thead .fuel-sort { white-space: normal; }   /* so that one measure's columns fit a phone */

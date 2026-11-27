@@ -1,32 +1,34 @@
 {%- comment -%}
 The inflation ranking: a table of every EU country's annual inflation rate in the latest month all of them have,
-highest first, with the euro area in its place among them. For each measure (headline and core): the rate, how far
-it has moved in a year, and how far it is from the euro area's.
+highest first, with the euro area in its place among them. For each measure (headline, core, food, energy, goods and
+services): the rate, how far it has moved in a year, and how far it is from the euro area's.
   {% include inflation-ranking.html %}
 Optional: title (a heading above it, set as a level-3 heading).
 source_in_method: omit the source caption when the host page has its own sources section.
 One per page: the inflation map links each country to its row here (#inflation-ranking-RO).
 Away from /data/inflation-by-country/, the caption ends with a link to that page, and the comment before the figure
 lets that page find the articles that use the ranking (_includes/data-articles.html).
-It reads _data/inflation_by_country.json, written by scripts/update-inflation-data.py, and shows both measures side
-by side without JavaScript. assets/js/inflation-by-country.js, added once below, shows one measure at a time, sorts
-the table by any column, and turns each country's name into a button that shows it on the map or in the chart.
+It reads _data/inflation_by_country.json, written by scripts/update-inflation-data.py, and shows headline and core
+side by side without JavaScript. assets/js/inflation-by-country.js, added once below, shows one measure at a time
+(headline, core or one of the four groups: their columns are in the table, hidden until chosen), sorts the table by
+any column, and turns each country's name into a button that shows it on the map or in the chart.
 {%- endcomment -%}
 {%- assign ib = site.data.inflation_by_country -%}
 {%- capture ir_month %}{{ ib.to | append: "-01" | date: "%B %Y" }}{% endcapture -%}
 {%- capture ir_before %}{{ ib.before | append: "-01" | date: "%B %Y" }}{% endcapture -%}
 {%- assign ir_outside = ib.areas | where_exp: "a", "a[2] == false" -%}
 {%- assign ir_countries = ib.areas.size | minus: 1 -%}
-{%- assign ir_measures = "headline,core" | split: "," -%}
+{%- assign ir_core = "headline,core" | split: "," -%}
 <!--uses:/data/inflation-by-country/-->
 <figure class="oil-widget fuel-list ibc-list" id="inflation-ranking" data-inflation-table data-src="{{ '/assets/data/inflation-by-country.json' | relative_url }}" data-to="{{ ib.to }}">
 {%- if include.title %}
 <h3 class="oil-title">{{ include.title }}</h3>
 {%- endif %}
 <div class="oil-controls" data-controls hidden>
-<div class="oil-tabs" role="group" aria-label="Measure">
-<button type="button" data-measure="headline" aria-pressed="true">Headline</button>
-<button type="button" data-measure="core" aria-pressed="false">Core</button>
+<div class="oil-tabs ibc-measures" role="group" aria-label="Measure">
+{%- for mm in ib.measures %}
+<button type="button" data-measure="{{ mm[0] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ mm[1] }}</button>
+{%- endfor %}
 </div>
 <p class="fuel-sort-hint">Select a column heading to sort<span data-pick-hint hidden>, or a country to see it <span data-pick-where>in the chart</span></span>.</p>
 </div>
@@ -34,13 +36,13 @@ the table by any column, and turns each country's name into a button that shows 
 <table class="data fuel-table ibc-table">
 <caption class="visually-hidden">Annual inflation in {{ ir_month }}, highest first</caption>
 <thead>
-<tr class="fuel-groups"><td></td><th scope="colgroup" colspan="3" class="is-headline">Headline</th><th scope="colgroup" colspan="3" class="is-core">Core</th></tr>
+<tr class="fuel-groups"><td></td>{% for mm in ib.measures %}<th scope="colgroup" colspan="3" class="ibc-m is-{{ mm[0] }}{% unless ir_core contains mm[0] %} ibc-cat{% endunless %}">{{ mm[1] }}</th>{% endfor %}</tr>
 <tr>
 <th scope="col" data-sort="name">Country</th>
-{%- for m in ir_measures %}
-<th scope="col" class="num is-{{ m }}" data-sort="rate">Inflation</th>
-<th scope="col" class="num is-{{ m }}" data-sort="change">Change in a year</th>
-<th scope="col" class="num is-{{ m }}" data-sort="gap">Against the euro area</th>
+{%- for mm in ib.measures %}{% capture ir_cls %}num ibc-m is-{{ mm[0] }}{% unless ir_core contains mm[0] %} ibc-cat{% endunless %}{% endcapture %}
+<th scope="col" class="{{ ir_cls }}" data-sort="rate">Inflation</th>
+<th scope="col" class="{{ ir_cls }}" data-sort="change">Change in a year</th>
+<th scope="col" class="{{ ir_cls }}" data-sort="gap">Against the euro area</th>
 {%- endfor %}
 </tr>
 </thead>
@@ -48,18 +50,18 @@ the table by any column, and turns each country's name into a button that shows 
 {%- for row in ib.rows %}
 <tr id="inflation-ranking-{{ row.code }}" data-code="{{ row.code }}"{% if row.euro == nil %} class="is-marked"{% endif %}>
 <th scope="row"><span data-country-name>{{ row.name }}</span>{% if row.euro == false %}<span aria-hidden="true">*</span><span class="visually-hidden"> (outside the euro area)</span>{% endif %}</th>
-{%- for m in ir_measures %}
-{%- assign f = row[m] %}
-<td class="num is-{{ m }}">{{ f.rate | replace: "-", "−" }}%</td>
-<td class="num is-{{ m }}">{{ f.change | replace: "-", "−" }}</td>
-<td class="num is-{{ m }}">{% if f.gap %}{{ f.gap | replace: "-", "−" }}{% else %}–{% endif %}</td>
+{%- for mm in ib.measures %}{% capture ir_cls %}num ibc-m is-{{ mm[0] }}{% unless ir_core contains mm[0] %} ibc-cat{% endunless %}{% endcapture %}
+{%- assign ir_m = mm[0] %}{% assign f = row[ir_m] %}
+<td class="{{ ir_cls }}">{{ f.rate | replace: "-", "−" }}%</td>
+<td class="{{ ir_cls }}">{{ f.change | replace: "-", "−" }}</td>
+<td class="{{ ir_cls }}">{% if f.gap %}{{ f.gap | replace: "-", "−" }}{% else %}–{% endif %}</td>
 {%- endfor %}
 </tr>
 {%- endfor %}
 </tbody>
 </table>
 </div>
-<p class="oil-note">Year to {{ ir_month }}, the latest month all {{ ir_countries }} countries have reported<span data-order>, highest headline rate first</span>. Changes are on {{ ir_before }}; changes and gaps are in percentage points. Core leaves out energy, food, alcohol and tobacco. *Outside the euro area: {% for a in ir_outside %}{{ a[1] }}{% unless forloop.last %}, {% endunless %}{% endfor %}.</p>
+<p class="oil-note">Year to {{ ir_month }}, the latest month all {{ ir_countries }} countries have reported<span data-order>, highest headline rate first</span>. Changes are on {{ ir_before }}; changes and gaps are in percentage points. Core leaves out energy, food, alcohol and tobacco<span data-groups-note hidden>; food includes alcohol and tobacco, and goods are those other than food and energy</span>. *Outside the euro area: {% for a in ir_outside %}{{ a[1] }}{% unless forloop.last %}, {% endunless %}{% endfor %}.</p>
 {%- unless include.source_in_method %}
 <figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, HICP, annual rate of change</a>. Updated {{ ib.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/inflation-by-country/" %} <a href="{{ '/data/inflation-by-country/' | relative_url }}">The map and every country’s chart</a>.{% endunless %}</figcaption>
 {%- endunless %}

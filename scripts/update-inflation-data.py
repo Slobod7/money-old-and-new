@@ -4,13 +4,17 @@ inflation-map.html, inflation-country-chart.html and inflation-ranking.html).
 
 Downloads, with no API key:
   - prc_hicp_minr, unit RCH_A                 from Eurostat: HICP, annual rate of change, monthly, for the euro area and
-                                              the 27 EU countries. Two categories: all items (coicop18 TOTAL), and all
-                                              items excluding energy, food, alcohol and tobacco (TOT_X_NRG_FOOD, "core").
+                                              the 27 EU countries. Six measures (MEASURES): all items (coicop18 TOTAL),
+                                              all items excluding energy, food, alcohol and tobacco (TOT_X_NRG_FOOD,
+                                              "core"), and the four groups that make up the whole basket: food including
+                                              alcohol and tobacco (FOOD), energy (NRG), non-energy industrial goods
+                                              (IGD_NNRG, "goods" on the page) and services (SERV).
                                               This is Eurostat's live dataset: prc_hicp_manr and prc_hicp_midx stopped
                                               at December 2025.
-  - HICP.M.{area}.N.{000000,XEF000}.4D0.ANR   from the ECB Data Portal: the ECB's copy of the same figures, which the
-                                              ECB rates page reads for the euro area. Used only to check Eurostat's
-                                              answer: the figures on the page are Eurostat's own.
+  - HICP.M.{area}.N.{item}.4D0.ANR            from the ECB Data Portal: the ECB's copy of the same figures (items 000000,
+                                              XEF000, FOOD00, NRGY00, IGXE00, SERV00), which the ECB rates page reads for
+                                              the euro area. Used only to check Eurostat's answer: the figures on the
+                                              page are Eurostat's own.
 
 Writes:
   _data/inflation_by_country.json         everything Jekyll draws: the latest month's figures for each area in ranking
@@ -81,25 +85,42 @@ AREAS = [
 ]
 EURO_AREA = 'EA'
 
-# The measure's name on the page, Eurostat's category and the ECB's item code
+# The measure's name in the data, Eurostat's category and the ECB's item code, in the order the page's tabs show them
 MEASURES = [
     ('headline', 'TOTAL', '000000'),
     ('core', 'TOT_X_NRG_FOOD', 'XEF000'),
+    ('food', 'FOOD', 'FOOD00'),
+    ('energy', 'NRG', 'NRGY00'),
+    ('goods', 'IGD_NNRG', 'IGXE00'),
+    ('services', 'SERV', 'SERV00'),
 ]
+# Each measure's tab on the page and its name in a sentence. assets/js/inflation-by-country.js has the same names.
+LABELS = {
+    'headline': ('Headline', 'Inflation'),
+    'core': ('Core', 'Core inflation'),
+    'food': ('Food', 'Food inflation'),
+    'energy': ('Energy', 'Energy inflation'),
+    'goods': ('Goods', 'Goods inflation'),
+    'services': ('Services', 'Services inflation'),
+}
+# The four groups that together make up all items. Core is the last two together.
+CATEGORIES = ('food', 'energy', 'goods', 'services')
 EUROSTAT_URL = ('https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr'
                 '?format=JSON&lang=EN&freq=M&unit=RCH_A&coicop18={}&{}&sinceTimePeriod={}')
 ECB_KEY = 'HICP/M.{}.N.{}.4D0.ANR'
 
 FIRST_MONTH = '1999-01'    # the euro's first month. Every area has headline inflation from here
-CORE_BY = '2001-12'        # core inflation starts later in many countries, and in all of them by this month
+CORE_BY = '2001-12'        # core and the four groups start later in many countries, and in all of them by this month
 LAG_MONTHS = 4             # the newest month may be this old before the script calls the data stale
 LOWEST, HIGHEST = -15, 100  # annual rates outside this range are taken as a fault (Romania's was 56.7% in January 2000)
+# The groups swing further than all items: energy has run from -42.6% to 113.8% since 1999, food down to -13.1%
+BOUNDS = {'energy': (-60, 200), 'food': (-30, 100), 'goods': (-30, 100), 'services': (-30, 100)}
 ECB_STEP = 0.1             # the ECB's copy may differ from Eurostat's by one rounding step, as it does for Greece
 ECB_SHARE = 0.01           # but in no more than this share of the figures
 
 # Eurostat's flags. A letter not listed stops the script, so that it gets looked at.
 FLAGS = {'e': 'estimated', 'p': 'provisional', 'd': 'definition differs', 'b': 'break in series'}
-SHOWN = ('estimated', 'provisional')   # listed per country on the page; the other two apply to core in every area
+SHOWN = ('estimated', 'provisional')   # listed per country on the page; the other two apply to core and the groups in every area
 
 # The chart's views: the name in the page, and how many months back from the latest one (None: from FIRST_MONTH)
 RANGES = [('5y', 60), ('10y', 120), ('all', None)]
@@ -114,9 +135,11 @@ STEADY = 0.2                     # a rate within this many points of a year earl
 OUTER = (0.5, 1, 2, 5, 10, 20)   # where the darkest shade of a rise or a fall may start, in points
 
 SOURCES = {
-    'inflation': 'Eurostat, HICP, annual rate of change (prc_hicp_minr): all items, and all items excluding energy, '
-                 'food, alcohol and tobacco. Euro area in its changing composition.',
-    'check': "Checked against the ECB Data Portal's copy (HICP.M.{area}.N.000000.4D0.ANR and .XEF000.)",
+    'inflation': 'Eurostat, HICP, annual rate of change (prc_hicp_minr): all items; all items excluding energy, '
+                 'food, alcohol and tobacco; food including alcohol and tobacco; energy; non-energy industrial goods; '
+                 'services. Euro area in its changing composition.',
+    'check': "Checked against the ECB Data Portal's copy (HICP.M.{area}.N.{item}.4D0.ANR, items 000000, XEF000, "
+             "FOOD00, NRGY00, IGXE00 and SERV00)",
 }
 
 
@@ -282,7 +305,7 @@ def assemble(eurostat, ecb, source_updated, today):
         for code, at_eurostat, _, name, _ in AREAS:
             label = '{} {} inflation'.format(name, measure)
             check(values.get(at_eurostat), 'Eurostat has no {}'.format(label))
-            oil.check_monthly(values[at_eurostat], label, today, LOWEST, HIGHEST, LAG_MONTHS)
+            oil.check_monthly(values[at_eurostat], label, today, *BOUNDS.get(measure, (LOWEST, HIGHEST)), LAG_MONTHS)
             unknown = sorted({letter for mark in marks.get(at_eurostat, {}).values() for letter in mark} - set(FLAGS))
             check(not unknown, 'Unexpected flag {!r} on {}'.format(''.join(unknown), label))
             series[measure, code] = values[at_eurostat]
@@ -327,7 +350,7 @@ def assemble(eurostat, ecb, source_updated, today):
     measures = [measure for measure, _, _ in MEASURES]
     countries = [code for code in codes if code != EURO_AREA]
     before = keys[-1 - CHANGE_MONTHS]
-    since = {'headline': FIRST_MONTH, 'core': max(starts['core', code] for code in codes)}
+    since = {m: FIRST_MONTH if m == 'headline' else max(starts[m, code] for code in codes) for m in measures}
     check(all(before >= since[m] for m in measures), 'There is no month a year before {} to compare with'.format(to))
 
     def numbers(measure, code):
@@ -379,6 +402,12 @@ def assemble(eurostat, ecb, source_updated, today):
                  for stretch in marked(flags[measure, code], keys, SHOWN)]
     differs = sorted(k for code in codes for k in keys if 'd' in flags['core', code].get(k, ''))
     breaks = sorted({k for code in codes for k in keys if 'b' in flags['core', code].get(k, '')})
+    # The page says core and the four groups share one note on definitions and breaks: stop if that stops being true
+    for measure in CATEGORIES:
+        theirs = sorted(k for code in codes for k in keys if 'd' in flags[measure, code].get(k, ''))
+        their_breaks = sorted({k for code in codes for k in keys if 'b' in flags[measure, code].get(k, '')})
+        check((theirs[:1] + theirs[-1:], their_breaks) == (differs[:1] + differs[-1:], breaks),
+              'Eurostat now flags {} inflation differently from core: update the note on definitions on the page'.format(measure))
 
     shared = {
         'source_updated': source_updated,
@@ -393,12 +422,11 @@ def assemble(eurostat, ecb, source_updated, today):
         'core_by': since['core'],
         'map_scales': map_scales,
     }
-    series_tables = {
-        'cols': ['month'] + codes,
-        'headline': tables['headline'],
-        'core': tables['core'],
-    }
+    series_tables = dict({'cols': ['month'] + codes}, **{m: tables[m] for m in measures})
     page = dict(shared, **{
+        'measures_cols': ['measure', 'tab', 'name'],
+        'measures': [[m, LABELS[m][0], LABELS[m][1]] for m in measures],
+        'categories': list(CATEGORIES),
         'names': names,
         'default': next(row['code'] for row in rows if row['code'] != EURO_AREA),
         'euro_area': {m: shown(m, EURO_AREA) for m in measures},

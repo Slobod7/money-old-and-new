@@ -13,7 +13,10 @@ const d = I.prepare(months);
 let checks = 0;
 const same = (a, b, what) => { assert.deepEqual(a, b, what); checks++; };
 const minus = text => text.replace('-', '−');   // the templates swap the hyphen for a minus sign, as the script does
-const MEASURES = ['headline', 'core'], LABEL = { headline: 'Inflation', core: 'Core inflation' };
+const MEASURES = page.measures.map(m => m[0]), LABEL = Object.fromEntries(page.measures.map(m => [m[0], m[2]]));
+same(MEASURES, ['headline', 'core', 'food', 'energy', 'goods', 'services'], 'the measures, in the order of the tabs');
+same(page.categories, ['food', 'energy', 'goods', 'services'], 'the groups in the card');
+for (const m of MEASURES) same(I.MEASURES[m], LABEL[m], m + ' name');
 
 // The two files describe the same months
 same(d.keys.length, page.months); same(d.keys[0], page.from); same(d.keys[d.last], page.to); same(d.keys[d.before], page.before);
@@ -22,7 +25,7 @@ same(d.countries.length, 27); same(Object.keys(d.col).length, 28); same(page.row
 same(d.countries.filter(code => d.euro[code] === false), ['CZ', 'DK', 'HU', 'PL', 'RO', 'SE']);
 same(d.since, page.since); same(d.shades, page.map_scales);
 
-// Every area, both measures: the figures the table, the card and the comparison print, and the two shades on the map
+// Every area, every measure: the figures the table, the card and the comparison print, and the two shades on the map
 const area = I.series(d, 'headline', 'EA');
 for (const row of page.rows) {
   const code = row.code;
@@ -121,9 +124,12 @@ same(I.verdict(d, 'DE', 'headline', 'EA'), I.verdict(d, 'DE', 'headline'));
 same(I.parseHash('#country=RO', d), {country: 'RO'});
 same(I.parseHash('#country=GR&measure=core&range=all', d), {country: 'GR', measure: 'core', range: 'all'});
 same(I.parseHash('#country=NL&with=DE&view=change', d), {country: 'NL', other: 'DE', view: 'change'});
+same(I.parseHash('#country=CY&measure=energy', d), {country: 'CY', measure: 'energy'});
+same(I.parseHash('#measure=services&view=change', d), {measure: 'services', view: 'change'});
+same(I.verdict(d, 'BE', 'energy').startsWith('Energy inflation in Belgium was '), true);
 same(I.parseHash('#with=EA', d), {other: 'EA'}); same(I.parseHash('#range=5y', d), {range: '5y'}); same(I.parseHash('#view=rate', d), {view: 'rate'});
 for (const bad of ['', '#', '#inflation-sources', '#inflation-ranking-RO', '#country=EA', '#country=XX', '#country=ro', '#country=RO&range=1y',
-  '#country=RO&measure=<script>', '#country=RO&measure=__proto__', '#country=RO&range=constructor', '#country', '#country=DE&country=XX',
+  '#country=RO&measure=<script>', '#country=RO&measure=__proto__', '#measure=Energy', '#measure=nrg', '#country=RO&range=constructor', '#country', '#country=DE&country=XX',
   '#country=RO&with=RO', '#country=RO&with=XX', '#view=price', '#view=constructor', '#with=']) {
   same(I.parseHash(bad, d), null, bad);
 }
@@ -134,7 +140,8 @@ same(I.hashFor({...open, sel: 'RO'}, home), '#country=RO');
 same(I.hashFor({...open, country: 'DE'}, home), '#country=DE');
 same(I.hashFor({...open, sel: 'DE', country: 'DE', other: 'NL', measure: 'core', view: 'change', range: 'all'}, home), '#country=DE&with=NL&measure=core&view=change&range=all');
 same(I.hashFor({...open, range: '5y'}, home), '#range=5y');
-for (const state of [{sel: 'SE', country: 'SE', other: 'EA', measure: 'core', view: 'rate', range: '5y'}, {sel: 'LT', country: 'LT', other: 'PL', measure: 'headline', view: 'change', range: 'all'}]) {
+for (const state of [{sel: 'SE', country: 'SE', other: 'EA', measure: 'core', view: 'rate', range: '5y'}, {sel: 'LT', country: 'LT', other: 'PL', measure: 'headline', view: 'change', range: 'all'},
+  {sel: 'CY', country: 'CY', other: 'EA', measure: 'food', view: 'change', range: 'all'}]) {
   const back = I.parseHash(I.hashFor(state, home), d);
   same({country: back.country, other: back.other || 'EA', measure: back.measure || 'headline', view: back.view || 'rate', range: back.range}, {country: state.country, other: state.other, measure: state.measure, view: state.view, range: state.range}, 'round trip');
 }

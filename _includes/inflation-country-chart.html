@@ -15,7 +15,7 @@ Jekyll draws it from _data/inflation_by_country.json: the country against the eu
 range asked for, as inline SVG. So it reads the same without JavaScript, and the table beneath has every month of
 both measures.
 assets/js/inflation-by-country.js, added once per page below, adds the choice of country, of what to compare it
-with, of measure and of range, and a readout on hover, tap and the arrow keys, from
+with, of measure (headline, core or one of the four groups) and of range, and a readout on hover, tap and the arrow keys, from
 assets/data/inflation-by-country.json. The first chart on a page follows the country chosen on the map or in the
 table, when they are there.
 {%- endcomment -%}
@@ -70,9 +70,10 @@ table, when they are there.
 <option value="{{ a[0] }}"{% if a[0] == "EA" %} selected{% endif %}>{{ a[1] }}</option>
 {%- endfor %}
 </select></div>
-<div class="oil-tabs" role="group" aria-label="Measure">
-<button type="button" data-measure="headline" aria-pressed="true">Headline</button>
-<button type="button" data-measure="core" aria-pressed="false">Core</button>
+<div class="oil-tabs ibc-measures" role="group" aria-label="Measure">
+{%- for mm in ib.measures %}
+<button type="button" data-measure="{{ mm[0] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ mm[1] }}</button>
+{%- endfor %}
 </div>
 </div>
 <p class="fuel-verdict" data-out="verdict" aria-live="polite">{{ ic_verdict }}</p>
@@ -87,7 +88,7 @@ table, when they are there.
 </tbody>
 </table>
 </div>
-<p class="fuel-nojs" data-nojs>Choosing another country, core inflation or a different period needs JavaScript. Every country’s latest figures are in the table{% if page.url == "/data/inflation-by-country/" %} below{% else %} on the <a href="{{ '/data/inflation-by-country/' | relative_url }}">inflation by country</a> page{% endif %}.</p>
+<p class="fuel-nojs" data-nojs>Choosing another country, another measure or a different period needs JavaScript. Every country’s latest figures are in the table{% if page.url == "/data/inflation-by-country/" %} below{% else %} on the <a href="{{ '/data/inflation-by-country/' | relative_url }}">inflation by country</a> page{% endif %}.</p>
 <div class="fuel-history">
 <div class="oil-controls">
 <h3 class="fuel-history-title">Month by month</h3>
@@ -125,7 +126,7 @@ table, when they are there.
 <div class="table-wrap" role="region" aria-label="Inflation by month since {{ ic_since }}" tabindex="0">
 <table class="data ecb-table ibc-months">
 <thead><tr><th scope="col">Month</th><th scope="col" class="num" data-out="head-a2">{{ ic_name }}</th><th scope="col" class="num" data-out="head-b2">Euro area</th><th scope="col" class="num" data-out="head-a-core">{{ ic_name }}, core</th><th scope="col" class="num" data-out="head-b-core">Euro area, core</th></tr></thead>
-<tbody data-months data-for="{{ ic_code }}|EA">
+<tbody data-months data-for="{{ ic_code }}|EA|core">
 {%- assign ic_at = ib.months %}
 {%- for row in ib.headline reversed %}
 {%- assign ic_at = ic_at | minus: 1 %}
@@ -135,7 +136,7 @@ table, when they are there.
 </tbody>
 </table>
 </div>
-<p class="oil-note">Annual rate of change in consumer prices (HICP), in percent. Core leaves out energy, food, alcohol and tobacco, and starts later than the headline rate: a dash marks a month with no figure.</p>
+<p class="oil-note">Annual rate of change in consumer prices (HICP), in percent. Core leaves out energy, food, alcohol and tobacco. With food, energy, goods or services chosen, that group takes core’s columns. Core and the four groups start later than the headline rate: a dash marks a month with no figure.</p>
 </details>
 {%- unless include.source_in_method %}
 <figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, HICP, annual rate of change</a>. Figures to {{ ic_month }}. Updated {{ ib.updated | date: "%-d %B %Y" }}.{% unless page.url == "/data/inflation-by-country/" %} <a href="{{ '/data/inflation-by-country/' | relative_url }}">The map and every country</a>.{% endunless %}</figcaption>

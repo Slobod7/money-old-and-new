@@ -10,8 +10,10 @@ Jekyll draws it from _data/inflation_by_country.json (the latest month's figures
 scripts/update-inflation-data.py) and _data/fuel_map.json (the outlines the fuel prices map uses, written once by
 scripts/build-fuel-map.py), so without JavaScript it shows headline inflation, each country links to its row in the
 table, and the card shows the euro area.
-assets/js/inflation-by-country.js, added once below, adds the measure and view tabs, the readout on hover and focus,
-and the choice of country, using assets/data/inflation-by-country.json. The same script runs the comparison chart and
+The card also gives the four groups that make up all items (food, energy, goods and services) for the place it
+shows, and for a country the euro area's beside each.
+assets/js/inflation-by-country.js, added once below, adds the measure and view tabs (headline, core and the four
+groups), the readout on hover and focus, and the choice of country, using assets/data/inflation-by-country.json. The same script runs the comparison chart and
 the table when they are on the page.
 {%- endcomment -%}
 {%- assign im = include.id | default: "inflation-map" -%}
@@ -26,9 +28,10 @@ the table when they are on the page.
 <!--uses:/data/inflation-by-country/-->
 <figure class="oil-widget fuel-widget ibc-map" id="{{ im }}" data-inflation-map data-src="{{ '/assets/data/inflation-by-country.json' | relative_url }}" data-to="{{ ib.to }}">
 <div class="oil-controls" data-controls hidden>
-<div class="oil-tabs" role="group" aria-label="Measure">
-<button type="button" data-measure="headline" aria-pressed="true">Headline</button>
-<button type="button" data-measure="core" aria-pressed="false">Core</button>
+<div class="oil-tabs ibc-measures" role="group" aria-label="Measure">
+{%- for mm in ib.measures %}
+<button type="button" data-measure="{{ mm[0] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ mm[1] }}</button>
+{%- endfor %}
 </div>
 <div class="oil-tabs" role="group" aria-label="Shade the map by">
 <button type="button" data-view="rate" aria-pressed="true">Inflation rate</button>
@@ -61,6 +64,12 @@ the table when they are on the page.
 <div><dt>A year earlier</dt><dd><span data-before>{{ im_ea.headline.before | replace: "-", "−" }}%</span> <small data-change>{% if im_ea.headline.change contains "+" %}{{ im_moved }} point{% unless im_moved == "1.0" %}s{% endunless %} higher now{% elsif im_ea.headline.change contains "-" %}{{ im_moved }} point{% unless im_moved == "1.0" %}s{% endunless %} lower now{% else %}the same now{% endif %}</small></dd></div>
 <div data-vs-row hidden><dt>Against the euro area</dt><dd data-vs></dd></div>
 <div><dt data-peak-label>Highest since {{ ib.since.headline | append: "-01" | date: "%B %Y" }}</dt><dd><span data-peak>{{ im_ea.headline.peak | replace: "-", "−" }}%</span> <small data-peak-month>{{ im_ea.headline.peak_month | append: "-01" | date: "%B %Y" }}</small></dd></div>
+</dl>
+<p class="ibc-parts-title" id="{{ im }}-parts">By category</p>
+<dl class="fuel-figures ibc-parts" aria-labelledby="{{ im }}-parts">
+{%- for c in ib.categories %}{% assign cm = ib.measures | where_exp: "x", "x[0] == c" | first %}
+<div data-part="{{ c }}"><dt>{{ cm[1] }}</dt><dd><span data-part-rate>{{ im_ea[c].rate | replace: "-", "−" }}%</span><small data-part-vs></small></dd></div>
+{%- endfor %}
 </dl>
 <p class="oil-note" data-outside hidden>Not in the euro area: it has its own central bank and its own interest rates.</p>
 <div class="oil-field fuel-pick" data-pick hidden>

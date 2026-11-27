@@ -26,12 +26,18 @@ def series(base, first='1999-01', last='2026-09', drop=()):
     return {k: base for k in m.months(first, last) if k not in drop}
 
 
-def downloads(headline=None, core=None):
-    """What build() hands to assemble(): Eurostat's answer and the ECB's identical copy. Areas rank in AREAS order,
-    highest first, unless a test replaces one: headline={'RO': {...}}."""
+# Where each measure's flat series starts and the rate of the first area in AREAS order
+FLAT = {'headline': ('1999-01', 9.0), 'core': ('2001-12', 5.0), 'food': ('2001-12', 3.0), 'energy': ('2001-12', 20.0),
+        'goods': ('2001-12', 2.0), 'services': ('2001-12', 4.0)}
+
+
+def downloads(**given):
+    """What build() hands to assemble(): Eurostat's answer and the ECB's identical copy, for every measure. Areas rank
+    in AREAS order, highest first, unless a test replaces one: headline={'RO': {...}}, energy={'BE': {...}}."""
     tables = {}
-    for measure, given, first, top in (('headline', headline or {}, '1999-01', 9.0), ('core', core or {}, '2001-12', 5.0)):
-        tables[measure] = {code: given.get(code, series(round(top - i / 10, 1), first)) for i, code in enumerate(CODES)}
+    for measure, _, _ in m.MEASURES:
+        first, top = FLAT[measure]
+        tables[measure] = {code: given.get(measure, {}).get(code, series(round(top - i / 10, 1), first)) for i, code in enumerate(CODES)}
     eurostat = {measure: ({AT_EUROSTAT[code]: dict(s) for code, s in table.items()}, {AT_EUROSTAT[code]: {} for code in table})
                 for measure, table in tables.items()}
     ecb = {measure: {AT_ECB[code]: dict(s) for code, s in table.items()} for measure, table in tables.items()}
@@ -111,8 +117,9 @@ class AssembleTests(unittest.TestCase):
             self.assertEqual((out['from'], out['to'], out['months']), ('1999-01', '2026-09', 333))
             self.assertEqual((out['headline'][0][0], out['headline'][-1][0], len(out['headline'])), ('1999-01', '2026-09', 333))
             self.assertTrue(all(len(row) == len(CODES) + 1 for row in out['headline'] + out['core']))
-        self.assertEqual(page['headline'], script['headline'])
-        self.assertEqual(page['core'], script['core'])
+        for measure, _, _ in m.MEASURES:
+            self.assertEqual(page[measure], script[measure], measure)
+            self.assertEqual(len(page[measure]), 333, measure)
         self.assertEqual(len(page['areas']), 28)
         self.assertEqual(sum(1 for area in page['areas'] if area[2]), 21)
         self.assertEqual([area[0] for area in page['areas'] if area[2] is False], ['CZ', 'DK', 'HU', 'PL', 'RO', 'SE'])
@@ -167,8 +174,8 @@ class AssembleTests(unittest.TestCase):
         ecb['headline']['GR']['2020-08'] = round(ecb['headline']['GR']['2020-08'] - 0.1, 1)
         page, _, (compared, differing) = assemble(eurostat, ecb)
         self.assertEqual(differing, 1)
-        self.assertEqual(compared, 28 * 333 + 28 * 298)
-        self.assertEqual(page['ecb_check'], {'compared': '17,668', 'differing': '1'})
+        self.assertEqual(compared, 28 * 333 + 5 * 28 * 298)   # headline from 1999, core and the four groups from December 2001
+        self.assertEqual(page['ecb_check'], {'compared': '51,044', 'differing': '1'})
         ecb['headline']['GR']['2020-08'] = round(ecb['headline']['GR']['2020-08'] - 0.1, 1)
         with self.assertRaisesRegex(m.DataError, "The ECB's Greece headline inflation for 2020-08"):
             assemble(eurostat, ecb)
@@ -211,7 +218,7 @@ class AssembleTests(unittest.TestCase):
         # The euro area has no gap to itself and no shade on the map
         self.assertEqual(rows['EA']['headline'], {'rate': '3.8', 'before': '2.2', 'change': '+1.6', 'peak': '3.8', 'peak_month': '2026-09'})
         self.assertEqual((rows['EA']['euro'], rows['EA']['place'], rows['NL']['place']), (None, 'the euro area', 'the Netherlands'))
-        self.assertEqual(page['euro_area'], {'headline': rows['EA']['headline'], 'core': rows['EA']['core']})
+        self.assertEqual(page['euro_area'], {measure: rows['EA'][measure] for measure, _, _ in m.MEASURES})
         self.assertEqual(rows['IE']['headline']['gap'], '0.0')
         self.assertEqual(rows['SE']['headline']['gap'], '-2.8')
         self.assertEqual((rows['HU']['headline']['rate'], rows['HU']['headline']['gap']), ('-0.4', '-4.2'))
@@ -258,7 +265,8 @@ class AssembleTests(unittest.TestCase):
         bulgaria.update({'2000-05': 13.2, '2008-07': 11.4})
         page, _, _ = assemble(*downloads(headline={'EA': series(2.0), 'RO': romania, 'EE': estonia}, core={'BG': bulgaria}))
         rows = {row['code']: row for row in page['rows']}
-        self.assertEqual(page['since'], {'headline': '1999-01', 'core': '2001-12'})
+        self.assertEqual(page['since'], {'headline': '1999-01', 'core': '2001-12', 'food': '2001-12', 'energy': '2001-12',
+                                         'goods': '2001-12', 'services': '2001-12'})
         self.assertEqual((rows['RO']['headline']['peak'], rows['RO']['headline']['peak_month']), ('56.7', '2000-01'))
         self.assertEqual((rows['EE']['headline']['peak'], rows['EE']['headline']['peak_month']), ('25.2', '2022-08'))   # reached twice: the later month
         self.assertEqual((rows['BG']['core']['peak'], rows['BG']['core']['peak_month']), ('11.4', '2008-07'))
@@ -274,9 +282,10 @@ class AssembleTests(unittest.TestCase):
         for k in m.months('1999-01', '2016-12'):
             eurostat['headline'][1]['FR'][k] = 'e'
         eurostat['headline'][1]['MT'].update({'2006-01': 'e', '2006-02': 'e', '2008-05': 'p'})
-        for k in m.months('2001-12', '2017-12'):
-            eurostat['core'][1]['RO'][k] = 'b' if k == '2017-01' else 'd'
-        eurostat['core'][1]['RO']['2018-01'] = 'b'
+        for measure in ('core',) + m.CATEGORIES:   # Eurostat flags core and the four groups alike
+            for k in m.months('2001-12', '2017-12'):
+                eurostat[measure][1]['RO'][k] = 'b' if k == '2017-01' else 'd'
+            eurostat[measure][1]['RO']['2018-01'] = 'b'
         page, script, _ = assemble(eurostat, ecb)
         self.assertEqual(page['estimated'], [
             ['headline', 'FR', 'estimated', '1999-01', '2016-12'],
@@ -286,6 +295,40 @@ class AssembleTests(unittest.TestCase):
         self.assertEqual(page['core_differs'], ['2001-12', '2017-12'])
         self.assertEqual(page['core_breaks'], ['2017-01', '2018-01'])
         self.assertNotIn('estimated', script)
+        # The page gives core and the groups one note on definitions: a group flagged differently stops the script
+        eurostat['services'][1]['RO']['2018-01'] = ''
+        with self.assertRaisesRegex(m.DataError, 'flags services inflation differently from core'):
+            assemble(eurostat, ecb)
+
+    def test_the_four_groups_are_measures_like_core(self):
+        page, script, _ = assemble(*downloads(energy={'BE': series(39.4, '2001-12'), 'MT': series(0.0, '2001-12')},
+                                              services={'RO': series(9.7, '2001-12')}))
+        self.assertEqual(page['measures'], [['headline', 'Headline', 'Inflation'], ['core', 'Core', 'Core inflation'],
+                                            ['food', 'Food', 'Food inflation'], ['energy', 'Energy', 'Energy inflation'],
+                                            ['goods', 'Goods', 'Goods inflation'], ['services', 'Services', 'Services inflation']])
+        self.assertEqual(page['categories'], ['food', 'energy', 'goods', 'services'])
+        self.assertNotIn('measures', script)
+        self.assertEqual(page['extremes']['energy']['highest'], {'code': 'BE', 'place': 'Belgium', 'rate': '39.4'})
+        self.assertEqual(page['extremes']['energy']['lowest'], {'code': 'MT', 'place': 'Malta', 'rate': '0.0'})
+        self.assertEqual(page['extremes']['services']['highest']['code'], 'RO')
+        rows = {row['code']: row for row in page['rows']}
+        self.assertEqual((rows['RO']['services']['rate'], rows['RO']['services']['gap']), ('9.7', '+5.7'))   # the euro area's flat 4.0
+        self.assertEqual(set(page['map_scales']), {measure for measure, _, _ in m.MEASURES})
+        self.assertEqual(set(page['legend']), set(page['map_scales']))
+        # The order of the rows is still the headline rate's
+        self.assertEqual(page['rows'][0]['code'], 'EA')
+
+    def test_each_group_has_its_own_plausible_range(self):
+        energy = series(5.0, '2001-12')
+        energy.update({'2022-09': 113.8, '2023-09': -42.6})   # energy's own extremes since 1999 pass
+        food = series(2.0, '2001-12')
+        food['2009-08'] = -13.1
+        assemble(*downloads(energy={'EE': energy}, food={'SE': food}))
+        energy['2022-10'] = 250.0
+        with self.assertRaisesRegex(m.DataError, 'implausible'):
+            assemble(*downloads(energy={'EE': energy}))
+        with self.assertRaisesRegex(m.DataError, 'Spain goods inflation starts too late: 2002-01'):
+            assemble(*downloads(goods={'ES': series(1.0, '2002-01')}))
 
 
 class HelperTests(unittest.TestCase):
@@ -406,8 +449,9 @@ class StoredFileTests(unittest.TestCase):
         root = pathlib.Path(__file__).parents[1]
         page = json.loads((root / '_data/inflation_by_country.json').read_text(encoding='utf-8'))
         script = json.loads((root / 'assets/data/inflation-by-country.json').read_text(encoding='utf-8'))
-        for key in ('updated', 'source_updated', 'from', 'to', 'before', 'since', 'months', 'areas', 'core_from', 'core_by', 'map_scales', 'cols', 'headline', 'core'):
+        for key in ('updated', 'source_updated', 'from', 'to', 'before', 'since', 'months', 'areas', 'core_from', 'core_by', 'map_scales', 'cols') + tuple(measure for measure, _, _ in m.MEASURES):
             self.assertEqual(page[key], script[key], key)
+        self.assertEqual([row[0] for row in page['measures']], [measure for measure, _, _ in m.MEASURES])
         self.assertEqual(len(page['rows']), 28)
         self.assertEqual(page['headline'][-1][0], page['to'])
         self.assertEqual(len(page['headline']), page['months'])

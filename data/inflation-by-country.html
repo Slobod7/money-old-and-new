@@ -2,11 +2,11 @@
 layout: default
 title: Inflation by country
 seo_title: "Inflation by country in Europe: EU map, ranking and chart"
-description: "Annual inflation in each of the 27 EU countries on a map, where it is rising or falling, and any country against the euro area month by month since 1999."
+description: "Annual inflation in the 27 EU countries on a map, split into food, energy, goods and services, and any country against the euro area month by month since 1999."
 permalink: /data/inflation-by-country/
-last_modified_at: 2026-11-14
+last_modified_at: 2026-11-27
 dataset: inflation_by_country
-content_checked: 2026-11-14
+content_checked: 2026-11-27
 jumps:
   - { label: Map, href: "#inflation-map-title" }
   - { label: Compare, href: "#inflation-compare-title" }
@@ -26,6 +26,8 @@ faq:
     answer: "It is a weighted average of its members only: each counts by its share of the area’s household spending, so Germany moves it far more than Malta. The countries outside the euro aren’t in it. A country enters the figure from the month it adopted the euro."
   - question: "What does core inflation leave out?"
     answer: "Energy, food, alcohol and tobacco, the prices that swing the most. What remains moves more slowly, which is why central banks watch it for where inflation is settling."
+  - question: "What is in food, energy, goods and services?"
+    answer: "Together they are everything the headline rate covers, each counted by its share of household spending. Food includes alcohol and tobacco, but not meals out, which are services. Energy is electricity, gas and other household fuels, and petrol and diesel. Goods are all the other goods, from clothes and cars to furniture and medicines. Services are the rest: rents, restaurants, travel, insurance, phone contracts and repairs."
 ---
 {%- assign ib = site.data.inflation_by_country %}
 {%- assign ib_x = ib.extremes.headline %}
@@ -33,10 +35,11 @@ faq:
 {%- capture ib_before %}{{ ib.before | append: "-01" | date: "%B %Y" }}{% endcapture %}
 {%- capture ib_since %}{{ ib.from | append: "-01" | date: "%B %Y" }}{% endcapture %}
 {%- assign ib_countries = ib.areas.size | minus: 1 %}
+{%- assign ib_groups_by = ib.since.core %}{% for c in ib.categories %}{% if ib.since[c] > ib_groups_by %}{% assign ib_groups_by = ib.since[c] %}{% endif %}{% endfor %}
 <div class="wrap calc-page inflation-page">
 <header class="page-head">
 <h1 class="page-title">Inflation by country</h1>
-<p class="page-lede">The annual inflation rate in each of the {{ ib_countries }} EU countries, where it is higher or lower than a year ago, and any country against the euro area month by month since {{ ib.from | slice: 0, 4 }}.</p>
+<p class="page-lede">The annual inflation rate in each of the {{ ib_countries }} EU countries, split into food, energy, goods and services, where it is higher or lower than a year ago, and any country against the euro area month by month since {{ ib.from | slice: 0, 4 }}.</p>
 <p class="meta page-vintage">Year to <strong>{{ ib_month }}</strong>: euro area <strong>{{ ib.euro_area.headline.rate | replace: "-", "−" }}%</strong>, from {{ ib_x.lowest.rate | replace: "-", "−" }}% in {{ ib_x.lowest.place }} to {{ ib_x.highest.rate | replace: "-", "−" }}% in {{ ib_x.highest.place }}<span aria-hidden="true"> · </span>Data updated {{ ib.updated | date: "%-d %B %Y" }}</p>
 </header>
 {% include page-jumps.html %}
@@ -86,6 +89,7 @@ faq:
 <dl class="brent-source-list">
 <div><dt>Inflation</dt><dd><a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en">Eurostat, harmonised index of consumer prices (HICP)</a>, annual rate of change: the index in a month against the same month a year earlier, in percent, as Eurostat rounds it to one decimal. Monthly, not seasonally adjusted, from {{ ib_since }}.</dd></div>
 <div><dt>Core</dt><dd>The same rate for all items except energy, food, alcohol and tobacco. It starts later than the headline rate: in {{ ib.core_from.EA | append: "-01" | date: "%B %Y" }} for the euro area, and by {{ ib.core_by | append: "-01" | date: "%B %Y" }} in every country.</dd></div>
+<div><dt>Food, energy, goods and services</dt><dd>The same rate for each of Eurostat’s four main groups, which together make up all items: food including alcohol and tobacco, energy, goods other than food and energy, and services. Like core, they start later than the headline rate, by {{ ib_groups_by | append: "-01" | date: "%B %Y" }} in every country.</dd></div>
 <div><dt>Euro area</dt><dd>Eurostat’s figure for the area as it was each month, with a country counted from the month it adopted the euro. It is weighted by household spending, so it is not an average of the bars on this page.</dd></div>
 <div><dt>Change in a year</dt><dd>This site’s subtraction: the published rate for {{ ib_month }} minus the rate for {{ ib_before }}, in percentage points. It says whether inflation is higher or lower than a year earlier, not whether prices fell.</dd></div>
 <div><dt>Gap</dt><dd>This site’s subtraction: a country’s published rate minus the euro area’s, in percentage points.</dd></div>
@@ -94,7 +98,7 @@ faq:
 </dl>
 <div class="faq brent-method-details">
 <details><summary>Estimates, breaks and checks</summary>
-<p>Eurostat marks some figures as estimates{% assign ib_marked = ib.estimated | where_exp: "e", "e[0] == 'headline'" %}{% if ib_marked.size > 0 %}: {% for e in ib_marked %}{{ ib.names[e[1]] }} from {{ e[3] | append: "-01" | date: "%B %Y" }} to {{ e[4] | append: "-01" | date: "%B %Y" }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}. They are shown as published.{% if ib.core_differs.size > 0 %} It also marks every core rate up to {{ ib.core_differs[1] | append: "-01" | date: "%B %Y" }} as following a different definition from the later ones{% if ib.core_breaks.size > 0 %}, with a break in the series in {% for b in ib.core_breaks %}{{ b | append: "-01" | date: "%B %Y" }}{% unless forloop.last %} and {% endunless %}{% endfor %}{% endif %}: read a core rate from those years as a guide, not to the decimal.{% endif %}</p>
+<p>Eurostat marks some figures as estimates{% assign ib_marked = ib.estimated | where_exp: "e", "e[0] == 'headline'" %}{% if ib_marked.size > 0 %}: {% for e in ib_marked %}{{ ib.names[e[1]] }} from {{ e[3] | append: "-01" | date: "%B %Y" }} to {{ e[4] | append: "-01" | date: "%B %Y" }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}. They are shown as published.{% if ib.core_differs.size > 0 %} It also marks every rate for core and the four groups up to {{ ib.core_differs[1] | append: "-01" | date: "%B %Y" }} as following a different definition from the later ones{% if ib.core_breaks.size > 0 %}, with a break in the series in {% for b in ib.core_breaks %}{{ b | append: "-01" | date: "%B %Y" }}{% unless forloop.last %} and {% endunless %}{% endfor %}{% endif %}: read a rate from those years as a guide, not to the decimal.{% endif %}</p>
 <p>Each update compares every figure with the copy in the <a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.U2.N.000000.4D0.ANR">ECB Data Portal</a>, which this site’s <a href="{{ '/data/ecb-interest-rates/' | relative_url }}">ECB rates chart</a> reads. At the last update, {{ ib.ecb_check.differing }} of {{ ib.ecb_check.compared }} differed, none by more than 0.1 point. A larger difference, a missing month or a country that stops reporting leaves the page as it was.</p>
 </details>
 <details><summary>Update schedule and reuse</summary>

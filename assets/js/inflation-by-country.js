@@ -1,7 +1,9 @@
 /* The inflation-by-country page (_includes/inflation-map.html, inflation-country-chart.html and inflation-ranking.html).
    Jekyll draws the map, the euro area's card, one country's comparison and the table, and they read the same without
-   this script. With it: the measure and view tabs, a readout on hover and focus, a card for the country you pick, a
-   second country to compare with, the chart's range and its readout, and a table that sorts. Each include also works
+   this script. With it: the measure and view tabs (headline, core and the four groups that make up all items: food,
+   energy, goods and services), a readout on hover and focus, a card for the country you pick with its four groups
+   against the euro area's, a second country to compare with, the chart's range and its readout, and a table that
+   sorts. Each include also works
    on its own in an article.
    It reads assets/data/inflation-by-country.json from this site: no outside requests, cookies or storage. The address
    takes the choice as a fragment (#country=RO&with=DE&measure=core&view=change&range=all), so a view can be shared.
@@ -12,7 +14,8 @@
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var MINUS = '−';
   var EURO_AREA = 'EA';
-  var MEASURES = { headline: 'Inflation', core: 'Core inflation' };
+  // Each measure's name in a sentence, in the order of the tabs: the same names as LABELS in the update script
+  var MEASURES = { headline: 'Inflation', core: 'Core inflation', food: 'Food inflation', energy: 'Energy inflation', goods: 'Goods inflation', services: 'Services inflation' };
   var VIEWS = { rate: 's', change: 'd' };              // the view, and the letter of its colour classes (fuel-s0…, fuel-d0…)
   var RANGES = { '5y': 60, '10y': 120, all: null };   // months back from the latest one, as in scripts/update-inflation-data.py
   var STEPS = [1, 2, 5, 10, 20, 50], MAX_STEPS = 6;
@@ -218,7 +221,7 @@
   var api = { prepare: prepare, series: series, windowStart: windowStart, scale: scale, peak: peak, yearStep: yearStep, gap: gap, figures: figures,
     ranked: ranked, rateClass: rateClass, changeClass: changeClass, legendLabels: legendLabels, monthName: monthName, shortMonth: shortMonth,
     num: num, pct: pct, signed: signed, points: points, place: place, against: against, moved: moved, tally: tally, summary: summary,
-    verdict: verdict, parseHash: parseHash, hashFor: hashFor };
+    verdict: verdict, parseHash: parseHash, hashFor: hashFor, MEASURES: MEASURES };
   if (typeof module !== 'undefined' && module.exports) { module.exports = api; return; }
   root.InflationByCountry = api;
 
@@ -359,6 +362,13 @@
       set('peak', f && f.peak ? pct(f.peak.value) : '–');
       set('peak-month', f && f.peak ? monthName(f.peak.month) : '');
       if (f && code !== EURO_AREA) set('vs', signed(f.gap) + (Math.abs(f.gap) === 1 ? ' point' : ' points'));
+      // The four groups for the same place, with the euro area's under a country's; the one on the map in forest
+      all('[data-part]', card).forEach(function (row) {
+        var part = row.getAttribute('data-part'), own = figures(d, code, part), area = code === EURO_AREA ? null : figures(d, EURO_AREA, part);
+        row.querySelector('[data-part-rate]').textContent = own ? pct(own.rate) : '–';
+        row.querySelector('[data-part-vs]').textContent = area ? 'Euro area ' + pct(area.rate) : '';
+        row.classList.toggle('is-current', part === state.measure);
+      });
     }
 
     return function () {
@@ -427,7 +437,7 @@
       var sentence = verdict(d, a, state.measure, b), both = place(nameA) + ' and in ' + place(nameB);
       say('verdict', sentence);
       say('head-a', nameA); say('head-b', nameB); say('key-a', nameA); say('key-b', nameB);
-      say('head-a2', nameA); say('head-b2', nameB); say('head-a-core', nameA + ', core'); say('head-b-core', nameB + ', core');
+      say('head-a2', nameA); say('head-b2', nameB);
       say('desc', 'Line chart of ' + what.toLowerCase() + ' in ' + both + ', monthly from ' + monthName(keys[0]) + ' to ' + monthName(keys[n]) + '. ' + sentence + ' Every month is in the table below.');
       plot.setAttribute('aria-label', what + ' in ' + both + ' by month. Use the arrow keys to read each month.');
       plot.setAttribute('aria-valuemax', String(n));
@@ -461,10 +471,13 @@
       });
     }
 
-    // Every month since the first, newest first, whatever the chart's range: both measures, for both lines
+    // Every month since the first, newest first, whatever the chart's range, for both lines: headline, then core, or
+    // the group chosen when it is one
     function table(a, b) {
-      if (body.getAttribute('data-for') === a + '|' + b) return;
-      var cols = [series(d, 'headline', a), series(d, 'headline', b), series(d, 'core', a), series(d, 'core', b)];
+      var second = state.measure === 'headline' ? 'core' : state.measure, key = a + '|' + b + '|' + second;
+      if (body.getAttribute('data-for') === key) return;
+      say('head-a-core', d.names[a] + ', ' + second); say('head-b-core', d.names[b] + ', ' + second);
+      var cols = [series(d, 'headline', a), series(d, 'headline', b), series(d, second, a), series(d, second, b)];
       var list = document.createDocumentFragment();
       for (var i = d.last; i >= 0; i--) {
         var tr = el('tr', '', list);
@@ -473,7 +486,7 @@
       }
       body.textContent = '';
       body.appendChild(list);
-      body.setAttribute('data-for', a + '|' + b);
+      body.setAttribute('data-for', key);
     }
 
     function spoken(i) {
@@ -612,6 +625,7 @@
       all('[data-pick-where]', list).forEach(function (where) { where.textContent = ctx.parts.map ? 'on the map' : 'in the chart'; });
     }
     tabs(list, 'data-measure', 'measure', ctx);
+    all('[data-groups-note]', list).forEach(function (note) { note.hidden = false; });
     reveal(list);
 
     return function () {
