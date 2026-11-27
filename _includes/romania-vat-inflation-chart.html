@@ -1,0 +1,69 @@
+{%- comment -%}
+Romania's inflation after its two VAT rises, lined up: the HICP annual rate (Eurostat) from six months before each rise to
+two years after, with the month of the rise at zero (July 2010, when VAT went from 19% to 24%; August 2025, from 19% to 21%,
+a month after the electricity price cap ended). A static drawing built by social/romania-inflation/build_include.py from
+_data/inflation_by_country.json; rerun it when a new month is published.
+  {% include romania-vat-inflation-chart.html %}
+{%- endcomment -%}
+<figure class="oil-widget ro-vat" id="ro-vat" aria-labelledby="ro-vat-title">
+<h3 class="oil-title" id="ro-vat-title">Romania’s two VAT rises, lined up</h3>
+<p class="oil-summary">Annual inflation, EU measure, from six months before each rise to two years after. In 2011 it fell away when the rise was a year old. In 2026 it fell, then turned back up.</p>
+<ul class="gold-key" style="display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 10px;padding:0;list-style:none;font-size:14px;">
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--forest);stroke-width:2;stroke-linecap:round;"/></svg>From the July 2010 rise, to 24%</li>
+<li style="display:flex;align-items:center;gap:8px;"><svg width="28" height="10" aria-hidden="true" focusable="false"><line x1="1" x2="27" y1="5" y2="5" style="stroke:var(--accent);stroke-width:3;stroke-linecap:round;"/></svg>From the August 2025 rise, to 21%</li>
+</ul>
+<div class="oil-plot">
+<div class="oil-static" role="img" aria-label="Line chart of Romania’s annual inflation, EU measure, around its two VAT rises. In 2010 it went from 4.3% in June to 7.1% in July and stayed near 8% for a year; when the rise was a year old it fell to 4.9%, then 3.5% by September 2011 and 1.9% by April 2012. In 2025 it went from 5.8% in June to 8.5% in August, reached 9.7% in May 2026, fell to 6.3% in August 2026 when the rise was a year old, then rose to 6.5% in September and 7.0% in October 2026. The figures are in the table below.">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+<line class="oil-axis" x1="0" x2="1000" y1="1000.0" y2="1000.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="800.0" y2="800.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="600.0" y2="600.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="400.0" y2="400.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="200.0" y2="200.0"/>
+<line class="oil-grid" x1="0" x2="1000" y1="0.0" y2="0.0"/>
+<line x1="200.0" x2="200.0" y1="0" y2="1000" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;"/>
+<line x1="600.0" x2="600.0" y1="0" y2="1000" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4;"/>
+<polyline points="0.0,480.0 33.3,550.0 66.7,580.0 100.0,580.0 133.3,560.0 166.7,570.0 200.0,290.0 233.3,240.0 266.7,230.0 300.0,210.0 333.3,230.0 366.7,210.0 400.0,300.0 433.3,240.0 466.7,200.0 500.0,160.0 533.3,150.0 566.7,200.0 600.0,510.0 633.3,570.0 666.7,650.0 700.0,640.0 733.3,650.0 766.7,680.0 800.0,720.0 833.3,730.0 866.7,750.0 900.0,810.0 933.3,800.0 966.7,780.0 1000.0,690.0" style="fill:none;stroke:var(--forest);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;"/>
+<polyline points="0.0,480.0 33.3,490.0 66.7,510.0 100.0,460.0 133.3,420.0 166.7,340.0 200.0,150.0 233.3,140.0 266.7,160.0 300.0,140.0 333.3,140.0 366.7,150.0 400.0,170.0 433.3,100.0 466.7,50.0 500.0,30.0 533.3,80.0 566.7,180.0 600.0,370.0 633.3,350.0 666.7,300.0" style="fill:none;stroke:var(--accent);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;"/>
+</svg>
+<span aria-hidden="true" style="position:absolute;left:calc(20.0% + 6px);top:4px;font-size:12.5px;line-height:1.25;color:var(--muted);white-space:nowrap;">VAT rise</span>
+<span aria-hidden="true" style="position:absolute;left:calc(60.0% + 6px);top:4px;font-size:12.5px;line-height:1.25;color:var(--muted);white-space:nowrap;">A year on</span>
+<span class="oil-static-y" style="bottom: 0.0%">0%</span>
+<span class="oil-static-y" style="bottom: 20.0%">2%</span>
+<span class="oil-static-y" style="bottom: 40.0%">4%</span>
+<span class="oil-static-y" style="bottom: 60.0%">6%</span>
+<span class="oil-static-y" style="bottom: 80.0%">8%</span>
+<span class="oil-static-y" style="bottom: 100.0%">10%</span>
+<span class="oil-static-x" style="left: 0.0%">−6 months</span>
+<span class="oil-static-x" style="left: 20.0%">Rise</span>
+<span class="oil-static-x is-minor" style="left: 40.0%">+6</span>
+<span class="oil-static-x" style="left: 60.0%">1 year</span>
+<span class="oil-static-x is-minor" style="left: 80.0%">+18</span>
+<span class="oil-static-x" style="left: 100.0%">2 years</span>
+</div>
+</div>
+<details class="oil-data">
+<summary>Show the data</summary>
+<div class="table-wrap" role="region" aria-label="Romania’s inflation around its two VAT rises" tabindex="0">
+<table class="data">
+<thead><tr><th scope="col">Months from the rise</th><th scope="col">Month, 2010 rise</th><th scope="col" class="num">Romania</th><th scope="col">Month, 2025 rise</th><th scope="col" class="num">Romania</th><th scope="col" class="num">Euro area</th></tr></thead>
+<tbody>
+<tr><th scope="row">−6</th><td>January 2010</td><td class="num">5.2%</td><td>February 2025</td><td class="num">5.2%</td><td class="num">2.3%</td></tr>
+<tr><th scope="row">−3</th><td>April 2010</td><td class="num">4.2%</td><td>May 2025</td><td class="num">5.4%</td><td class="num">1.9%</td></tr>
+<tr><th scope="row">The rise</th><td>July 2010</td><td class="num">7.1%</td><td>August 2025</td><td class="num">8.5%</td><td class="num">2.0%</td></tr>
+<tr><th scope="row">+3</th><td>October 2010</td><td class="num">7.9%</td><td>November 2025</td><td class="num">8.6%</td><td class="num">2.1%</td></tr>
+<tr><th scope="row">+6</th><td>January 2011</td><td class="num">7.0%</td><td>February 2026</td><td class="num">8.3%</td><td class="num">1.9%</td></tr>
+<tr><th scope="row">+9</th><td>April 2011</td><td class="num">8.4%</td><td>May 2026</td><td class="num">9.7%</td><td class="num">3.2%</td></tr>
+<tr><th scope="row">+12</th><td>July 2011</td><td class="num">4.9%</td><td>August 2026</td><td class="num">6.3%</td><td class="num">3.2%</td></tr>
+<tr><th scope="row">+15</th><td>October 2011</td><td class="num">3.6%</td><td>–</td><td class="num">–</td><td class="num">–</td></tr>
+<tr><th scope="row">+18</th><td>January 2012</td><td class="num">2.8%</td><td>–</td><td class="num">–</td><td class="num">–</td></tr>
+<tr><th scope="row">+21</th><td>April 2012</td><td class="num">1.9%</td><td>–</td><td class="num">–</td><td class="num">–</td></tr>
+<tr><th scope="row">+24</th><td>July 2012</td><td class="num">3.1%</td><td>–</td><td class="num">–</td><td class="num">–</td></tr>
+<tr><th scope="row">+14</th><td>–</td><td class="num">–</td><td>October 2026</td><td class="num">7.0%</td><td class="num">4.0%</td></tr>
+</tbody>
+</table>
+</div>
+<p class="oil-note">Annual rate of the harmonised index of consumer prices (HICP), the EU’s common measure. Romania’s own index (INS) differs slightly: 6.9% in October 2026, against 7.0% here. The 2025 rise came a month after the electricity price cap ended on 1 July 2025, so that month is −1. The 2026 line ends in October 2026, the latest month published.</p>
+</details>
+<figcaption class="oil-source">Source: <a href="https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table">Eurostat, HICP, annual rate of change</a>, to October 2026, as on the site’s <a href="{{ '/data/inflation-by-country/' | relative_url }}">inflation by country</a> page.</figcaption>
+</figure>

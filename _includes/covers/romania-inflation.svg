@@ -1,0 +1,12 @@
+<svg class="art" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<!-- Two price lines that each step up when a tax rises. The first (forest) steps back down a year later and stays down; the second (the accent) steps down, then turns back up: Romania's VAT rises of 2010 and 2025. Drawn for this site. The parts are styled by .art in assets/css/site.css. -->
+<rect class="ground" width="480" height="300"/>
+<path class="thin" d="M56 236H424"/>
+<path class="thin" d="M56 92V236"/>
+<path class="dots" d="M164 76V236M296 76V236"/>
+<path class="ink heavy" d="M64 196H164V132H296V212H416"/>
+<path class="mark-line" style="stroke-width:5" d="M64 210H164V112H296V176L356 168L388 140"/>
+<path class="mark" d="M402 124L382 132L396 148Z"/>
+<circle class="coin" cx="112" cy="104" r="18"/>
+<circle class="coin" cx="124" cy="84" r="13"/>
+</svg>
