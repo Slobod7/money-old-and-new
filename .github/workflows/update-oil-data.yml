@@ -1,15 +1,24 @@
-# Updates the data behind the charts once a month: runs scripts/update-oil-data.py (the oil widgets),
-# scripts/update-ecb-data.py (the ECB rates chart), scripts/update-old-new-data.py (the old-vs-new calculator),
-# scripts/update-inflation-data.py (inflation by country) and scripts/update-minimum-wage-data.py (minimum wages in
-# Europe), and commits their files, but only when the data changed.
+# Updates the data behind the charts twice a month, and checks the review dates of the facts typed by hand.
+# On the 18th, and when run by hand, it runs scripts/update-oil-data.py (the oil widgets), scripts/update-ecb-data.py
+# (the ECB rates chart), scripts/update-old-new-data.py (the old-vs-new calculator), scripts/update-inflation-data.py
+# (inflation by country) and scripts/update-minimum-wage-data.py (minimum wages in Europe), and commits their files,
+# but only when the data changed.
+# On the 2nd it runs only the first two. By then they can pick up the euro area's flash inflation estimate (Eurostat
+# publishes it at the end of the month or in its first days), any ECB rate change that took effect after the 18th, and
+# two more weeks of Brent prices. The other three sources publish later in the month: run on the 2nd, they would find
+# nothing new, and the old-vs-new script could call its data stale days before its sources catch up.
 # If a download fails or looks wrong, that script stops with an error and leaves its files as they were: the other
 # scripts' updates are still committed, the old data stays on the site, and this run shows as failed (GitHub emails
 # you about failed runs).
+# The second job, "Check the review dates", runs scripts/check-review-dates.py on both days. Once a fact typed by hand
+# has passed the date it must be checked by (in _data/review_dates.yml), that job fails, so GitHub emails you.
 name: Update oil data
 
 on:
   schedule:
-    - cron: '30 6 18 * *'   # 06:30 UTC on the 18th, after the month's US CPI, euro area HICP and EIA's weekly Brent update
+    - cron: '30 6 2 * *'    # 06:30 UTC on the 2nd: the oil and ECB data only. Three steps below skip this run by
+                            # naming this exact line, so change them with it
+    - cron: '30 6 18 * *'   # 06:30 UTC on the 18th: everything, after the month's US CPI, euro area HICP and EIA's weekly Brent update
   workflow_dispatch:         # to run it by hand: Actions → Update oil data → Run workflow
 
 permissions:
@@ -34,15 +43,15 @@ jobs:
         run: python3 scripts/update-ecb-data.py
 
       - name: Download the old-vs-new data and rebuild its files
-        if: ${{ !cancelled() }}   # runs even if the others failed
+        if: ${{ !cancelled() && github.event.schedule != '30 6 2 * *' }}   # not on the 2nd; runs even if the others failed
         run: python3 scripts/update-old-new-data.py
 
       - name: Download inflation by country and rebuild its files
-        if: ${{ !cancelled() }}   # runs even if the others failed
+        if: ${{ !cancelled() && github.event.schedule != '30 6 2 * *' }}   # not on the 2nd; runs even if the others failed
         run: python3 scripts/update-inflation-data.py
 
       - name: Download minimum wages and rebuild their files
-        if: ${{ !cancelled() }}   # runs even if the others failed
+        if: ${{ !cancelled() && github.event.schedule != '30 6 2 * *' }}   # not on the 2nd; runs even if the others failed
         run: python3 scripts/update-minimum-wage-data.py
 
       - name: Commit if the data changed
@@ -88,3 +97,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
+
+  review-dates:
+    name: Check the review dates
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read   # it only reads the files
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check the facts typed by hand against their review dates
+        run: python3 scripts/check-review-dates.py

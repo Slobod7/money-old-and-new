@@ -295,7 +295,7 @@ The script checks everything it downloads (the right series, dates in order, pri
 
 ### How the data stays up to date
 
-`.github/workflows/update-oil-data.yml` runs the script at 06:30 UTC on the 18th of each month, after the month’s US CPI comes out, and commits the two files only if they changed. If a download fails, the run fails, GitHub emails you, and the site keeps the old data.
+`.github/workflows/update-oil-data.yml` runs the script at 06:30 UTC on the 2nd and the 18th of each month (the 18th comes after the month’s US CPI), and commits the two files only if they changed. If a download fails, the run fails, GitHub emails you, and the site keeps the old data.
 
 A push made with the workflow’s own token (`GITHUB_TOKEN`) does **not** start a GitHub Pages build. GitHub’s documentation says so in as many words ("Commits pushed by a GitHub Actions workflow that uses the GITHUB_TOKEN do not trigger a GitHub Pages build"). So after committing, the workflow asks Pages to rebuild through GitHub’s API, which its `pages: write` permission allows. This hasn’t run yet: after the first run, check **Actions** for a "pages build and deployment" run straight after "Update oil data". If it isn’t there, the fallback is a personal access token saved as a repository secret.
 
@@ -374,7 +374,7 @@ The episodes are set in `EPISODES` at the top of `scripts/update-ecb-data.py`, a
 
 When the ECB first cuts after 11 June 2026, the script stops and asks for the date of that decision. Add it as the end of the last entry in `EPISODES`, run the script again and commit.
 
-The monthly workflow (**Actions → Update oil data**, on the 18th) runs it after the oil script. If one of the two fails, the other's update is still committed, and the run shows as failed so GitHub emails you. To update by hand, from this folder:
+The monthly workflow (**Actions → Update oil data**, on the 2nd and the 18th) runs it after the oil script. The run on the 2nd picks up the euro area's flash inflation estimate and any rate change that took effect after the 18th; until the 18th, the chart's latest month is that flash estimate. If one of the two fails, the other's update is still committed, and the run shows as failed so GitHub emails you. To update by hand, from this folder:
 
 ```bash
 python3 scripts/update-ecb-data.py
@@ -698,7 +698,7 @@ Eurostat's [earn_mw_cur](https://ec.europa.eu/eurostat/databrowser/view/earn_mw_
 
 Eurostat allows reuse with the source named (its [copyright notice](https://ec.europa.eu/eurostat/help/copyright-notice)). The ranks, the places moved, the change in a year and the map's bands are this site's work, and the page's sources say so.
 
-**Ireland and Spain** set their minimum wage differently from the monthly figure Eurostat compares: Ireland by the hour, with lower rates under 20; Spain by the month, paid 14 times a year. The page explains both from the laws themselves, in `_data/minimum_wage_national.yml`, which is typed by hand and kept apart from Eurostat's figures. **Check it by its `review_by` date** (1 January 2027): Ireland's rate rises to €14.94 an hour on 1 January 2027 (S.I. No. 533/2026), and the page switches to it by itself on the first build after that date. Spain's 2026 decree runs to 31 December 2026, and its 2027 decree must be added by hand once it is published in the BOE.
+**Ireland and Spain** set their minimum wage differently from the monthly figure Eurostat compares: Ireland by the hour, with lower rates under 20; Spain by the month, paid 14 times a year. The page explains both from the laws themselves, in `_data/minimum_wage_national.yml`, which is typed by hand and kept apart from Eurostat's figures. **Check it by its `review_by` date** (1 January 2027): Ireland's rate rises to €14.94 an hour on 1 January 2027 (S.I. No. 533/2026), and the page switches to it by itself on the first build after that date. Spain's 2026 decree runs to 31 December 2026, and its 2027 decree must be added by hand once it is published in the BOE. Once the `review_by` date has passed, the review-date check fails the monthly run (see "Review dates").
 
 ### How it stays up to date
 
@@ -736,7 +736,27 @@ The first runs the script's checks on figures it makes itself: reading Eurostat'
 4. If the page shows data from a file in `_data/` that has an `updated` date, name that file in the page's front matter: `dataset: brent_annual` for `_data/brent_annual.json`. The page then counts as changed whenever its data is: `_includes/page-modified.html` gives the later of `last_modified_at` and the data's date to `sitemap.xml` and to the page's markup (`dateModified`), so the monthly update moves both without anyone editing the page. Change `last_modified_at` yourself only when you change the page.
 5. To link the page and the articles that use its chart, both ways and with nothing listed by hand: have the chart's include print a comment naming the page before its figure (`<!--uses:/data/your-page/-->`), and end its source caption with a link to the page when it's shown anywhere else (see `_includes/oil-chart.html`). Then put `{% include data-articles.html %}` on the page: it shows a card leading to the latest article that contains that comment, and nothing while there is none.
 
+6. If the page states a fact typed by hand that will go out of date (a tax, a law, a rate "since" a date, "this year"), add it to `_data/review_dates.yml` (see "Review dates").
+
 `sitemap.xml` at the top of the site replaces the one the jekyll-sitemap plugin would write (the plugin steps aside when the file exists). It lists the same addresses; the only difference is the date rule above.
+
+## Review dates
+
+The updates refresh every figure that comes from a download. They can't refresh a fact typed by hand: a tax cut that ends, the ECB's rate "since 16 September", "its second rise this year". Each of those has an entry in `_data/review_dates.yml`: what the fact is, where it is, the date to check it by and how to check it.
+
+`scripts/check-review-dates.py` lists them. It also reads the top-level `review_by` line of any other file in `_data/`, so `_data/minimum_wage_national.yml` counts without a second entry. The monthly workflow runs it as a job of its own, **Check the review dates**, on the 2nd and the 18th:
+
+- Once a date has passed, the job fails and GitHub emails you. The run's page names the fact and points at its line.
+- A date in the next 16 days shows on the run's page as coming up, without failing, so the run before a date always warns.
+- The data job is separate, so a passed date never stops the data updating, and the email says which of the two failed.
+
+When you've checked a fact, correct the page if it needs it, then move its `review_by` on to the next date to check it by. When the fact has gone from the site, delete its entry. To see what will be due on a later day, from this folder:
+
+```bash
+python3 scripts/check-review-dates.py --today 2027-01-02
+```
+
+The file keeps to a simple form, described at its top, so the script can read it without a YAML library: four lines an entry, each value in double quotes. The script stops with an error on anything else, and when the file or folder an entry names doesn't exist, so a mistake or a moved page fails the run instead of hiding an entry. `tests/test_review_dates.py` checks the script and that the site's own files read.
 
 ## Where things are
 
@@ -768,9 +788,10 @@ The first runs the script's checks on figures it makes itself: reading Eurostat'
 | `_data/inflation_by_country.json`, `assets/data/inflation-by-country.json` | The inflation page's data, written by `scripts/update-inflation-data.py`. Don't edit by hand |
 | `_includes/minimum-wage-map.html`, `_includes/minimum-wage-compare.html`, `_includes/minimum-wage-table.html`, `assets/js/minimum-wage-europe.js` | The minimum wage map, the two-country comparison and the table of all countries (see "Minimum wages in Europe"). The script is loaded only by pages with one of them; all three read fine without it |
 | `_data/minimum_wage_europe.json`, `assets/data/minimum-wage-europe.json` | The minimum wage page's data, written by `scripts/update-minimum-wage-data.py`. Don't edit by hand |
-| `_data/minimum_wage_national.yml` | Ireland's and Spain's legal rates, typed by hand from the laws. Check by its `review_by` date |
-| `scripts/`, `tests/` | The data update scripts and the oil calculator's maths test. Not published |
-| `.github/workflows/` | The monthly update of the oil, ECB, old-vs-new, inflation-by-country and minimum wage data, the twice-weekly update of the fuel prices, and the Sunday rebuild that publishes scheduled posts |
+| `_data/minimum_wage_national.yml` | Ireland's and Spain's legal rates, typed by hand from the laws. Check by its `review_by` date, which the review-date check reads |
+| `_data/review_dates.yml` | The facts typed by hand that go out of date, each with the date to check it by (see "Review dates") |
+| `scripts/`, `tests/` | The data update scripts, the review-date check and the tests. Not published |
+| `.github/workflows/` | The update of the oil and ECB data on the 2nd and the 18th of each month and of the old-vs-new, inflation-by-country and minimum wage data on the 18th, with the review-date check; the twice-weekly update of the fuel prices; and the Sunday rebuild that publishes scheduled posts |
 | `assets/fonts/` | Archivo and Besley, hosted here so visitors' browsers never contact Google |
 | `assets/brand/` | The approved identity: `wordmark.svg`, `gateway.svg` and `favicon.svg`. Don't edit these by hand |
 | `assets/img/guides/` | Images that belong to the articles |

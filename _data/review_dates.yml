@@ -1,0 +1,30 @@
+# Facts typed by hand on the site that go out of date. The data updates can't refresh them, so each one has a date to
+# check it by. scripts/check-review-dates.py reads this file, and the top-level review_by line of any other file in
+# _data/ (minimum_wage_national.yml has one), and the monthly workflow (Actions → Update oil data) runs it on the 2nd
+# and the 18th. Once a date has passed, its "Check the review dates" job fails and GitHub emails you. A date in the
+# next 16 days shows as coming up in the run's summary, without failing.
+#
+# When you've checked a fact: correct the page if it needs it, then move review_by on to the next date to check it by.
+# When the fact has gone from the site, delete its entry. To add one, copy an entry.
+#
+# Kept in a simple form, so the script can read it without a YAML library:
+#   - each entry starts with "- fact:" and has four lines: fact, where, review_by, check;
+#   - review_by is a date, YYYY-MM-DD; every other value sits in double quotes on one line, with no straight double
+#     quote or backslash inside (use “curly” quotes);
+#   - "where" starts with the file or folder the fact is in, as a path from the top of the site, then a comma.
+# The script stops with an error on anything else, and if the file or folder named in "where" doesn't exist.
+
+- fact: "The home page’s figures for deposit rates, inflation and the ECB’s deposit rate"
+  where: "index.html, in the faq front matter: the answers on savings, on ECB decisions and on the official inflation rate"
+  review_by: 2026-12-05
+  check: "Once a month, after the ECB publishes a new month’s bank deposit rates, early in the month. On 27 November 2026 the answers gave September 2026; October’s deposit rates are due in early December, and October’s inflation (4.0%) is already out. “Its second rise this year” stops being true on 1 January 2027, or sooner if the ECB moves. Then set faq_checked to the day you checked."
+
+- fact: "Spain’s 20-cent fuel duty cut, in the fuel page’s answer on tax"
+  where: "data/europe-fuel-prices.html, in the faq front matter: the answer that cites Royal Decree-law 25/2026"
+  review_by: 2026-12-31
+  check: "The cut, and the smaller cuts written in for November and December, run to the end of 2026. Check the BOE for whether it ended, tapered or was extended, then reword the answer or use another example. Then set content_checked to the day you checked."
+
+- fact: "The method and source notes on every data page, and their links"
+  where: "data/, every page: its method, its sources and its common questions"
+  review_by: 2027-05-01
+  check: "Read each page’s notes against its sources: a dataset renamed or replaced, a method changed, a link that no longer works. The updaters stop when a source stops updating, but not when it changes what it measures. Then update the date each page keeps for its last check (content_checked, or content_updated on the ECB page), and move this date six months on."
