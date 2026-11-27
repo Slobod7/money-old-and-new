@@ -1,5 +1,5 @@
 {
-"updated":"2026-11-18",
+"updated":"2026-11-27",
 "source_updated":"2026-11-18",
 "from":"1999-01",
 "to":"2026-10",
@@ -83,7 +83,7 @@
 ],
 "core_differs":["1999-01","2017-12"],
 "core_breaks":["2017-01","2018-01"],
-"ecb_check":{"compared":"18,265","differing":"32"},
+"ecb_check":{"compared":"18,265","differing":"0"},
 "sources":{"inflation":"Eurostat, HICP, annual rate of change (prc_hicp_minr): all items, and all items excluding energy, food, alcohol and tobacco. Euro area in its changing composition.","check":"Checked against the ECB Data Portal's copy (HICP.M.{area}.N.000000.4D0.ANR and .XEF000.)"},
 "cols":["month","EA","AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE"],
 "headline":[

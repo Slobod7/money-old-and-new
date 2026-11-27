@@ -1,13 +1,13 @@
 {
-"updated":"2026-11-18",
-"eia_release":"2026-11-12",
-"brent_to":"2026-11-11",
+"updated":"2026-11-27",
+"eia_release":"2026-11-25",
+"brent_to":"2026-11-24",
 "cpi_to":"2026-10",
 "hicp_to":"2026-10",
 "partial_year":2026,
 "cpi_filled":["2025-10"],
 "hicp_filled":[],
-"calculator_default":{"date":"2000-01-04","price":"23.95","barrels":"41.75","value":"3,847","latest_price":"92.14"},
+"calculator_default":{"date":"2000-01-04","price":"23.95","barrels":"41.75","value":"3,833","latest_price":"91.80"},
 "cols":["year","avg_usd","avg_today_usd"],
 "rows":[
 [1990,"23.76","61.37"],
@@ -46,6 +46,6 @@
 [2023,"82.49","91.36"],
 [2024,"80.52","86.62"],
 [2025,"69.14","72.42"],
-[2026,"96.38","97.85"]
+[2026,"96.26","97.73"]
 ]
 }
