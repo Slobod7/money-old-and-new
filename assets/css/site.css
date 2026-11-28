@@ -1275,3 +1275,36 @@ th[aria-sort="descending"] .fuel-sort::after { content: " \2193"; }
   .mw-bar-row { grid-template-columns: 6.5em minmax(0, 1fr) 5.8em; font-size: 13.5px; }
   .mw-table { font-size: 13.5px; }
 }
+
+/* The fuel cost calculator (data/fuel-cost-calculator.html, assets/js/fuel-cost.js): the inputs on the panel strip, as
+   on the home page's calculator, one line per country on the route, then the answer and the table of 100 km. */
+.fuelcost .oil-form { margin: 0 0 32px; padding: 20px 24px 24px; background: var(--panel); }
+.fuelcost-label { display: block; margin: 0 0 6px; font: 500 14px/1.4 var(--sans); }
+.fuelcost-use { display: flex; gap: 8px; max-width: 340px; }
+.fuelcost input[type="text"] { width: 100%; min-height: 44px; margin: 0; padding: 8px 12px; border: 1px solid var(--edge); border-radius: 0; background: var(--bg); color: var(--text); font: 400 17px/1.3 var(--sans); font-variant-numeric: tabular-nums; }
+.fuelcost input[type="text"][aria-invalid="true"] { border-width: 2px; border-color: var(--text); }
+.fuelcost-use input[type="text"] { flex: 0 0 92px; width: 92px; }
+.fuelcost-use select { flex: 1 1 auto; min-width: 0; }
+.fuelcost-route { grid-column: 1 / -1; }
+.oil-widget .fuelcost-route .oil-hint { margin: -2px 0 6px; }
+.fuelcost-units { margin: 0 0 6px; }
+.fuelcost-legs { margin: 0; padding: 0; list-style: none; }
+.fuelcost-leg { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 150px) auto; gap: 0 16px; align-items: end; margin: 0; padding: 0 0 14px; }
+.fuelcost-leg .oil-error { grid-column: 1 / -1; }
+.fuelcost-remove { justify-self: start; }
+.fuelcost-add[hidden], .fuelcost-remove[hidden] { display: none; }
+.oil-widget .fuelcost-cheapest { max-width: 40em; margin: 0 0 18px; font-size: 16px; }
+.fuelcost-leg-table { max-width: 680px; }
+.fuelcost-leg-table .fuelcost-total > * { font-weight: 500; border-bottom: 0; }
+.oil-widget .fuelcost-share { margin: 4px 0 0; }
+.fuelcost-share [data-copy-status]:empty { display: none; }
+@media (max-width: 640px) {
+  .fuelcost .oil-form { margin-inline: calc(-1 * var(--gutter)); padding: 18px var(--gutter) 22px; }
+}
+@media (max-width: 600px) {
+  .fuelcost-leg { grid-template-columns: minmax(0, 1fr) minmax(0, 7.5em); }
+  .fuelcost-remove { grid-column: 1 / -1; }
+  .fuelcost-table { font-size: 13.5px; }
+  .fuelcost-table th, .fuelcost-table td { padding-right: 10px; }
+}
+.fuelcost [data-people] { max-width: 120px; }

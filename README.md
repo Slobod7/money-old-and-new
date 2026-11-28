@@ -410,7 +410,7 @@ There's no chart-image download. Tests: `node tests/euro-lookup-controls.cjs`.
 
 ### Typed amounts
 
-The euro and Brent calculators read an amount typed the English way (1,000.50) or the continental way (1.000,50 or 1000,50). A comma or point before exactly three digits groups thousands; before one or two digits at the end it is the decimal mark; anything else (1,0000 or 1,000,50) is refused with the usual message instead of guessed. Until 13 November 2026 every comma was stripped, so 1000,50 was read as 100,050. A share link still carries a plain number and is read strictly. The rule is `parseAmount()` in `assets/js/old-new-calculator.js` and `assets/js/oil-widgets.js`, kept identical; `node tests/amount-input.cjs` checks both.
+The euro and Brent calculators read an amount typed the English way (1,000.50) or the continental way (1.000,50 or 1000,50). A comma or point before exactly three digits groups thousands; before one or two digits at the end it is the decimal mark; anything else (1,0000 or 1,000,50) is refused with the usual message instead of guessed. Until 13 November 2026 every comma was stripped, so 1000,50 was read as 100,050. A share link still carries a plain number and is read strictly. The rule is `parseAmount()` in `assets/js/old-new-calculator.js`, `assets/js/oil-widgets.js` and `assets/js/fuel-cost.js`, kept identical; `node tests/amount-input.cjs` checks all three.
 
 ### Standalone euro page interpretation
 
@@ -596,6 +596,27 @@ node tests/fuel-prices.cjs
 ```
 
 The first runs the script on a small workbook it makes itself: the latest week, the tax subtraction, a skipped week, a missing country, repeated figures, and the files it must refuse. The second checks that every figure the script printed for the page is the figure the page's JavaScript works out from the weekly history, then the comparison's sentences. Run both after changing either file.
+
+## Fuel cost calculator
+
+What petrol or diesel costs for a drive in one EU country or across several, at this week's average prices. It lives at `/data/fuel-cost-calculator/` (`data/fuel-cost-calculator.html`, `assets/js/fuel-cost.js`), with a card on the Data page and a link in the fuel page's introduction. It was built for the searches "fuel cost calculator", "petrol cost calculator" and "journey cost calculator", the largest the site has found in Ahrefs (28 November 2026).
+
+The reader picks the fuel, the car's fuel use (litres per 100 km or UK mpg), kilometres or miles, one line per country with the distance driven in it (up to eight), a return journey and the number of people sharing the cost. The answer is one sentence, the litres, the cost, and the cost per 100 km, per mile or per person. With more than one country it adds a table by country and what all the litres would cost in the cheapest country on the route, with the caveat that a tank only carries so much.
+
+It has no data file of its own. Jekyll writes `_data/fuel_prices.json` into the page's table of what 100 km costs, each row carrying its prices in euros per 1,000 litres (`data-petrol`, `data-diesel`), and the script reads its prices from that table. So the weekly fuel update moves both pages at once, and the calculator can't disagree with the table. Without JavaScript the form stays hidden and the page shows a worked example and the table at 6 litres per 100 km; `_includes/fuel-cost-money.html` does the cent rounding for those figures the same way the script does.
+
+The choices go into the page's address (`#fuel=diesel&use=47.5&unit=mpg&dist=mi&route=fr-312.25_es-80&back=yes&people=4`), and "Copy a link to this drive" copies it. A link carries inputs, never prices, so it opens at the current week's. `readHash` refuses the whole link if any value is out of range or names a country with no row, and the calculator then shows its usual example with a note. A jump link to a section (`#fuel-cost-questions`) isn't read as a drive.
+
+The UK, Switzerland and Norway aren't in the Commission's bulletin, so they can't be picked; one answer under the questions says so. UK pump prices exist as open data (the Department for Energy Security and Net Zero's weekly road fuel prices, Open Government Licence), if a UK line is ever added.
+
+### Check the sums
+
+```bash
+node tests/fuel-cost.cjs
+node tests/amount-input.cjs
+```
+
+The first prices drives on this week's `_data/fuel_prices.json`: every country's 100 km figure against what the Liquid include prints, mpg and miles, the way back, people, several countries and the cheapest one, the sentences, and share links, including the ones it must refuse. The second checks that the calculator reads typed numbers (`6,5`, `1.200`) the same way as the euro and Brent calculators.
 
 ## Inflation by country
 

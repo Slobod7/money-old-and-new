@@ -23,6 +23,10 @@
   title: Petrol and diesel prices in Europe
   description: "A litre in each EU country this week, and how much of it is tax."
   url: /data/europe-fuel-prices/
+- label: Calculator
+  title: Fuel cost calculator
+  description: "What petrol or diesel costs for a drive in any EU country, or across several, at this week’s prices."
+  url: /data/fuel-cost-calculator/
 - label: Map
   title: Minimum wages in Europe
   description: "Each EU country’s minimum wage in euros and adjusted for prices, and how the order changes."

@@ -32,7 +32,7 @@ faq:
 <div class="wrap calc-page fuel-page">
 <header class="page-head">
 <h1 class="page-title">Petrol and diesel prices in Europe</h1>
-<p class="page-lede">What a litre costs in each of the {{ fp.countries }} EU countries, how much of it is tax, and where the price rose or fell over four weeks.</p>
+<p class="page-lede">What a litre costs in each of the {{ fp.countries }} EU countries, how much of it is tax, and where the price rose or fell over four weeks. To price a whole drive, use the <a href="{{ '/data/fuel-cost-calculator/' | relative_url }}">fuel cost calculator</a>.</p>
 <p class="meta page-vintage">Week of <strong>{{ f_week }}</strong>, EU average petrol €{{ fp.eu.petrol.price }} and diesel €{{ fp.eu.diesel.price }} a litre<span aria-hidden="true"> · </span>Data updated {{ fp.updated | date: "%-d %B %Y" }}</p>
 </header>
 {% include page-jumps.html %}

@@ -1,5 +1,5 @@
-// Run: node tests/amount-input.cjs. How the euro and Brent calculators read a typed amount.
-// Both must read an English amount (1,000.50) and a continental one (1.000,50 or 1000,50) the same way, and refuse
+// Run: node tests/amount-input.cjs. How the euro, Brent and fuel cost calculators read a typed amount.
+// All three must read an English amount (1,000.50) and a continental one (1.000,50 or 1000,50) the same way, and refuse
 // anything they would have to guess at. "1000,50" once had its comma stripped and became 100,050.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -12,7 +12,7 @@ function load(file, name) {
   return context.window[name].parseAmount;
 }
 
-const readers = { euro: load('old-new-calculator.js', 'OldNewCalculator'), brent: load('oil-widgets.js', 'OilWidgets') };
+const readers = { euro: load('old-new-calculator.js', 'OldNewCalculator'), brent: load('oil-widgets.js', 'OilWidgets'), fuel: load('fuel-cost.js', 'FuelCost') };
 
 // What is typed, and what it means. null is refused: the calculator shows its "Enter €1 to €100,000,000" message.
 const cases = [

@@ -1,0 +1,9 @@
+{%- comment -%}
+What a number of litres costs at a price from _data/fuel_prices.json ("1.308" euros a litre), as €39.24.
+  {% include fuel-cost-money.html price=row.petrol.price litres=30 %}
+Rounded to the cent once, as assets/js/fuel-cost.js does, so the page and the calculator agree.
+{%- endcomment -%}
+{%- assign fcm_cents = include.price | times: include.litres | times: 100 | round -%}
+{%- assign fcm_euros = fcm_cents | divided_by: 100 -%}
+{%- assign fcm_rest = fcm_cents | modulo: 100 -%}
+€{{ fcm_euros }}.{% if fcm_rest < 10 %}0{% endif %}{{ fcm_rest }}
