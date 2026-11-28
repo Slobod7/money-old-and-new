@@ -1,9 +1,11 @@
 # Updates the fuel prices page twice a week: runs scripts/update-fuel-data.py, which downloads the European
-# Commission's Weekly Oil Bulletin, and commits its two files, but only when the data changed.
+# Commission's Weekly Oil Bulletin, then scripts/update-uk-fuel-data.py, which adds the UK's prices for the fuel cost
+# calculator, and commits their three files, but only when the data changed.
 # The Commission publishes a week's prices a few days after its Monday. Friday's run normally picks them up;
 # Monday's run catches a bulletin that came out late. A run that finds nothing new changes nothing.
 # If the download fails or looks wrong, the script stops with an error and leaves its files as they were: the old
 # week stays on the site, dated as such, and this run shows as failed (GitHub emails you about failed runs).
+# A failed UK download doesn't hold back the EU prices: they are still committed, and the run then shows as failed.
 name: Update fuel data
 
 on:
@@ -28,10 +30,15 @@ jobs:
       - name: Download the bulletin and rebuild the fuel files
         run: python3 scripts/update-fuel-data.py
 
+      - name: Download the UK prices for the same week
+        id: uk
+        continue-on-error: true
+        run: python3 scripts/update-uk-fuel-data.py
+
       - name: Commit if the data changed
         id: commit
         run: |
-          files="_data/fuel_prices.json assets/data/fuel.json"
+          files="_data/fuel_prices.json assets/data/fuel.json _data/uk_fuel_prices.json"
           if git diff --quiet -- $files; then
             echo "No change in the data, so nothing to commit."
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -50,3 +57,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
+
+      - name: Fail the run if the UK download failed
+        if: ${{ steps.uk.outcome == 'failure' }}
+        run: |
+          echo "The UK prices were not updated; see the 'Download the UK prices' step. The EU prices were handled as usual."
+          exit 1

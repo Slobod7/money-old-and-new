@@ -1,0 +1,10 @@
+{
+"updated":"2026-11-28",
+"week":"2026-11-23",
+"eu_week":"2026-11-23",
+"gbp_per_eur":0.83673,
+"petrol":{"pence":"161.96","per1000":1619.6,"eur":"1.936"},
+"diesel":{"pence":"193.29","per1000":1932.9,"eur":"2.310"},
+"sources":{"prices":"Department for Energy Security and Net Zero, Weekly road fuel prices: average UK pump prices of ultra-low-sulphur unleaded petrol and diesel, pence a litre. Contains public sector information licensed under the Open Government Licence v3.0.","rate":"European Central Bank, euro reference rate for the pound sterling (EXR D.GBP.EUR.SP00.A), on the day of the prices or the last day before it"},
+"source_url":"https://www.gov.uk/government/statistics/weekly-road-fuel-prices"
+}

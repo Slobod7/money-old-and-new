@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Fuel cost calculator
-seo_title: "Fuel cost calculator: what a drive costs in Europe at this week’s prices"
-description: "Work out what petrol or diesel costs for a drive in any EU country, or across several, at this week’s average pump prices. In kilometres or miles, litres per 100 km or mpg."
+seo_title: "Fuel cost calculator: what a drive costs in the UK and Europe at this week’s prices"
+description: "Work out what petrol or diesel costs for a drive in the UK or any EU country, or across several, at this week’s average pump prices. In pounds or euros, miles or kilometres, mpg or litres per 100 km."
 permalink: /data/fuel-cost-calculator/
 last_modified_at: 2026-11-28
 dataset: fuel_prices
@@ -16,40 +16,57 @@ faq:
   - question: "How does the calculator work out the cost?"
     answer: "It turns the distance into litres with your car’s fuel use, then prices the litres at this week’s average for that fuel in the country where you drive each stretch. A 500 km drive in a car that uses 6 litres per 100 km needs 30 litres; at €1.80 a litre, that is €54."
   - question: "Whose prices are these?"
-    answer: "National averages, with all taxes, that each EU government reports to the European Commission’s Weekly Oil Bulletin. A motorway station usually charges more and a supermarket pump often less, so read the answer as a typical cost, not a quote."
+    answer: "National averages, with all taxes. For the EU, the figures each government reports to the European Commission’s Weekly Oil Bulletin; for the UK, the government’s own weekly road fuel prices. A motorway station usually charges more and a supermarket pump often less, so read the answer as a typical cost, not a quote."
+  - question: "Can I see the cost in pounds?"
+    answer: "Yes: choose Pounds under Show costs in. A route through the UK starts in pounds and one through the EU in euros, until you pick. Prices are converted at the European Central Bank’s reference rate for the Monday of the prices’ week."
   - question: "How do I turn miles per gallon into litres per 100 km?"
     answer: "Divide 282.5 by the UK figure: 47 mpg is about 6 litres per 100 km. The calculator does it for you when you choose mpg (UK). A US gallon is smaller, so for a US figure divide 235.2 by it instead."
   - question: "What does the cheapest country on the route show?"
     answer: "When a route crosses more than one country, the calculator also prices all the fuel at the lowest national average on it. That is the most the difference could be worth. In practice you can only carry what the tank holds, and stations near a border often price closer to the country next door than to their own national average."
   - question: "What is left out?"
     answer: "Everything but the fuel: tolls, motorway vignettes, ferries and parking. Fuel use also rises at motorway speeds, in the hills and with a heavy load, so a figure from the car’s brochure will undercount."
-  - question: "Why can’t I pick the UK, Switzerland or Norway?"
-    answer: "The bulletin covers the 27 EU countries only. For a drive that starts outside the EU, enter just the distance you will drive inside it."
+  - question: "Why can’t I pick Switzerland or Norway?"
+    answer: "The calculator only uses official weekly national averages: the Commission’s bulletin covers the 27 EU countries, and the UK publishes its own. Switzerland and Norway are in neither, so for a drive through them, enter just the distance you will drive in the countries the calculator covers."
 ---
 {%- comment -%}
-The fuel cost calculator. Jekyll writes this week's prices from _data/fuel_prices.json into the table of what 100 km
-costs (one row per country, with the price in euros per 1,000 litres on data-petrol and data-diesel), so the table reads
-the same without JavaScript. assets/js/fuel-cost.js reads its prices from that table, so the calculator and the page
-can never disagree, and it sends nothing and stores nothing. See the README's "Fuel cost calculator".
+The fuel cost calculator. Jekyll writes this week's prices from _data/fuel_prices.json (the EU) and
+_data/uk_fuel_prices.json (the UK) into the table of what 100 km costs: one row per country, with the price per 1,000
+litres in the country's own money on data-petrol and data-diesel (pounds for the UK, marked data-cur="gbp") and the
+pounds-to-the-euro rate on the table. So the table reads the same without JavaScript. assets/js/fuel-cost.js reads its
+prices from that table, so the calculator and the page can never disagree, and it sends nothing and stores nothing.
+UK prices more than two weeks behind the EU's are left out rather than shown against another week.
+See the README's "Fuel cost calculator".
 {%- endcomment -%}
 {%- assign fp = site.data.fuel_prices -%}
+{%- assign uk = site.data.uk_fuel_prices -%}
+{%- if uk -%}
+{%- assign uk_gap = fp.week | date: "%s" | minus: 0 -%}
+{%- assign uk_then = uk.week | date: "%s" | minus: 0 -%}
+{%- assign uk_gap = uk_gap | minus: uk_then -%}
+{%- if uk_gap < 0 or uk_gap > 1209600 -%}{%- assign uk = false -%}{%- endif -%}
+{%- endif -%}
+{%- if uk -%}
+{%- assign uk_week = uk.week | date: "%-d %B %Y" -%}
+{%- assign uk_rate_day = uk.week | date: "%-d %B" -%}
+{%- assign uk_petrol_pounds = uk.petrol.per1000 | divided_by: 1000.0 -%}
+{%- endif -%}
 {%- assign fc_week = fp.week | date: "%-d %B %Y" -%}
 {%- assign fc_names = fp.rows | sort: "name" -%}
 {%- assign fc_fuels = "petrol,diesel" | split: "," -%}
 <div class="wrap calc-page fuel-page fuelcost-page">
 <header class="page-head">
 <h1 class="page-title">Fuel cost calculator</h1>
-<p class="page-lede">What petrol or diesel costs for a drive in any EU country, or across several, at this week’s average prices at the pump.</p>
-<p class="meta page-vintage">Prices for the week of <strong>{{ fc_week }}</strong><span aria-hidden="true"> · </span>Data updated {{ fp.updated | date: "%-d %B %Y" }}</p>
+<p class="page-lede">What petrol or diesel costs for a drive in {% if uk %}the UK or {% endif %}any EU country, or across several, at this week’s average prices at the pump.</p>
+<p class="meta page-vintage">Prices for the week of <strong>{{ fc_week }}</strong>{% if uk and uk.week != fp.week %} (UK: {{ uk_week }}){% endif %}<span aria-hidden="true"> · </span>Data updated {{ fp.updated | date: "%-d %B %Y" }}</p>
 </header>
 {% include page-jumps.html %}
 <!--footnote-->
-<p><strong>The fuel cost calculator uses national averages, not a quote for any station.</strong> The prices come from the European Commission’s Weekly Oil Bulletin and are dated by the Monday of the bulletin’s week.</p>
+<p><strong>The fuel cost calculator uses national averages, not a quote for any station.</strong> The EU prices come from the European Commission’s Weekly Oil Bulletin{% if uk %} and the UK’s from the government’s weekly road fuel prices; both are{% else %} and are{% endif %} dated by the Monday of the week.</p>
 <!--footnote-->
 
 <section class="oil-widget fuelcost" id="fuel-cost" data-fuel-cost aria-labelledby="fuel-cost-title">
 <h2 class="section-title" id="fuel-cost-title">Your drive</h2>
-<p class="fuel-nojs" data-fuelcost-nojs>The calculator needs JavaScript. Without it, the table below gives what 100 km costs in each country. Driving 500 km in a car that uses 6 litres per 100 km takes 30 litres of petrol: {% include fuel-cost-money.html price=fp.cheapest.petrol.price litres=30 %} in {{ fp.cheapest.petrol.name }}, where it is cheapest this week, and {% include fuel-cost-money.html price=fp.dearest.petrol.price litres=30 %} in {{ fp.dearest.petrol.name }}, where it is dearest.</p>
+<p class="fuel-nojs" data-fuelcost-nojs>The calculator needs JavaScript. Without it, the table below gives what 100 km costs in each country. Driving 500 km in a car that uses 6 litres per 100 km takes 30 litres of petrol: {% include fuel-cost-money.html price=fp.cheapest.petrol.price litres=30 %} in {{ fp.cheapest.petrol.name }}, where it is cheapest this week, and {% include fuel-cost-money.html price=fp.dearest.petrol.price litres=30 %} in {{ fp.dearest.petrol.name }}, where it is dearest.{% if uk %} In the UK, the same 30 litres cost {% include fuel-cost-money.html price=uk_petrol_pounds litres=30 symbol="£" %}.{% endif %}</p>
 <form class="oil-form fuelcost-form" data-form novalidate hidden>
 <div class="oil-field">
 <span class="fuelcost-label" id="fuel-cost-fuel-label">Fuel</span>
@@ -93,6 +110,15 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 {%- endfor %}
 </select>
 </div>
+{%- if uk %}
+<div class="oil-field" data-cur-field>
+<span class="fuelcost-label" id="fuel-cost-cur-label">Show costs in</span>
+<div class="oil-choices" role="radiogroup" aria-labelledby="fuel-cost-cur-label">
+<label><input type="radio" name="fuel-cost-cur" value="eur" checked> Euros</label>
+<label><input type="radio" name="fuel-cost-cur" value="gbp"> Pounds</label>
+</div>
+</div>
+{%- endif %}
 </form>
 <template data-leg-template>
 <li class="fuelcost-leg">
@@ -103,6 +129,9 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 {%- for row in fc_names %}
 <option value="{{ row.code | downcase }}">{{ row.name }}</option>
 {%- endfor %}
+{%- if uk %}
+<option value="uk">United Kingdom</option>
+{%- endif %}
 </select>
 </div>
 <div class="oil-field fuelcost-distance">
@@ -125,7 +154,7 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 <div class="table-wrap" data-leg-table hidden>
 <table class="data fuelcost-leg-table">
 <caption class="visually-hidden">The cost of each country on the route</caption>
-<thead><tr><th scope="col">Country</th><th scope="col" class="num" data-out="leg-distance-head">Distance</th><th scope="col" class="num">Litres</th><th scope="col" class="num">€ a litre</th><th scope="col" class="num">Cost</th></tr></thead>
+<thead><tr><th scope="col">Country</th><th scope="col" class="num" data-out="leg-distance-head">Distance</th><th scope="col" class="num">Litres</th><th scope="col" class="num" data-out="leg-price-head">€ a litre</th><th scope="col" class="num">Cost</th></tr></thead>
 <tbody data-leg-rows></tbody>
 </table>
 </div>
@@ -138,14 +167,14 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 <section class="fuel-section" aria-labelledby="fuel-cost-table-title">
 <h2 class="section-title" id="fuel-cost-table-title">What 100 km costs in each country</h2>
 <p class="section-intro" data-table-intro>At this week’s average prices, in a car that uses 6 litres per 100 km.</p>
-<div class="table-wrap" role="region" aria-label="What 100 km of driving costs in each EU country" tabindex="0">
-<table class="data fuelcost-table" data-prices data-week="{{ fp.week }}">
+<div class="table-wrap" role="region" aria-label="What 100 km of driving costs in each country" tabindex="0">
+<table class="data fuelcost-table" data-prices data-week="{{ fp.week }}"{% if uk %} data-gbp-per-eur="{{ uk.gbp_per_eur }}"{% endif %}>
 <thead>
 <tr>
 <th scope="col">Country</th>
-<th scope="col" class="num">Petrol, € a litre</th>
+<th scope="col" class="num" data-litre-head>Petrol, € a litre</th>
 <th scope="col" class="num" data-per-head>Petrol, 100 km</th>
-<th scope="col" class="num">Diesel, € a litre</th>
+<th scope="col" class="num" data-litre-head>Diesel, € a litre</th>
 <th scope="col" class="num" data-per-head>Diesel, 100 km</th>
 </tr>
 </thead>
@@ -156,7 +185,7 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 {%- for fuel in fc_fuels %}
 {%- assign f = row[fuel] %}
 {%- if f %}
-<td class="num">€{{ f.price }}</td>
+<td class="num" data-litre="{{ fuel }}">€{{ f.price }}</td>
 <td class="num" data-per="{{ fuel }}">{% include fuel-cost-money.html price=f.price litres=6 %}</td>
 {%- else %}
 <td class="num" colspan="2">No figure this week</td>
@@ -165,19 +194,32 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 </tr>
 {%- endfor %}
 </tbody>
+{%- if uk %}
+<tbody class="fuelcost-outside">
+<tr data-code="uk" data-name="United Kingdom" data-cur="gbp" data-week="{{ uk.week }}" data-petrol="{{ uk.petrol.per1000 }}" data-diesel="{{ uk.diesel.per1000 }}">
+<th scope="row">United Kingdom</th>
+{%- for fuel in fc_fuels %}
+{%- assign f = uk[fuel] %}
+{%- assign uk_eur = f.per1000 | divided_by: uk.gbp_per_eur | divided_by: 1000.0 %}
+<td class="num" data-litre="{{ fuel }}">€{{ f.eur }}</td>
+<td class="num" data-per="{{ fuel }}">{% include fuel-cost-money.html price=uk_eur litres=6 %}</td>
+{%- endfor %}
+</tr>
+</tbody>
+{%- endif %}
 <tfoot>
 <tr data-code="eu" data-name="EU average" data-petrol="{{ fp.eu.petrol.price | times: 1000 | round }}" data-diesel="{{ fp.eu.diesel.price | times: 1000 | round }}">
 <th scope="row">EU average</th>
 {%- for fuel in fc_fuels %}
 {%- assign f = fp.eu[fuel] %}
-<td class="num">€{{ f.price }}</td>
+<td class="num" data-litre="{{ fuel }}">€{{ f.price }}</td>
 <td class="num" data-per="{{ fuel }}">{% include fuel-cost-money.html price=f.price litres=6 %}</td>
 {%- endfor %}
 </tr>
 </tfoot>
 </table>
 </div>
-<p class="oil-note">Week of {{ fc_week }}, cheapest petrol first. Prices include every tax.{% if fp.missing.size > 0 %} No complete figures this week for {{ fp.missing | join: ", " }}.{% endif %}</p>
+<p class="oil-note">Week of {{ fc_week }}, EU countries cheapest petrol first. Prices include every tax.{% if fp.missing.size > 0 %} No complete figures this week for {{ fp.missing | join: ", " }}.{% endif %}{% if uk %} The UK’s{% if uk.week != fp.week %}, for the week of {{ uk_week }},{% endif %} are {{ uk.petrol.pence }}p a litre of petrol and {{ uk.diesel.pence }}p of diesel; pounds and euros are converted at the European Central Bank’s rate for {{ uk_rate_day }}, £{{ uk.gbp_per_eur }} to the euro.{% endif %}</p>
 </section>
 
 <aside class="next-step" aria-labelledby="next-step-title">
@@ -203,12 +245,16 @@ can never disagree, and it sends nothing and stores nothing. See the README's "F
 <dl class="brent-source-list">
 <div><dt>Prices</dt><dd><a href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">European Commission, Weekly Oil Bulletin</a>, price developments 2005 onwards: Euro-super 95 petrol and automotive gas oil (road diesel), the consumer price with taxes that each country reports as most often charged. Published in euros per 1,000 litres and shown here per litre. The same figures as on <a href="{{ '/data/europe-fuel-prices/' | relative_url }}">petrol and diesel prices in Europe</a>.</dd></div>
 <div><dt>EU average</dt><dd>The Commission’s own figure, weighted by how much of each fuel each country uses.</dd></div>
+{%- if uk %}
+<div><dt>UK prices</dt><dd><a href="{{ uk.source_url }}">Department for Energy Security and Net Zero, Weekly road fuel prices</a>: the average UK pump price of ultra-low-sulphur unleaded petrol and diesel, with duty and VAT, for the Monday of each week. Published in pence a litre.</dd></div>
+<div><dt>Pounds and euros</dt><dd>The <a href="https://data.ecb.europa.eu/data/datasets/EXR/EXR.D.GBP.EUR.SP00.A">European Central Bank’s euro reference rate for the pound</a> on the Monday of the UK prices’ week, or the last working day before it: £{{ uk.gbp_per_eur }} to the euro for {{ uk_week }}. The same rate converts both ways.</dd></div>
+{%- endif %}
 <div><dt>Calculation</dt><dd>Litres = distance in km × litres per 100 km ÷ 100, and cost = litres × price, for each country on the route, rounded to the cent only at the end. A mile is 1.609344 km. A UK gallon is 4.54609 litres, so litres per 100 km = 282.481 ÷ mpg.</dd></div>
 </dl>
 <div class="faq brent-method-details">
 <details><summary>Update schedule and reuse</summary>
-<p>The prices are refreshed by a scheduled download each week, after the Commission publishes. A failed download leaves the previous week in place, and the date at the top of the page says which week you are reading. This is not a live feed.</p>
-<p>The <a href="https://commission.europa.eu/legal-notice_en">Commission allows reuse of its content</a> with credit and with changes indicated: here, the conversion to euros per litre and every calculation are this site’s.</p>
+<p>The prices are refreshed by a scheduled download each week, after the Commission publishes. A failed download leaves the previous week in place, and the date at the top of the page says which week you are reading. This is not a live feed.{% if uk %} UK prices more than two weeks older than the EU’s are taken off the page rather than set against another week.{% endif %}</p>
+<p>The <a href="https://commission.europa.eu/legal-notice_en">Commission allows reuse of its content</a> with credit and with changes indicated: here, the conversion to euros per litre and every calculation are this site’s.{% if uk %} UK prices: contains public sector information licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>. The exchange rate is the ECB’s, used under its <a href="https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html">attribution and reuse terms</a>; the conversions are this site’s.{% endif %}</p>
 </details>
 </div>
 </section>

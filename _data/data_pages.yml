@@ -25,7 +25,7 @@
   url: /data/europe-fuel-prices/
 - label: Calculator
   title: Fuel cost calculator
-  description: "What petrol or diesel costs for a drive in any EU country, or across several, at this week’s prices."
+  description: "What petrol or diesel costs for a drive in the UK or any EU country, or across several, at this week’s prices."
   url: /data/fuel-cost-calculator/
 - label: Map
   title: Minimum wages in Europe

@@ -1,6 +1,7 @@
 // Run: node tests/fuel-cost.cjs. The fuel cost calculator's sums, sentences and share links (assets/js/fuel-cost.js),
-// on this week's prices from _data/fuel_prices.json, read the way the page hands them to the script: each price in
-// euros per 1,000 litres, under a lower-case country code, with the EU average as "eu".
+// on this week's prices from _data/fuel_prices.json and _data/uk_fuel_prices.json, read the way the page hands them to
+// the script: each price per 1,000 litres in the country's own money (pounds for the UK, "uk"), under a lower-case
+// country code, with the EU average as "eu", and the pounds-to-the-euro rate as fx.
 'use strict';
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -11,12 +12,15 @@ const page = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '_data/fuel_p
 const per1000 = f => (f ? Math.round(parseFloat(f.price) * 1000) : null);
 const prices = { eu: { name: 'EU average', petrol: per1000(page.eu.petrol), diesel: per1000(page.eu.diesel) } };
 page.rows.forEach(r => { prices[r.code.toLowerCase()] = { name: r.name, petrol: per1000(r.petrol), diesel: per1000(r.diesel) }; });
+const ukFile = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '_data/uk_fuel_prices.json'), 'utf8'));
+prices.uk = { name: 'United Kingdom', cur: 'gbp', week: ukFile.week, petrol: ukFile.petrol.per1000, diesel: ukFile.diesel.per1000 };
+const fx = ukFile.gbp_per_eur;
 let checks = 0;
 const same = (a, b, what) => { assert.deepEqual(a, b, what); checks++; };
 const near = (a, b, what) => { assert.ok(Math.abs(a - b) < 1e-9, `${what}: ${a} is not ${b}`); checks++; };
 // What the page's Liquid include (_includes/fuel-cost-money.html) prints for litres at a price: rounded to the cent once
-const liquid = (price, litres) => { const c = Math.round(price / 1000 * litres * 100); return '€' + Math.floor(c / 100) + '.' + String(c % 100).padStart(2, '0'); };
-const drive = over => Object.assign({ fuel: 'petrol', use: 6, unit: 'l100', dist: 'km', legs: [{ code: 'fr', distance: 500 }], back: false, people: 1 }, over);
+const liquid = (price, litres, symbol = '€') => { const c = Math.round(price / 1000 * litres * 100); return symbol + Math.floor(c / 100) + '.' + String(c % 100).padStart(2, '0'); };
+const drive = over => Object.assign({ fuel: 'petrol', use: 6, unit: 'l100', dist: 'km', legs: [{ code: 'fr', distance: 500 }], back: false, people: 1, cur: null }, over);
 const fr = prices.fr.petrol;
 
 // One country: 500 km at 6 litres per 100 km is 30 litres
@@ -27,8 +31,9 @@ same(F.euros(r.per100km), liquid(fr, 6), 'per 100 km is the table’s figure');
 same(r.cheapest, null, 'one country has no cheaper country');
 same(F.verdict(r, drive()), `Driving 500 km in France costs ${liquid(fr, 30)} in petrol at this week’s average price.`);
 
-// The table's 100 km figure, for every country and fuel, matches what Liquid prints
+// The table's 100 km figure, for every EU country and fuel, matches what Liquid prints
 for (const [code, p] of Object.entries(prices)) {
+  if (code === 'uk') continue;
   for (const fuel of ['petrol', 'diesel']) {
     if (p[fuel] == null) continue;
     const one = F.calculate(prices, drive({ fuel, legs: [{ code, distance: 100 }] }));
@@ -86,11 +91,57 @@ const bad = h => { assert.throws(() => F.readHash(h, prices), /link/, h); checks
 const ok = 'fuel=petrol&use=6&unit=l100&dist=km&route=fr-500&back=no&people=1';
 F.readHash('#' + ok, prices); checks++;
 [ok.replace('petrol', 'lpg'), ok.replace('use=6', 'use=0.5'), ok.replace('use=6', 'use=41'), ok.replace('unit=l100&', 'unit=mpg&'),
- ok.replace('use=6', 'use=6.125'), ok.replace('use=6', 'use=6,5'), ok.replace('dist=km', 'dist=nm'), ok.replace('fr-500', 'uk-500'),
+ ok.replace('use=6', 'use=6.125'), ok.replace('use=6', 'use=6,5'), ok.replace('dist=km', 'dist=nm'), ok.replace('fr-500', 'ch-500'),
  ok.replace('fr-500', 'FR-500'), ok.replace('fr-500', 'fr-0'), ok.replace('fr-500', 'fr-20001'), ok.replace('fr-500', 'fr-500_'),
  ok.replace('fr-500', 'fr-1_de-1_at-1_be-1_bg-1_hr-1_cy-1_cz-1_dk-1'), ok.replace('back=no', 'back=maybe'), ok.replace('&back=no', ''),
  ok.replace('people=1', 'people=9'), ok.replace('people=1', 'people=0'), ok.replace('people=1', 'people=1.5'), ok.replace('&people=1', '')
 ].forEach(h => bad('#' + h));
 same(F.readHash('#' + ok.replace('fr-500', 'fr-1_de-1_at-1_be-1_bg-1_hr-1_cy-1_cz-1'), prices).legs.length, 8, 'eight countries is the limit');
+bad('#' + ok + '&cur=usd'); bad('#' + ok + '&cur=');
+
+// The UK, in pounds, and pounds and euros either way --------------------------------------------------------------
+const uk = prices.uk.petrol;
+// The table's UK row in euros, as the page's Liquid works it out: pounds per 1,000 litres ÷ the rate
+for (const fuel of ['petrol', 'diesel']) {
+  const eur = prices.uk[fuel] / fx;
+  same((eur / 1000).toFixed(3), ukFile[fuel].eur, `UK ${fuel}: the euro price a litre in the file is the script’s`);
+  const one = F.calculate(prices, drive({ fuel, legs: [{ code: 'uk', distance: 100 }] }), fx);
+  same(F.euros(one.cents), liquid(eur, 6), `UK ${fuel}: 100 km in euros matches the page`);
+  same(one.converted, true, 'pounds shown as euros are converted');
+  const gbp = F.calculate(prices, drive({ fuel, cur: 'gbp', legs: [{ code: 'uk', distance: 100 }] }), fx);
+  same(F.money(gbp.cents, 'gbp'), liquid(prices.uk[fuel], 6, '£'), `UK ${fuel}: 100 km in pounds`);
+  same(gbp.converted, false, 'pounds shown as pounds are not');
+  for (const [code, p] of Object.entries(prices)) {
+    if (code === 'uk' || p[fuel] == null) continue;
+    const eu = F.calculate(prices, drive({ fuel, cur: 'gbp', legs: [{ code, distance: 100 }] }), fx);
+    near(eu.cents, 6 * p[fuel] * fx / 10, `${code} ${fuel}: 100 km in pounds`);
+  }
+}
+// The page's example without JavaScript: 30 litres of UK petrol
+same(liquid(uk, 30, '£'), F.money(30 * uk / 10, 'gbp'));
+r = F.calculate(prices, drive({ cur: 'gbp', dist: 'mi', legs: [{ code: 'uk', distance: 300 }] }), fx);
+same(F.verdict(r, drive({ cur: 'gbp', dist: 'mi', legs: [{ code: 'uk', distance: 300 }] })), `Driving 300 miles in the UK costs ${F.money(r.cents, 'gbp')} in petrol at this week’s average price.`);
+near(r.perMile, r.cents / 300, 'pence a mile');
+same(F.small(15.24, 'gbp'), '15.2p'); same(F.small(15.26, 'eur'), '15.3 cents');
+same(F.money(123456.4, 'gbp'), '£1,234.56'); same(F.euros(5), '€0.05');
+// Across the Channel: France in pounds, and the cheaper of the two found in the same money
+const channel = drive({ cur: 'gbp', legs: [{ code: 'uk', distance: 200 }, { code: 'fr', distance: 500 }] });
+r = F.calculate(prices, channel, fx);
+near(r.cents, (12 * uk + 30 * fr * fx) / 10, 'the UK and France in pounds');
+same(r.converted, true, 'France in pounds is converted');
+same(r.cheapest && r.cheapest.code, uk < fr * fx ? 'uk' : 'fr', 'the cheaper of the UK and France');
+same(F.verdict(r, channel).startsWith('Driving 700 km through the UK and France costs £'), true);
+same(F.cheapestText(r).includes(' would cost £'), true, 'the cheapest country in pounds too');
+const inEuros = F.calculate(prices, Object.assign({}, channel, { cur: 'eur' }), fx);
+near(inEuros.cents * fx, r.cents, 'the same drive in euros is the same money');
+same(F.autoCur(['fr', 'uk'], prices), 'gbp'); same(F.autoCur(['fr', 'de'], prices), 'eur'); same(F.autoCur([], prices), 'eur');
+near(F.convert(F.convert(1619.6, 'gbp', 'eur', fx), 'eur', 'gbp', fx), 1619.6, 'there and back');
+same(F.convert(1500, 'eur', 'eur'), 1500, 'no rate needed for no conversion');
+assert.throws(() => F.calculate(prices, drive({ cur: 'gbp' }))); checks++;   // pounds with no rate: refused
+// Links: the money only when the reader chose it, and read back
+same(F.writeHash(drive({ cur: 'gbp' })).includes('cur='), false, 'a money the reader didn’t pick stays out of the link');
+const chosen = F.writeHash(drive({ cur: 'gbp', curSet: true, legs: [{ code: 'uk', distance: 120 }] }));
+same(chosen, '#fuel=petrol&use=6&unit=l100&dist=km&route=uk-120&back=no&people=1&cur=gbp');
+same(F.readHash(chosen, prices).cur, 'gbp'); same(F.readHash('#' + ok, prices).cur, null, 'an older link leaves the money to the route');
 
 console.log(`All ${checks} fuel cost checks passed.`);
